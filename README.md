@@ -62,7 +62,7 @@ builds for clients.
 | --- | --- | --- |
 | **Atlas Pool Kit** | ESP32-S3 sensor with Atlas Scientific EZO circuits. Measures the water, shows it on a small screen and publishes it to Home Assistant over MQTT. Monitor only; it never commands the doser. | [Atlas Pool Kit](atlas-pool-kit/README.md) |
 | **Pool Doser** | Drives a Stenner peristaltic pump. A Wi-Fi Master and an RS485 Slave each control one of two series contactors, with flow, relay-proving, runtime and communication interlocks on every dose. | [Pool Doser](pool-doser/README.md) |
-| **Home Assistant** | A package and a **Pool** dashboard that add Auto, STOP, manual doses, a tank estimate, live readings and guided calibration. Setup only adds; it never changes your existing dashboards. | [Setup guide](home-assistant/README.md) |
+| **Home Assistant** | A package and a **Pool** dashboard that add Auto, STOP, manual doses, a tank estimate, live readings, a two-hour pH chart and guided calibration. Setup only adds; it never changes your existing dashboards. | [Setup guide](home-assistant/README.md) |
 | **Pool Math** *(optional)* | Pulls your test results from a [Pool Math](https://www.troublefreepool.com/) share link and calculates a live CSI from the Atlas readings. | [Pool Math](home-assistant/pool-math.md) |
 
 ## See it

@@ -2,7 +2,8 @@
 
 Everything Home Assistant needs is in this repository. These steps add a
 **Pool** dashboard to the sidebar: grouped controls and doser status on the
-left, water readings on the right, every tile in a fixed order. They add files and
+left, water readings and a two-hour pH chart on the right, every tile in a
+fixed order. They add files and
 dashboards only; your existing dashboards, default screen and settings stay as
 they are.
 
@@ -84,10 +85,11 @@ first, you can optionally set it as the default under **Settings → Dashboards*
 **Control** has three groups: **Dosing** (Auto, STOP, Dose Amount, Dose Now),
 **Status** (flow, outlet live, dose progress, last delivered dose, doser
 status, readiness) and **Tank and Maintenance** (maintenance lockout, relay
-fault and sensor calibration beside tank level, capacity and refilled). **Water** has two groups: **Atlas**, the four live
-readings (pH, ORP, salinity, temperature), and **Pool Math**, the tests (free chlorine,
+fault and sensor calibration beside tank level, capacity and refilled). **Water** has three groups: **Atlas**, the four live
+readings (pH, ORP, salinity, temperature); **Pool Math**, the tests (free chlorine,
 total alkalinity, calcium hardness, stabilizer, borates) with their test age, and
-CSI last.
+CSI last; and **pH History**, a chart of the last two hours of Atlas pH from
+Home Assistant's recorder.
 
 | Tile | Tap | Icon |
 | --- | --- | --- |
