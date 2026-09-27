@@ -1,0 +1,203 @@
+# Home Assistant owns Auto intent and the pH threshold; the ESP32 enforces safety.
+# All calendar clocks use time.nist.gov. pool_telemetry validates raw MQTT first.
+
+pool_tank:
+
+input_boolean:
+  doser_auto_enabled:
+    name: Pool Doser Auto Enabled
+    icon: mdi:water-sync
+    # No initial override: HA restores both On and Off across restarts.
+
+input_text:
+  doser_acid_session:
+    name: Doser observer session
+    initial: ""
+    max: 64
+
+input_number:
+  doser_dose_oz:
+    name: Dose amount
+    min: 0.5
+    max: 13
+    step: 0.5
+    unit_of_measurement: oz
+    icon: mdi:cup-water
+    mode: box
+
+# HA keeps the last delivered dose. The doser reports it from RAM, so its own
+# reading is unknown after a doser restart; this one survives restarts and
+# changes only when the doser reports a new delivered amount.
+template:
+  - triggers:
+      - trigger: state
+        entity_id: sensor.pool_doser_last_delivered
+    sensor:
+      - name: Pool Doser Last Dose
+        unique_id: pool_doser_last_dose
+        default_entity_id: sensor.pool_doser_last_dose
+        unit_of_measurement: oz
+        icon: mdi:history
+        state: >-
+          {% set new = trigger.to_state.state if trigger.to_state else none %}
+          {{ new | float | round(2) if is_number(new) else this.state | float(none) }}
+
+script:
+  doser_stop:
+    alias: Pool Doser STOP
+    description: Turn Auto Off and immediately stop the current dose.
+    mode: restart
+    sequence:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.doser_auto_enabled
+      - action: esphome.pool_doser_stop
+        continue_on_error: true
+
+  doser_dose:
+    alias: Dose chemical
+    description: Request a dose; the ESP32 enforces all safety checks.
+    mode: single
+    sequence:
+      - action: esphome.pool_doser_dose
+        data:
+          ounces: "{{ states('input_number.doser_dose_oz') | float(0) }}"
+        response_variable: acceptance
+      - action: pool_tank.record_acceptance
+        continue_on_error: true
+        data:
+          response: "{{ acceptance }}"
+
+automation:
+  - id: doser_acid_samples
+    alias: Doser - observe fresh Atlas pH
+    mode: single
+    max_exceeded: silent
+    triggers:
+      - trigger: mqtt
+        topic: pool/atlas_pool/live/ph
+    actions:
+      # Call the doser only while it is connected. Startup and outages end
+      # quietly; the reconnect trigger reruns reconciliation when it returns.
+      - condition: template
+        value_template: "{{ states('sensor.pool_doser_request_readiness') not in ['unavailable', 'unknown'] }}"
+      - variables:
+          packet: "{{ trigger.payload_json if trigger.payload_json is mapping else {} }}"
+      - action: esphome.pool_doser_acid_observe_ph
+        data:
+          valid: >-
+            {% set measured = (packet.get('measured_at_ms', 0) | int(0)) / 1000 %}
+            {% set published = (packet.get('timestamp_ms', 0) | int(0)) / 1000 %}
+            {% set diagnostic = (state_attr('sensor.atlas_pool_calibration', 'timestamp_ms') | int(0)) / 1000 %}
+            {% set current = as_timestamp(utcnow()) %}
+            {{ is_state('sensor.atlas_pool_calibration', 'Monitoring') and
+               is_state('binary_sensor.atlas_pool_maintenance', 'off') and
+               state_attr('sensor.atlas_pool_calibration', 'diagnostic_version') == 2 and
+               state_attr('sensor.atlas_pool_calibration', 'configuration_ok') == true and
+               state_attr('sensor.atlas_pool_calibration', 'recovery') == false and
+               state_attr('sensor.atlas_pool_calibration', 'clock_healthy') == true and
+               packet.get('clock_healthy') == true and
+               packet.get('time_source') == 'time.nist.gov' and
+               packet.get('clock_epoch') == state_attr('sensor.atlas_pool_calibration', 'clock_epoch') and
+               packet.get('boot', '') == state_attr('sensor.atlas_pool_calibration', 'boot') and
+               -2 <= current - measured < 20 and
+               -2 <= current - published < 10 and
+               -2 <= current - diagnostic < 10 and
+               is_number(packet.get('value')) }}
+          boot: "{{ packet.get('boot', '') ~ ':' ~ (packet.get('clock_epoch', '') | string) }}"
+          sample_id: "{{ packet.get('measured_at_ms', '') | string }}"
+          ph: "{{ packet.get('value') | float(-1) }}"
+
+  - id: doser_acid_reconcile
+    alias: Doser - observe and request one acid pulse
+    mode: restart
+    max_exceeded: silent
+    triggers:
+      - trigger: homeassistant
+        event: start
+        id: startup
+      - trigger: time_pattern
+        seconds: /5
+        id: periodic
+      - trigger: mqtt
+        topic: pool/atlas_pool/availability
+        id: reconnect
+      - trigger: state
+        entity_id: sensor.pool_doser_request_readiness
+        from: unavailable
+        id: reconnect
+      - trigger: state
+        entity_id: sensor.pool_doser_request_readiness
+        from: unknown
+        id: reconnect
+      - trigger: state
+        entity_id: binary_sensor.atlas_pool_maintenance
+        to:
+        id: reconnect
+      - trigger: state
+        entity_id:
+          - sensor.atlas_pool_ph
+          - sensor.atlas_pool_calibration
+        to: unavailable
+        id: reconnect
+      - trigger: state
+        entity_id: input_boolean.doser_auto_enabled
+        to:
+        id: intent
+    actions:
+      # Call the doser only while it is connected. Startup and outages end
+      # quietly; the reconnect trigger reruns reconciliation when it returns.
+      - condition: template
+        value_template: "{{ states('sensor.pool_doser_request_readiness') not in ['unavailable', 'unknown'] }}"
+      # Auto Off only prevents new automatic requests; a dose already running
+      # finishes. STOP is the only HA action that aborts a dose.
+      - variables:
+          session: >-
+            {{ utcnow().isoformat() if trigger.id in ['startup', 'reconnect'] or
+               states('input_text.doser_acid_session') in ['', 'unknown', 'unavailable']
+               else states('input_text.doser_acid_session') }}
+          monitoring: >-
+            {% set diagnostic = (state_attr('sensor.atlas_pool_calibration', 'timestamp_ms') | int(0)) / 1000 %}
+            {{ is_state('sensor.atlas_pool_calibration', 'Monitoring') and
+               is_state('binary_sensor.atlas_pool_maintenance', 'off') and
+               state_attr('sensor.atlas_pool_calibration', 'diagnostic_version') == 2 and
+               state_attr('sensor.atlas_pool_calibration', 'configuration_ok') == true and
+               state_attr('sensor.atlas_pool_calibration', 'recovery') == false and
+               state_attr('sensor.atlas_pool_calibration', 'clock_healthy') == true and
+               state_attr('sensor.atlas_pool_calibration', 'time_source') == 'time.nist.gov' and
+               -2 <= as_timestamp(utcnow()) - diagnostic < 10 }}
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.doser_acid_session
+        data:
+          value: "{{ session }}"
+      - if:
+          - condition: template
+            value_template: "{{ trigger.id in ['startup', 'reconnect', 'intent'] or not monitoring }}"
+        then:
+          - action: esphome.pool_doser_acid_pause
+      # Every attempt starts with a current status response. No timer.finished
+      # event, retained pH, saved HA request, retry loop or catch-up queue.
+      - action: esphome.pool_doser_acid_status
+        data:
+          client_session: "{{ session }}"
+        response_variable: doser
+      - condition: template
+        value_template: >-
+          {{ doser.get('response_version') == 3 and monitoring and
+             is_state('input_boolean.doser_auto_enabled', 'on') and
+             is_number(doser.get('average_ph')) and 7.80 < doser.average_ph | float <= 14 and
+             doser.ready == true and
+             doser.active_request_id == '' and
+             doser.result in ['none', 'completed', 'interrupted'] and
+             doser.relay_fault == false and
+             doser.request_token | length > 0 }}
+      - action: esphome.pool_doser_automatic_dose
+        data:
+          request_id: "{{ doser.request_token }}"
+        response_variable: acceptance
+      - action: pool_tank.record_acceptance
+        continue_on_error: true
+        data:
+          response: "{{ acceptance }}"
+      # Results remain in controller RAM until the next accepted request or reboot.

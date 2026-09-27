@@ -1,0 +1,23 @@
+# Mosquitto MQTT broker for the Atlas Pool Kit and Home Assistant (Docker).
+# Joins the Docker network of a Home Assistant container named in its own
+# compose project "home-assistant"; adjust the network name to match yours.
+name: eclipse-mosquitto
+
+services:
+  eclipse-mosquitto:
+    image: eclipse-mosquitto:2.1.2-alpine
+    container_name: eclipse-mosquitto
+    restart: unless-stopped
+    ports:
+      - "${MQTT_BIND_ADDRESS:?Set this computer's LAN address in .env}:1883:1883"
+    volumes:
+      - ./config:/mosquitto/config:ro
+      - ./data:/mosquitto/data
+      - ./log:/mosquitto/log
+    networks:
+      - home_assistant
+
+networks:
+  home_assistant:
+    external: true
+    name: home-assistant_default

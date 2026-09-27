@@ -1,0 +1,1055 @@
+[
+  {
+    "id": "A01",
+    "from": "BOX:L",
+    "to": "F1:LINE",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "Separate stranded source-hot lead to bottom LINE",
+    "ends": [
+      "BOX:L",
+      "F1:LINE"
+    ],
+    "physical": [
+      "Inside metal box: hot Wago joins source-whip black to separate black A01 lead OUT",
+      "F1 bottom LINE clamp; A01 incoming supply"
+    ],
+    "prep": [
+      "BOX",
+      "S14"
+    ],
+    "prep_notes": [
+      "Wago connection inside the metal box; follow the installed connector conductor range and strip length. No ferrule specified at this end.",
+      "SINGLE 14 AWG ferrule. Kit: blue collar, 8 mm barrel; kit chart metal-tube OD 2.6 mm. Check device-specific note. C60 wire guidance: 14 mm strip and 22 lb-in for this current/voltage range, subject to installed markings. Kit blue barrel is 8 mm; check the metal-barrel engagement against the device instructions."
+    ],
+    "hex": "#202832",
+    "harness": "A",
+    "sheet": "mains",
+    "prep_labels": [
+      "BOX",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A02",
+    "from": "F1:LOAD",
+    "to": "PS1:L",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "Protected-hot branch; single blue at Mean Well L",
+    "ends": [
+      "F1:LOAD",
+      "PS1:L"
+    ],
+    "physical": [
+      "F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches",
+      "PS1 bottom RIGHT L, terminal 4"
+    ],
+    "prep": [
+      "M4_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A02/A05/A06/A07, four black 14 AWG wires, tightened and connected as drawn. Wires: A02 + A05 + A06 + A07. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "Single blue 14 AWG ferrule. The design limits all Mean Well terminals to a blue-single-14-AWG ferrule envelope; confirm the selected ferrule/barrel. Published wire strip 6 mm, torque 0.49 N·m; kit barrel is 8 mm."
+    ],
+    "hex": "#202832",
+    "harness": "A",
+    "sheet": "mains",
+    "prep_labels": [
+      "4 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A05",
+    "from": "F1:LOAD",
+    "to": "W2:COM",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "Protected-hot branch; single blue at Slave COM",
+    "ends": [
+      "F1:LOAD",
+      "W2:COM"
+    ],
+    "physical": [
+      "F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches",
+      "W2 Slave / K3: bottom 2nd screw COM"
+    ],
+    "prep": [
+      "M4_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A02/A05/A06/A07, four black 14 AWG wires, tightened and connected as drawn. Wires: A02 + A05 + A06 + A07. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "SINGLE 14 AWG ferrule. Kit: blue collar, 8 mm barrel; kit chart metal-tube OD 2.6 mm. Check device-specific note. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque."
+    ],
+    "hex": "#202832",
+    "harness": "A",
+    "sheet": "mains",
+    "prep_labels": [
+      "4 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A06",
+    "from": "F1:LOAD",
+    "to": "K1:1",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "Protected-hot branch to first pump-power contact",
+    "ends": [
+      "F1:LOAD",
+      "K1:1"
+    ],
+    "physical": [
+      "F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches",
+      "K1 Finder: top outer LEFT screw 1"
+    ],
+    "prep": [
+      "M4_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A02/A05/A06/A07, four black 14 AWG wires, tightened and connected as drawn. Wires: A02 + A05 + A06 + A07. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm."
+    ],
+    "hex": "#202832",
+    "harness": "A",
+    "sheet": "mains",
+    "prep_labels": [
+      "4 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A07",
+    "from": "F1:LOAD",
+    "to": "W1:COM",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "Protected-hot branch; single blue at Master COM",
+    "ends": [
+      "F1:LOAD",
+      "W1:COM"
+    ],
+    "physical": [
+      "F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches",
+      "W1 Master / K2: bottom 2nd screw COM"
+    ],
+    "prep": [
+      "M4_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A02/A05/A06/A07, four black 14 AWG wires, tightened and connected as drawn. Wires: A02 + A05 + A06 + A07. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "SINGLE 14 AWG ferrule. Kit: blue collar, 8 mm barrel; kit chart metal-tube OD 2.6 mm. Check device-specific note. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque."
+    ],
+    "hex": "#202832",
+    "harness": "A",
+    "sheet": "mains",
+    "prep_labels": [
+      "4 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A08",
+    "from": "BOX:N",
+    "to": "K5:3",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "White",
+    "function": "Only white lead from box; enters four-wire neutral branch",
+    "ends": [
+      "BOX:N",
+      "K5:3"
+    ],
+    "physical": [
+      "Inside metal box: neutral Wago joins source-whip neutral, outlet-whip neutral and white A08 lead OUT",
+      "K5 Finder: top outer RIGHT / neutral branch screw 3"
+    ],
+    "prep": [
+      "BOX",
+      "M4_14"
+    ],
+    "prep_notes": [
+      "Wago connection inside the metal box; follow the installed connector conductor range and strip length. No ferrule specified at this end.",
+      "FITTED: one LARGE RED ferrule holding A08/A11/A13/A14, four white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning. Wires: A08 + A11 + A13 + A14. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD."
+    ],
+    "hex": "#ffffff",
+    "harness": "A",
+    "sheet": "neutral",
+    "prep_labels": [
+      "BOX",
+      "4 × 14 / ONE"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A11",
+    "from": "K5:3",
+    "to": "K1:3",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "White",
+    "function": "Neutral bridge between the two power-terminal branch points",
+    "ends": [
+      "K5:3",
+      "K1:3"
+    ],
+    "physical": [
+      "K5 Finder: top outer RIGHT / neutral branch screw 3",
+      "K1 Finder: top outer RIGHT / neutral branch screw 3"
+    ],
+    "prep": [
+      "M4_14",
+      "M3_14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A08/A11/A13/A14, four white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning. Wires: A08 + A11 + A13 + A14. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "FITTED: one LARGE RED ferrule holding A11/A15/A16, three white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning. Wires: A11 + A15 + A16. ONE LARGE RED ferrule containing THREE 14 AWG conductors, at K1 terminal 3. Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD."
+    ],
+    "hex": "#ffffff",
+    "harness": "A",
+    "sheet": "neutral",
+    "prep_labels": [
+      "4 × 14 / ONE",
+      "3 × 14 / ONE"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A13",
+    "from": "K5:3",
+    "to": "PS1:N",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "White",
+    "function": "Neutral branch; single blue at Mean Well N",
+    "ends": [
+      "K5:3",
+      "PS1:N"
+    ],
+    "physical": [
+      "K5 Finder: top outer RIGHT / neutral branch screw 3",
+      "PS1 bottom LEFT N, terminal 3"
+    ],
+    "prep": [
+      "M4_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A08/A11/A13/A14, four white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning. Wires: A08 + A11 + A13 + A14. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "Single blue 14 AWG ferrule. The design limits all Mean Well terminals to a blue-single-14-AWG ferrule envelope; confirm the selected ferrule/barrel. Published wire strip 6 mm, torque 0.49 N·m; kit barrel is 8 mm."
+    ],
+    "hex": "#ffffff",
+    "harness": "A",
+    "sheet": "neutral",
+    "prep_labels": [
+      "4 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A14",
+    "from": "K5:3",
+    "to": "K5:A2",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "White",
+    "function": "Slave coil neutral; single blue at A2",
+    "ends": [
+      "K5:3",
+      "K5:A2"
+    ],
+    "physical": [
+      "K5 Finder: top outer RIGHT / neutral branch screw 3",
+      "K5 Finder: lower inner ledge screw A2"
+    ],
+    "prep": [
+      "M4_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A08/A11/A13/A14, four white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning. Wires: A08 + A11 + A13 + A14. ONE LARGE RED ferrule containing FOUR 14 AWG conductors, Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm. A1/A2: one 14 AWG wire in one blue ferrule; no branch at this coil terminal."
+    ],
+    "hex": "#ffffff",
+    "harness": "A",
+    "sheet": "neutral",
+    "prep_labels": [
+      "4 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A15",
+    "from": "K1:3",
+    "to": "K1:A2",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "White",
+    "function": "Master coil neutral; single blue at A2",
+    "ends": [
+      "K1:3",
+      "K1:A2"
+    ],
+    "physical": [
+      "K1 Finder: top outer RIGHT / neutral branch screw 3",
+      "K1 Finder: lower inner ledge screw A2"
+    ],
+    "prep": [
+      "M3_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A11/A15/A16, three white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning. Wires: A11 + A15 + A16. ONE LARGE RED ferrule containing THREE 14 AWG conductors, at K1 terminal 3. Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm. A1/A2: one 14 AWG wire in one blue ferrule; no branch at this coil terminal."
+    ],
+    "hex": "#ffffff",
+    "harness": "A",
+    "sheet": "neutral",
+    "prep_labels": [
+      "3 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "A16",
+    "from": "K1:3",
+    "to": "K4:A2",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "White",
+    "function": "Detector neutral; single blue at A2",
+    "ends": [
+      "K1:3",
+      "K4:A2"
+    ],
+    "physical": [
+      "K1 Finder: top outer RIGHT / neutral branch screw 3",
+      "K4 top inner A2 input clamp"
+    ],
+    "prep": [
+      "M3_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one LARGE RED ferrule holding A11/A15/A16, three white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning. Wires: A11 + A15 + A16. ONE LARGE RED ferrule containing THREE 14 AWG conductors, at K1 terminal 3. Pittsburgh 70195 kit chart: 8 AWG label, 12 mm barrel, 4.9 mm tube OD.",
+      "SINGLE 14 AWG ferrule. Kit: blue collar, 8 mm barrel; kit chart metal-tube OD 2.6 mm. Check device-specific note. K4 supports single ferrules 0.2–2.5 mm²; strip 8 mm, torque 0.6–0.8 N·m."
+    ],
+    "hex": "#ffffff",
+    "harness": "A",
+    "sheet": "neutral",
+    "prep_labels": [
+      "3 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "B01",
+    "from": "W1:NO",
+    "to": "K1:A1",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Red",
+    "function": "Master relay switches K1 coil only; single blue at both ends",
+    "ends": [
+      "W1:NO",
+      "K1:A1"
+    ],
+    "physical": [
+      "W1 Master / K2: bottom 1st / LEFTMOST screw NO",
+      "K1 Finder: upper inner ledge screw A1"
+    ],
+    "prep": [
+      "S14",
+      "S14"
+    ],
+    "prep_notes": [
+      "SINGLE 14 AWG ferrule. Kit: blue collar, 8 mm barrel; kit chart metal-tube OD 2.6 mm. Check device-specific note. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque.",
+      "Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm. A1/A2: one 14 AWG wire in one blue ferrule; no branch at this coil terminal."
+    ],
+    "hex": "#d93136",
+    "harness": "B",
+    "sheet": "switched",
+    "prep_labels": [
+      "SINGLE 14",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "B02",
+    "from": "W2:NO",
+    "to": "K5:A1",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Red",
+    "function": "Slave relay switches K5 coil only; single blue at both ends",
+    "ends": [
+      "W2:NO",
+      "K5:A1"
+    ],
+    "physical": [
+      "W2 Slave / K3: bottom 1st / LEFTMOST screw NO",
+      "K5 Finder: upper inner ledge screw A1"
+    ],
+    "prep": [
+      "S14",
+      "S14"
+    ],
+    "prep_notes": [
+      "SINGLE 14 AWG ferrule. Kit: blue collar, 8 mm barrel; kit chart metal-tube OD 2.6 mm. Check device-specific note. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque.",
+      "Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm. A1/A2: one 14 AWG wire in one blue ferrule; no branch at this coil terminal."
+    ],
+    "hex": "#d93136",
+    "harness": "B",
+    "sheet": "switched",
+    "prep_labels": [
+      "SINGLE 14",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "B03",
+    "from": "K1:2",
+    "to": "K5:1",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Red",
+    "function": "Series motor-power link",
+    "ends": [
+      "K1:2",
+      "K5:1"
+    ],
+    "physical": [
+      "K1 Finder: bottom outer LEFT screw 2",
+      "K5 Finder: top outer LEFT screw 1"
+    ],
+    "prep": [
+      "S14",
+      "S14"
+    ],
+    "prep_notes": [
+      "Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm.",
+      "Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm."
+    ],
+    "hex": "#d93136",
+    "harness": "B",
+    "sheet": "switched",
+    "prep_labels": [
+      "SINGLE 14",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "B04",
+    "from": "K5:2",
+    "to": "BOX:SW",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Red",
+    "function": "Single red return into the box to pump-outlet hot",
+    "ends": [
+      "K5:2",
+      "BOX:SW"
+    ],
+    "physical": [
+      "K5 Finder: bottom outer LEFT screw 2",
+      "Inside metal box: switched-hot Wago joins red B04 lead IN to outlet-whip black"
+    ],
+    "prep": [
+      "M2_14",
+      "BOX"
+    ],
+    "prep_notes": [
+      "FITTED: one YELLOW ferrule holding B04/B05, two red 14 AWG wires, tightened and connected as drawn. Wires: B04 + B05. ONE YELLOW ferrule containing TWO 14 AWG conductors, at K5 terminal 2. Pittsburgh 70195 kit chart: 10 AWG label, 12 mm barrel, 3.9 mm tube OD. This records the kit ferrule used, not a separate twin-ferrule product.",
+      "Wago connection inside the metal box; follow the installed connector conductor range and strip length. No ferrule specified at this end."
+    ],
+    "hex": "#d93136",
+    "harness": "B",
+    "sheet": "switched",
+    "prep_labels": [
+      "2 × 14 / ONE",
+      "BOX"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "B05",
+    "from": "K5:2",
+    "to": "K4:A1",
+    "gauge": "14 AWG MTW, 600 V",
+    "color": "Red",
+    "function": "Final-output detector tap; single blue at detector A1",
+    "ends": [
+      "K5:2",
+      "K4:A1"
+    ],
+    "physical": [
+      "K5 Finder: bottom outer LEFT screw 2",
+      "K4 top outer A1 input clamp"
+    ],
+    "prep": [
+      "M2_14",
+      "S14"
+    ],
+    "prep_notes": [
+      "FITTED: one YELLOW ferrule holding B04/B05, two red 14 AWG wires, tightened and connected as drawn. Wires: B04 + B05. ONE YELLOW ferrule containing TWO 14 AWG conductors, at K5 terminal 2. Pittsburgh 70195 kit chart: 10 AWG label, 12 mm barrel, 3.9 mm tube OD. This records the kit ferrule used, not a separate twin-ferrule product.",
+      "SINGLE 14 AWG ferrule. Kit: blue collar, 8 mm barrel; kit chart metal-tube OD 2.6 mm. Check device-specific note. K4 supports single ferrules 0.2–2.5 mm²; strip 8 mm, torque 0.6–0.8 N·m."
+    ],
+    "hex": "#d93136",
+    "harness": "B",
+    "sheet": "switched",
+    "prep_labels": [
+      "2 × 14 / ONE",
+      "SINGLE 14"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: 14 AWG harness end as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C01",
+    "from": "PS1:+V",
+    "to": "W2:VCC",
+    "gauge": "18 AWG MTW, 600 V",
+    "color": "Red",
+    "function": "5 V supply to Slave; shares at Slave with onward C03",
+    "ends": [
+      "PS1:+V",
+      "W2:VCC"
+    ],
+    "physical": [
+      "PS1 top LEFT +V, terminal 1",
+      "W2 Slave / K3: top power RIGHT (+5 V) screw VCC"
+    ],
+    "prep": [
+      "S18",
+      "T18"
+    ],
+    "prep_notes": [
+      "Single 18 AWG ferrule. The design limits all Mean Well terminals to a blue-single-14-AWG ferrule envelope; confirm the selected ferrule/barrel. Published wire strip 6 mm, torque 0.49 N·m; kit barrel is 8 mm.",
+      "DATA: record the two-18-AWG twin size/profile within the blue-sized envelope and the Waveshare clamp strip/torque specification. Wires: C01 + C03. ONE two-wire ferrule containing TWO 18 AWG conductors. Record its size, barrel length and crimp profile. Check retention of each wire and metal-barrel engagement at the clamp."
+    ],
+    "hex": "#d93136",
+    "harness": "C",
+    "sheet": "dc",
+    "prep_labels": [
+      "SINGLE 18",
+      "SHARED 18"
+    ],
+    "end_status": [
+      "FITTED",
+      "DATA"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C03",
+    "from": "W2:VCC",
+    "to": "W1:VCC",
+    "gauge": "18 AWG MTW, 600 V",
+    "color": "Red",
+    "function": "Continue 5 V directly from Slave to Master",
+    "ends": [
+      "W2:VCC",
+      "W1:VCC"
+    ],
+    "physical": [
+      "W2 Slave / K3: top power RIGHT (+5 V) screw VCC",
+      "W1 Master / K2: top power RIGHT (+5 V) screw VCC"
+    ],
+    "prep": [
+      "T18",
+      "S18"
+    ],
+    "prep_notes": [
+      "DATA: record the two-18-AWG twin size/profile within the blue-sized envelope and the Waveshare clamp strip/torque specification. Wires: C01 + C03. ONE two-wire ferrule containing TWO 18 AWG conductors. Record its size, barrel length and crimp profile. Check retention of each wire and metal-barrel engagement at the clamp.",
+      "SINGLE 18 AWG ferrule. Kit reference: SMALL red collar, 8 mm barrel; kit chart metal-tube OD 1.7 mm. Check device-specific note. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque."
+    ],
+    "hex": "#d93136",
+    "harness": "C",
+    "sheet": "dc",
+    "prep_labels": [
+      "SHARED 18",
+      "SINGLE 18"
+    ],
+    "end_status": [
+      "DATA",
+      "DATA"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C04",
+    "from": "PS1:-V",
+    "to": "W2:GND",
+    "gauge": "18 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "DC return to Slave; shares at Slave with onward C06",
+    "ends": [
+      "PS1:-V",
+      "W2:GND"
+    ],
+    "physical": [
+      "PS1 top RIGHT −V, terminal 2",
+      "W2 Slave / K3: top power LEFT screw GND"
+    ],
+    "prep": [
+      "S18",
+      "T18"
+    ],
+    "prep_notes": [
+      "Single 18 AWG ferrule. The design limits all Mean Well terminals to a blue-single-14-AWG ferrule envelope; confirm the selected ferrule/barrel. Published wire strip 6 mm, torque 0.49 N·m; kit barrel is 8 mm.",
+      "DATA: record the two-18-AWG twin size/profile within the blue-sized envelope and the Waveshare clamp strip/torque specification. Wires: C04 + C06. ONE two-wire ferrule containing TWO 18 AWG conductors. Record its size, barrel length and crimp profile. Check retention of each wire and metal-barrel engagement at the clamp."
+    ],
+    "hex": "#202832",
+    "harness": "C",
+    "sheet": "returns",
+    "prep_labels": [
+      "SINGLE 18",
+      "SHARED 18"
+    ],
+    "end_status": [
+      "FITTED",
+      "DATA"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C06",
+    "from": "W2:GND",
+    "to": "W1:GND",
+    "gauge": "18 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "Continue DC return directly from Slave to Master",
+    "ends": [
+      "W2:GND",
+      "W1:GND"
+    ],
+    "physical": [
+      "W2 Slave / K3: top power LEFT screw GND",
+      "W1 Master / K2: top power LEFT screw GND"
+    ],
+    "prep": [
+      "T18",
+      "S18"
+    ],
+    "prep_notes": [
+      "DATA: record the two-18-AWG twin size/profile within the blue-sized envelope and the Waveshare clamp strip/torque specification. Wires: C04 + C06. ONE two-wire ferrule containing TWO 18 AWG conductors. Record its size, barrel length and crimp profile. Check retention of each wire and metal-barrel engagement at the clamp.",
+      "SINGLE 18 AWG ferrule. Kit reference: SMALL red collar, 8 mm barrel; kit chart metal-tube OD 1.7 mm. Check device-specific note. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque."
+    ],
+    "hex": "#202832",
+    "harness": "C",
+    "sheet": "returns",
+    "prep_labels": [
+      "SHARED 18",
+      "SINGLE 18"
+    ],
+    "end_status": [
+      "DATA",
+      "DATA"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C07",
+    "from": "W1:A+",
+    "to": "W2:A+",
+    "gauge": "One conductor of intact Cat6A pair",
+    "color": "Blue",
+    "function": "RS485 A+; blue pair assigned for this build",
+    "ends": [
+      "W1:A+",
+      "W2:A+"
+    ],
+    "physical": [
+      "W1 Master / K2: bottom 4th / RIGHTMOST screw A+",
+      "W2 Slave / K3: bottom 4th / RIGHTMOST screw A+"
+    ],
+    "prep": [
+      "DATA",
+      "DATA"
+    ],
+    "prep_notes": [
+      "Identify Cat6A gauge/construction and clamp specification. Solid: bare. Stranded: only an accepted matching ferrule. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque.",
+      "Identify Cat6A gauge/construction and clamp specification. Solid: bare. Stranded: only an accepted matching ferrule. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque."
+    ],
+    "hex": "#217dcb",
+    "harness": "C",
+    "sheet": "returns",
+    "prep_labels": [
+      "CABLE END",
+      "CABLE END"
+    ],
+    "end_status": [
+      "DATA",
+      "DATA"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C08",
+    "from": "W1:B-",
+    "to": "W2:B-",
+    "gauge": "Mate of same intact Cat6A pair",
+    "color": "White/blue stripe",
+    "function": "RS485 B−; preserve twist/jacket",
+    "ends": [
+      "W1:B-",
+      "W2:B-"
+    ],
+    "physical": [
+      "W1 Master / K2: bottom 3rd screw B-",
+      "W2 Slave / K3: bottom 3rd screw B-"
+    ],
+    "prep": [
+      "DATA",
+      "DATA"
+    ],
+    "prep_notes": [
+      "Identify Cat6A gauge/construction and clamp specification. Solid: bare. Stranded: only an accepted matching ferrule. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque.",
+      "Identify Cat6A gauge/construction and clamp specification. Solid: bare. Stranded: only an accepted matching ferrule. DATA: record the installed Waveshare clamp wire/ferrule range, strip and torque."
+    ],
+    "hex": "#ffffff",
+    "harness": "C",
+    "sheet": "returns",
+    "prep_labels": [
+      "CABLE END",
+      "CABLE END"
+    ],
+    "end_status": [
+      "DATA",
+      "DATA"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C09",
+    "from": "JM1",
+    "to": "RJ11:FLOW",
+    "gauge": "Installed telephone-cord conductor; gauge not recorded",
+    "color": "Red",
+    "function": "Completed: yellow Master GPIO1 to red phone-cord conductor and RJ11 flow-switch contact",
+    "ends": [
+      "JM1",
+      "RJ11:FLOW"
+    ],
+    "physical": [
+      "JM1: Master J5-1 GPIO1 YELLOW factory lead to RED telephone-cord conductor C09; photographed splice",
+      "Installed RJ11 coupling at enclosure bottom: GPIO1 contact of the connected flow-switch pair; functional label, not a contact number"
+    ],
+    "prep": [
+      "J",
+      "RJ11"
+    ],
+    "prep_notes": [
+      "Mechanically engaged solder joint, individually sleeved and strain-relieved; no ferrule.",
+      "Existing telephone-cord RJ11 contact. Retain the installed contact mapping; this drawing assigns no numbered RJ11 pinout."
+    ],
+    "hex": "#d93136",
+    "harness": "C",
+    "sheet": "signals",
+    "prep_labels": [
+      "SOLDER",
+      "RJ11 CONTACT"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: telephone-cord/RJ11 flow tail as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C10",
+    "from": "JM2",
+    "to": "RJ11:RETURN",
+    "gauge": "Installed telephone-cord conductor; gauge not recorded",
+    "color": "Green",
+    "function": "Completed: black Master GND to green phone-cord conductor and other RJ11 contact",
+    "ends": [
+      "JM2",
+      "RJ11:RETURN"
+    ],
+    "physical": [
+      "JM2: Master J5-4 GND BLACK factory lead to GREEN telephone-cord conductor C10; photographed splice",
+      "Installed RJ11 coupling at enclosure bottom: GND contact of the connected flow-switch pair; functional label, not a contact number"
+    ],
+    "prep": [
+      "J",
+      "RJ11"
+    ],
+    "prep_notes": [
+      "Mechanically engaged solder joint, individually sleeved and strain-relieved; no ferrule.",
+      "Existing telephone-cord RJ11 contact. Retain the installed contact mapping; this drawing assigns no numbered RJ11 pinout."
+    ],
+    "hex": "#26834b",
+    "harness": "C",
+    "sheet": "signals",
+    "prep_labels": [
+      "SOLDER",
+      "RJ11 CONTACT"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: telephone-cord/RJ11 flow tail as built",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C12",
+    "from": "R1:SENSE",
+    "to": "JS2",
+    "gauge": "Integral R1 lead",
+    "color": "Metal lead",
+    "function": "R1 lead to the local GPIO1/orange-output splice; no added wire",
+    "ends": [
+      "R1:SENSE",
+      "JS2"
+    ],
+    "physical": [
+      "Integral R1 sense-side lead; C12 is not cut hookup wire",
+      "JS2: ONE local three-conductor splice joins YELLOW GPIO1 factory lead, R1 lead C12 and ORANGE C13 to detector terminal 14"
+    ],
+    "prep": [
+      "R",
+      "J"
+    ],
+    "prep_notes": [
+      "Integral resistor lead C12; sleeve the exposed metal and its splice. No extra hookup wire or ferrule at this end.",
+      "Three-conductor solder splice: YELLOW GPIO1 factory lead + R1 lead C12 + ORANGE C13. Individually insulate this node from the RED 3V3 splice and support the resistor assembly."
+    ],
+    "hex": "#a5abb2",
+    "harness": "C",
+    "sheet": "signals",
+    "prep_labels": [
+      "R1 LEAD",
+      "SOLDER"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C13",
+    "from": "JS2",
+    "to": "K4:14",
+    "gauge": "18 AWG MTW, 600 V",
+    "color": "Orange",
+    "function": "One detector signal wire from the GPIO1/R1 splice to K4-14; single ferrule at K4",
+    "ends": [
+      "JS2",
+      "K4:14"
+    ],
+    "physical": [
+      "JS2: ONE local three-conductor splice joins YELLOW GPIO1 factory lead, R1 lead C12 and ORANGE C13 to detector terminal 14",
+      "K4 bottom middle 14 normally open"
+    ],
+    "prep": [
+      "J",
+      "S18"
+    ],
+    "prep_notes": [
+      "Three-conductor solder splice: YELLOW GPIO1 factory lead + R1 lead C12 + ORANGE C13. Individually insulate this node from the RED 3V3 splice and support the resistor assembly.",
+      "SINGLE 18 AWG ferrule. Kit reference: SMALL red collar, 8 mm barrel; kit chart metal-tube OD 1.7 mm. Check device-specific note. K4 supports single ferrules 0.2–2.5 mm²; strip 8 mm, torque 0.6–0.8 N·m."
+    ],
+    "hex": "#ed7c19",
+    "harness": "C",
+    "sheet": "signals",
+    "prep_labels": [
+      "SOLDER",
+      "SINGLE 18"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  },
+  {
+    "id": "C14",
+    "from": "JS3",
+    "to": "K4:11",
+    "gauge": "18 AWG MTW, 600 V",
+    "color": "Black",
+    "function": "One detector return wire from black Slave GND to K4-11; single ferrule at K4",
+    "ends": [
+      "JS3",
+      "K4:11"
+    ],
+    "physical": [
+      "JS3: Slave J5-4 GND BLACK factory lead joined to BLACK C14 for detector terminal 11",
+      "K4 bottom inner 11 common"
+    ],
+    "prep": [
+      "J",
+      "S18"
+    ],
+    "prep_notes": [
+      "Mechanically engaged solder joint, individually sleeved and strain-relieved; no ferrule.",
+      "SINGLE 18 AWG ferrule. Kit reference: SMALL red collar, 8 mm barrel; kit chart metal-tube OD 1.7 mm. Check device-specific note. K4 supports single ferrules 0.2–2.5 mm²; strip 8 mm, torque 0.6–0.8 N·m."
+    ],
+    "hex": "#202832",
+    "harness": "C",
+    "sheet": "signals",
+    "prep_labels": [
+      "SOLDER",
+      "SINGLE 18"
+    ],
+    "end_status": [
+      "FITTED",
+      "FITTED"
+    ],
+    "status": "FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications",
+    "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+    "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "revision": 13
+  }
+]

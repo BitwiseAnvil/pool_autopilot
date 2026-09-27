@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1400" viewBox="0 0 2200 1400" role="img" aria-label="Shared ferrules">
+<title>Shared ferrules</title><desc>Harness revision 13: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Three box leads: black A01, white A08, red B04.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
+.t-title{font-size:36px;font-weight:700;fill:white}.t-sub{font-size:18px;fill:#cedee7}
+.t-label{font-size:18px;font-weight:700}.t-small{font-size:16px}.t-tiny{font-size:14px}
+.t-micro{font-size:12px}.t-white{fill:white}.t-muted{fill:#677987}
+.wire{cursor:pointer}.wire path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.endpoint{cursor:pointer}.wire.muted,.endpoint.muted{opacity:.12}.wire.selected .halo{stroke:#f3bb42;stroke-width:15}
+.endpoint.selected .screw{fill:#ffe599;stroke:#916012;stroke-width:4}
+.wire:focus,.endpoint:focus{outline:3px solid #e7ac36}.unused{fill:#85939d}
+</style><rect x="0" y="0" width="2200" height="1400" fill="#fff" stroke="none" rx="0" />
+<rect x="0" y="0" width="2200" height="105" fill="#152d3b" stroke="none" rx="0" />
+<text x="35" y="48" class="t-title">08  /  One ferrule / multiple conductors</text>
+<text x="35" y="80" class="t-sub">Six shared device locations · K4 detector terminals 11 and 14 now each receive a SINGLE 18 AWG wire</text>
+<text x="2165" y="46" class="t-sub" text-anchor="end">POOLDose</text>
+<text x="2165" y="77" class="t-sub" text-anchor="end">REV 13</text>
+<rect x="45" y="140" width="680" height="395" fill="#f1f5f7" stroke="#c6d3dc" rx="10" />
+<text x="70" y="180" class="t-label">F1 top LOAD / 4 × 14 AWG</text>
+<text x="70" y="217" class="t-label">A02 + A05 + A06 + A07</text>
+<rect x="475" y="270" width="175" height="100" fill="#dce5ea" stroke="#7d929e" rx="5" />
+<circle cx="575" cy="320" r="19" fill="#aebdc6" stroke="#65808f" />
+<path d="M562 331 L588 309" fill="none" stroke="#425e70" stroke-width="4" />
+<path d="M105 284 H355" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M105 284 H355" fill="none" stroke="#202832" stroke-width="9" />
+<path d="M105 308 H355" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M105 308 H355" fill="none" stroke="#202832" stroke-width="9" />
+<path d="M105 332 H355" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M105 332 H355" fill="none" stroke="#202832" stroke-width="9" />
+<path d="M105 356 H355" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M105 356 H355" fill="none" stroke="#202832" stroke-width="9" />
+<rect x="333" y="267" width="52" height="108" fill="#d93136" stroke="#668093" rx="5" />
+<rect x="385" y="279" width="107" height="82" fill="#bcc9d1" stroke="#6c8290" rx="3" />
+<text x="395" y="409" class="t-small" text-anchor="middle">ONE crimped end / 4 separate conductors</text>
+<text x="70" y="452" class="t-small" style="fill:#934f08">LARGE RED / 12 mm kit barrel.</text>
+<text x="70" y="489" class="t-small">Single blue at each small-terminal destination.</text>
+<rect x="755" y="140" width="680" height="395" fill="#f1f5f7" stroke="#c6d3dc" rx="10" />
+<text x="780" y="180" class="t-label">K5 POWER terminal 3 / 4 × 14 AWG</text>
+<text x="780" y="217" class="t-label">A08 + A11 + A13 + A14</text>
+<rect x="1185" y="270" width="175" height="100" fill="#dce5ea" stroke="#7d929e" rx="5" />
+<circle cx="1285" cy="320" r="19" fill="#aebdc6" stroke="#65808f" />
+<path d="M1272 331 L1298 309" fill="none" stroke="#425e70" stroke-width="4" />
+<path d="M815 284 H1065" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M815 284 H1065" fill="none" stroke="#fff" stroke-width="9" />
+<path d="M815 308 H1065" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M815 308 H1065" fill="none" stroke="#fff" stroke-width="9" />
+<path d="M815 332 H1065" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M815 332 H1065" fill="none" stroke="#fff" stroke-width="9" />
+<path d="M815 356 H1065" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M815 356 H1065" fill="none" stroke="#fff" stroke-width="9" />
+<rect x="1043" y="267" width="52" height="108" fill="#d93136" stroke="#668093" rx="5" />
+<rect x="1095" y="279" width="107" height="82" fill="#bcc9d1" stroke="#6c8290" rx="3" />
+<text x="1105" y="409" class="t-small" text-anchor="middle">ONE crimped end / 4 separate conductors</text>
+<text x="780" y="452" class="t-small" style="fill:#934f08">LARGE RED / 12 mm kit barrel.</text>
+<text x="780" y="489" class="t-small">Single blue at each small-terminal destination.</text>
+<text x="780" y="522" class="t-label" style="fill:#b3261e">Exceeds Finder rating: reference build only.</text>
+<rect x="1465" y="140" width="680" height="395" fill="#f1f5f7" stroke="#c6d3dc" rx="10" />
+<text x="1490" y="180" class="t-label">K1 POWER terminal 3 / 3 × 14 AWG</text>
+<text x="1490" y="217" class="t-label">A11 + A15 + A16</text>
+<rect x="1895" y="270" width="175" height="100" fill="#dce5ea" stroke="#7d929e" rx="5" />
+<circle cx="1995" cy="320" r="19" fill="#aebdc6" stroke="#65808f" />
+<path d="M1982 331 L2008 309" fill="none" stroke="#425e70" stroke-width="4" />
+<path d="M1525 296 H1775" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M1525 296 H1775" fill="none" stroke="#fff" stroke-width="9" />
+<path d="M1525 320 H1775" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M1525 320 H1775" fill="none" stroke="#fff" stroke-width="9" />
+<path d="M1525 344 H1775" fill="none" stroke="#667986" stroke-width="14" />
+<path d="M1525 344 H1775" fill="none" stroke="#fff" stroke-width="9" />
+<rect x="1753" y="267" width="52" height="108" fill="#d93136" stroke="#668093" rx="5" />
+<rect x="1805" y="279" width="107" height="82" fill="#bcc9d1" stroke="#6c8290" rx="3" />
+<text x="1815" y="409" class="t-small" text-anchor="middle">ONE crimped end / 3 separate conductors</text>
+<text x="1490" y="452" class="t-small" style="fill:#934f08">LARGE RED / 12 mm kit barrel.</text>
+<text x="1490" y="489" class="t-small">Single blue at each small-terminal destination.</text>
+<text x="1490" y="522" class="t-label" style="fill:#b3261e">Exceeds Finder rating: reference build only.</text>
+<text x="55" y="580" class="t-label">EXISTING SCREW</text>
+<text x="355" y="580" class="t-label">ALL WIRES IN ONE FERRULE</text>
+<text x="700" y="580" class="t-label">INSULATION / AWG</text>
+<text x="1050" y="580" class="t-label">TERMINAL NOTE</text>
+<rect x="40" y="600" width="2110" height="61" fill="#eef4f7" stroke="none" rx="4" />
+<text x="55" y="636" class="t-label">F1 LOAD</text>
+<text x="355" y="636" class="t-small">A02 + A05 + A06 + A07</text>
+<text x="700" y="636" class="t-small">BLACK · 4 × 14</text>
+<text x="1050" y="636" class="t-small">FITTED — LARGE RED; tightened and connected as drawn.</text>
+<rect x="40" y="665" width="2110" height="61" fill="#fff" stroke="none" rx="4" />
+<text x="55" y="701" class="t-label">K5 terminal 3</text>
+<text x="355" y="701" class="t-small">A08 + A11 + A13 + A14</text>
+<text x="700" y="701" class="t-small">WHITE · 4 × 14</text>
+<text x="1050" y="701" class="t-small">FITTED — LARGE RED; exceeds Finder rating, reference build only.</text>
+<rect x="40" y="730" width="2110" height="61" fill="#eef4f7" stroke="none" rx="4" />
+<text x="55" y="766" class="t-label">K1 terminal 3</text>
+<text x="355" y="766" class="t-small">A11 + A15 + A16</text>
+<text x="700" y="766" class="t-small">WHITE · 3 × 14</text>
+<text x="1050" y="766" class="t-small">FITTED — LARGE RED; exceeds Finder rating, reference build only.</text>
+<rect x="40" y="795" width="2110" height="61" fill="#fff" stroke="none" rx="4" />
+<text x="55" y="831" class="t-label">K5 terminal 2</text>
+<text x="355" y="831" class="t-small">B04 + B05</text>
+<text x="700" y="831" class="t-small">RED · 2 × 14</text>
+<text x="1050" y="831" class="t-small">FITTED — YELLOW; two 14 AWG wires in the one kit ferrule.</text>
+<rect x="40" y="860" width="2110" height="61" fill="#eef4f7" stroke="none" rx="4" />
+<text x="55" y="896" class="t-label">W2 VCC</text>
+<text x="355" y="896" class="t-small">C01 + C03</text>
+<text x="700" y="896" class="t-small">RED · 2 × 18</text>
+<text x="1050" y="896" class="t-small">DATA — record twin size/profile within the blue-sized envelope.</text>
+<rect x="40" y="925" width="2110" height="61" fill="#fff" stroke="none" rx="4" />
+<text x="55" y="961" class="t-label">W2 GND</text>
+<text x="355" y="961" class="t-small">C04 + C06</text>
+<text x="700" y="961" class="t-small">BLACK · 2 × 18</text>
+<text x="1050" y="961" class="t-small">DATA — record twin size/profile within the blue-sized envelope.</text>
+<rect x="45" y="1110" width="2100" height="168" fill="#eef4f7" stroke="#cfdae2" rx="8" />
+<text x="62" y="1138" class="t-label">14 AWG ferrules: three large red, one yellow, remaining device ends blue</text>
+<text x="62" y="1165" class="t-small">Mean Well L/N, Waveshare COM/NO, detector A1/A2 and all Finder A1/A2: one 14 AWG wire in one blue ferrule.</text>
+<text x="62" y="1190" class="t-small">14 AWG groups: two four-wire red, one three-wire red, one two-wire yellow and 16 single blue ends.</text>
+<text x="62" y="1215" class="t-small">Kit chart: large red = 8 AWG label / 12 mm / 4.9 mm OD; yellow = 10 AWG label / 12 mm / 3.9 mm OD.</text>
+<text x="62" y="1240" class="t-small">K4-14: one orange C13. K4-11: one black C14. The GPIO1/R1 branch is soldered locally at JS2; no shared ferrule at K4.</text>
+<text x="62" y="1265" class="t-small">Finder 22.32 contact terminals are rated for 1 × 10 AWG or 2 × 12 AWG. K5-3 and K1-3 exceed that; use a rated neutral terminal block instead.</text>
+<text x="35" y="1371" class="t-small">WIRE BY ID · follow the end-preparation notes and assembly checkout · crossings do not connect</text>
+<text x="2165" y="1371" class="t-label" text-anchor="end">6 requested shared ferrules</text></svg>

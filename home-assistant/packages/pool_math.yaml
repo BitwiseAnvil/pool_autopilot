@@ -1,0 +1,269 @@
+# Current Pool Math tests only; Atlas supplies the live pH, temperature and salt.
+# Install alongside the existing Atlas and doser packages in /config/packages/.
+# Set pool_math_url in secrets.yaml to your Pool Math share JSON link.
+rest:
+  - resource: !secret pool_math_url
+    scan_interval: 600
+    timeout: 30
+    sensor:
+      - name: Pool Math Overview
+        unique_id: pool_math_overview
+        value_template: >-
+          {{ 'OK' if value_json is defined and value_json is mapping
+             and value_json.get('pools', []) | count > 0
+             and value_json.pools[0].get('pool', {}).get('overview') is mapping
+             else 'unavailable' }}
+        json_attributes_path: '$.pools[0].pool.overview'
+        json_attributes: [fc, fcTs, ta, taTs, cya, cyaTs, ch, chTs, bor, borTs]
+
+# These readings are current snapshots; do not record them or calculated CSI.
+recorder:
+  exclude:
+    entity_globs:
+      - sensor.pool_math_*
+    entities:
+      - sensor.pool_csi
+
+# Each test reading keeps its last valid value and test time until Pool Math
+# returns a newer valid one. Trigger-based template sensors restore state and
+# attributes across restarts, so a restart, outage or rate-limited request
+# never blanks them. The minute trigger only refreshes the age text.
+template:
+  - triggers:
+      - trigger: state
+        entity_id: sensor.pool_math_overview
+      - trigger: time_pattern
+        minutes: /1
+    sensor:
+      - name: "Pool Math Free Chlorine"
+        unique_id: pool_math_free_chlorine
+        default_entity_id: sensor.pool_math_free_chlorine
+        icon: mdi:flask-outline
+        unit_of_measurement: ppm
+        state: >-
+          {% set o = 'sensor.pool_math_overview' %}
+          {% set new = state_attr(o, 'fc') %}
+          {% set new_at = state_attr(o, 'fcTs') %}
+          {% set fresh = is_state(o, 'OK') and is_number(new)
+                          and as_timestamp(new_at, none) is not none %}
+          {{ new | float if fresh else this.state | float(none) }}
+        attributes:
+          tested_at: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'fc') %}
+            {% set new_at = state_attr(o, 'fcTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {{ new_at if fresh else this.attributes.get('tested_at') }}
+          reading: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'fc') %}
+            {% set new_at = state_attr(o, 'fcTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {% set value = new | float if fresh else this.state | float(none) %}
+            {% set tested = as_timestamp(new_at if fresh else this.attributes.get('tested_at'), none) %}
+            {% if value is number and tested is not none %}
+              {% set days = [0, ((as_timestamp(now()) - tested) / 86400) | int] | max %}
+              {{ '%g' | format(value) }} ppm — {{ days }} {{ 'day' if days == 1 else 'days' }} ago
+            {% else %}
+              {{ none }}
+            {% endif %}
+
+      - name: "Pool Math Total Alkalinity"
+        unique_id: pool_math_total_alkalinity
+        default_entity_id: sensor.pool_math_total_alkalinity
+        icon: mdi:flask-outline
+        unit_of_measurement: ppm
+        state: >-
+          {% set o = 'sensor.pool_math_overview' %}
+          {% set new = state_attr(o, 'ta') %}
+          {% set new_at = state_attr(o, 'taTs') %}
+          {% set fresh = is_state(o, 'OK') and is_number(new)
+                          and as_timestamp(new_at, none) is not none %}
+          {{ new | float if fresh else this.state | float(none) }}
+        attributes:
+          tested_at: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'ta') %}
+            {% set new_at = state_attr(o, 'taTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {{ new_at if fresh else this.attributes.get('tested_at') }}
+          reading: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'ta') %}
+            {% set new_at = state_attr(o, 'taTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {% set value = new | float if fresh else this.state | float(none) %}
+            {% set tested = as_timestamp(new_at if fresh else this.attributes.get('tested_at'), none) %}
+            {% if value is number and tested is not none %}
+              {% set days = [0, ((as_timestamp(now()) - tested) / 86400) | int] | max %}
+              {{ '%g' | format(value) }} ppm — {{ days }} {{ 'day' if days == 1 else 'days' }} ago
+            {% else %}
+              {{ none }}
+            {% endif %}
+
+      - name: "Pool Math Stabilizer / CYA"
+        unique_id: pool_math_cya
+        default_entity_id: sensor.pool_math_cya
+        icon: mdi:flask-outline
+        unit_of_measurement: ppm
+        state: >-
+          {% set o = 'sensor.pool_math_overview' %}
+          {% set new = state_attr(o, 'cya') %}
+          {% set new_at = state_attr(o, 'cyaTs') %}
+          {% set fresh = is_state(o, 'OK') and is_number(new)
+                          and as_timestamp(new_at, none) is not none %}
+          {{ new | float if fresh else this.state | float(none) }}
+        attributes:
+          tested_at: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'cya') %}
+            {% set new_at = state_attr(o, 'cyaTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {{ new_at if fresh else this.attributes.get('tested_at') }}
+          reading: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'cya') %}
+            {% set new_at = state_attr(o, 'cyaTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {% set value = new | float if fresh else this.state | float(none) %}
+            {% set tested = as_timestamp(new_at if fresh else this.attributes.get('tested_at'), none) %}
+            {% if value is number and tested is not none %}
+              {% set days = [0, ((as_timestamp(now()) - tested) / 86400) | int] | max %}
+              {{ '%g' | format(value) }} ppm — {{ days }} {{ 'day' if days == 1 else 'days' }} ago
+            {% else %}
+              {{ none }}
+            {% endif %}
+
+      - name: "Pool Math Calcium Hardness"
+        unique_id: pool_math_calcium_hardness
+        default_entity_id: sensor.pool_math_calcium_hardness
+        icon: mdi:flask-outline
+        unit_of_measurement: ppm
+        state: >-
+          {% set o = 'sensor.pool_math_overview' %}
+          {% set new = state_attr(o, 'ch') %}
+          {% set new_at = state_attr(o, 'chTs') %}
+          {% set fresh = is_state(o, 'OK') and is_number(new)
+                          and as_timestamp(new_at, none) is not none %}
+          {{ new | float if fresh else this.state | float(none) }}
+        attributes:
+          tested_at: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'ch') %}
+            {% set new_at = state_attr(o, 'chTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {{ new_at if fresh else this.attributes.get('tested_at') }}
+          reading: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'ch') %}
+            {% set new_at = state_attr(o, 'chTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {% set value = new | float if fresh else this.state | float(none) %}
+            {% set tested = as_timestamp(new_at if fresh else this.attributes.get('tested_at'), none) %}
+            {% if value is number and tested is not none %}
+              {% set days = [0, ((as_timestamp(now()) - tested) / 86400) | int] | max %}
+              {{ '%g' | format(value) }} ppm — {{ days }} {{ 'day' if days == 1 else 'days' }} ago
+            {% else %}
+              {{ none }}
+            {% endif %}
+
+      - name: "Pool Math Borates"
+        unique_id: pool_math_borates
+        default_entity_id: sensor.pool_math_borates
+        icon: mdi:flask-outline
+        unit_of_measurement: ppm
+        state: >-
+          {% set o = 'sensor.pool_math_overview' %}
+          {% set new = state_attr(o, 'bor') %}
+          {% set new_at = state_attr(o, 'borTs') %}
+          {% set fresh = is_state(o, 'OK') and is_number(new)
+                          and as_timestamp(new_at, none) is not none %}
+          {{ new | float if fresh else this.state | float(none) }}
+        attributes:
+          tested_at: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'bor') %}
+            {% set new_at = state_attr(o, 'borTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {{ new_at if fresh else this.attributes.get('tested_at') }}
+          reading: >-
+            {% set o = 'sensor.pool_math_overview' %}
+            {% set new = state_attr(o, 'bor') %}
+            {% set new_at = state_attr(o, 'borTs') %}
+            {% set fresh = is_state(o, 'OK') and is_number(new)
+                            and as_timestamp(new_at, none) is not none %}
+            {% set value = new | float if fresh else this.state | float(none) %}
+            {% set tested = as_timestamp(new_at if fresh else this.attributes.get('tested_at'), none) %}
+            {% if value is number and tested is not none %}
+              {% set days = [0, ((as_timestamp(now()) - tested) / 86400) | int] | max %}
+              {{ '%g' | format(value) }} ppm — {{ days }} {{ 'day' if days == 1 else 'days' }} ago
+            {% else %}
+              {{ none }}
+            {% endif %}
+
+  # CSI uses the retained test readings with live Atlas pH, temperature and salt.
+  - sensor:
+      # TFP's CSI equation: https://www.troublefreepool.com/calc.html (function CSI).
+      # Keep full input precision; round only the result to two decimal places.
+      - name: Pool CSI
+        unique_id: pool_csi
+        default_entity_id: sensor.pool_csi
+        icon: mdi:calculator
+        availability: >-
+          {% set ph = states('sensor.atlas_pool_ph') | float(none) %}
+          {% set temp = states('sensor.atlas_pool_temperature') | float(none) %}
+          {% set salt = states('sensor.atlas_pool_salinity') | float(none) %}
+          {% set ta = states('sensor.pool_math_total_alkalinity') | float(none) %}
+          {% set cya = states('sensor.pool_math_cya') | float(none) %}
+          {% set ch = states('sensor.pool_math_calcium_hardness') | float(none) %}
+          {% set bor = states('sensor.pool_math_borates') | float(none) %}
+          {% set unit = state_attr('sensor.atlas_pool_temperature', 'unit_of_measurement') %}
+          {% if [ph, temp, salt, ta, cya, ch, bor] | select('is_number') | list | count == 7
+                and unit in ['°C', '°F']
+                and state_attr('sensor.atlas_pool_salinity', 'unit_of_measurement') == 'ppm'
+                and 6 <= ph <= 9 and ch > 0 and ta >= 0 and cya >= 0 and bor >= 0 and salt >= 0 %}
+            {% set celsius = (temp - 32) * 5 / 9 if unit == '°F' else temp %}
+            {% set carbonate_alkalinity = ta - 0.38772 * cya / (1 + 10 ** (6.83 - ph))
+                                             - 4.63 * bor / (1 + 10 ** (9.11 - ph)) %}
+            {{ celsius > -273.15 and carbonate_alkalinity > 0 }}
+          {% else %}
+            false
+          {% endif %}
+        state: >-
+          {% set ph = states('sensor.atlas_pool_ph') | float(none) %}
+          {% set temp = states('sensor.atlas_pool_temperature') | float(none) %}
+          {% set salt = states('sensor.atlas_pool_salinity') | float(none) %}
+          {% set ta = states('sensor.pool_math_total_alkalinity') | float(none) %}
+          {% set cya = states('sensor.pool_math_cya') | float(none) %}
+          {% set ch = states('sensor.pool_math_calcium_hardness') | float(none) %}
+          {% set bor = states('sensor.pool_math_borates') | float(none) %}
+          {% set unit = state_attr('sensor.atlas_pool_temperature', 'unit_of_measurement') %}
+          {% if [ph, temp, salt, ta, cya, ch, bor] | select('is_number') | list | count == 7
+                and unit in ['°C', '°F'] and ch > 0 and 6 <= ph <= 9
+                and ta >= 0 and cya >= 0 and bor >= 0 and salt >= 0 %}
+            {% set celsius = (temp - 32) * 5 / 9 if unit == '°F' else temp %}
+            {% set carbonate_alkalinity = ta - 0.38772 * cya / (1 + 10 ** (6.83 - ph))
+                                             - 4.63 * bor / (1 + 10 ** (9.11 - ph)) %}
+            {% set extra_salt = [salt - 1.1678 * ch, 0] | max %}
+            {% set ionic_strength = (1.5 * ch + ta) / 50045 + extra_salt / 58440 %}
+            {% if carbonate_alkalinity > 0 and celsius > -273.15 %}
+              {% set root_ionic = sqrt(ionic_strength) %}
+              {% set csi = ph - 11.677 + log(ch, 10) + log(carbonate_alkalinity, 10)
+                           - 2.56 * root_ionic / (1 + 1.65 * root_ionic)
+                           - 1412.5 / (celsius + 273.15) + 4.7375 %}
+              {{ ((csi * 100 + 0.5) | round(0, 'floor')) / 100 }}
+            {% else %}
+              {{ none }}
+            {% endif %}
+          {% else %}
+            {{ none }}
+          {% endif %}

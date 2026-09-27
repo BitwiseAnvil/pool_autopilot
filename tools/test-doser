@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+atlas_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+atlas_python="${POOL_ESPHOME_PYTHON:-python3}"
+"$atlas_python" "$atlas_root/tests/test_pool_tank.py"
+cd "$atlas_root/pool-doser"
+"$atlas_python" tests/test_safety_automation_order.py
+"$atlas_python" tests/test_wiring_documentation.py
+"$atlas_python" tests/test_runtime_state.py
+"$atlas_python" tests/test_maintenance_wifi.py
+"$atlas_python" tests/test_home_assistant.py "$@"
+atlas_test_binary="$(mktemp /tmp/pool-doser-tests.XXXXXX)"
+trap 'rm -f -- "$atlas_test_binary"' EXIT
+g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer \
+  -Itests/include -I. tests/test_pool_doser_rs485.cpp -o "$atlas_test_binary"
+"$atlas_test_binary"
+printf '%s\n' 'All Pool Doser regression checks passed.'

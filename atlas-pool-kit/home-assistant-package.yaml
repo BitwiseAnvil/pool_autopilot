@@ -1,0 +1,145 @@
+# Guided dashboard, history exclusions and mandatory live measurement validation.
+# The firmware's discovered controls also work independently of this package.
+recorder:
+  exclude:
+    entities:
+      - sensor.atlas_pool_calibration
+      - sensor.atlas_pool_preview
+      - sensor.atlas_pool_preview_age
+      - sensor.atlas_pool_calibration_step
+
+# Read-only presentation state: the firmware remains the calibration authority.
+template:
+  - sensor:
+      - name: Atlas pool calibration step
+        unique_id: atlas_pool_guided_calibration_step
+        default_entity_id: sensor.atlas_pool_calibration_step
+        state: >-
+          {% set status = states('sensor.atlas_pool_calibration') %}
+          {% set probe = state_attr('sensor.atlas_pool_calibration', 'sensor') %}
+          {% set step = state_attr('sensor.atlas_pool_calibration', 'step') %}
+          {% if status in ['unknown', 'unavailable'] %}
+            offline
+          {% elif state_attr('sensor.atlas_pool_calibration', 'configuration_ok') == false %}
+            fault
+          {% elif status == 'Restoring pool readings' %}
+            returning
+          {% elif state_attr('sensor.atlas_pool_calibration', 'busy') %}
+            saving
+          {% elif status == 'Monitoring' and is_state('binary_sensor.atlas_pool_maintenance', 'off') %}
+            idle
+          {% elif probe not in ['pH', 'ORP', 'RTD', 'EC'] %}
+            maintenance
+          {# Clearing keeps done/zero in RAM across a disconnect; a restart has no selected probe. #}
+          {% elif step == 'done' and state_attr('sensor.atlas_pool_calibration', 'completed') == 0 %}
+            cleared
+          {% elif state_attr('sensor.atlas_pool_calibration', 'recovery') %}
+            recovery
+          {% elif step == 'done' %}
+            done
+          {% elif state_attr('sensor.atlas_pool_calibration', 'armed') %}
+            confirm
+          {% elif probe == 'pH' and step in ['mid', 'low', 'high'] %}
+            ph_{{ step }}
+          {% elif probe == 'EC' and step in ['dry', 'low', 'high', 'single'] %}
+            ec_{{ step }}
+          {% elif probe == 'RTD' and step == 'single' %}
+            rtd
+          {% elif probe == 'ORP' and step == 'single' %}
+            orp
+          {% else %}
+            fault
+          {% endif %}
+
+# These two UI shortcuts only prepare a save or return to monitoring.
+# Saving a reference still requires a separate, deliberate native Apply press.
+# Wait for the exact device acknowledgement; abort on timeout or any competing
+# command, reboot, session/step change or changed reference settings. Never retry.
+script:
+  atlas_pool_prepare_calibration:
+    alias: Atlas - reading is steady
+    mode: single
+    sequence:
+      - condition: template
+        value_template: >-
+          {{ is_state('binary_sensor.atlas_pool_maintenance', 'on') and
+             states('sensor.atlas_pool_calibration') not in ['unknown', 'unavailable'] and
+             state_attr('sensor.atlas_pool_calibration', 'sensor') in ['pH', 'ORP', 'RTD', 'EC'] and
+             state_attr('sensor.atlas_pool_calibration', 'step') in ['mid', 'low', 'high', 'dry', 'single'] and
+             state_attr('sensor.atlas_pool_calibration', 'configuration_ok') == true and
+             state_attr('sensor.atlas_pool_calibration', 'busy') == false and
+             state_attr('sensor.atlas_pool_calibration', 'recovery') == false and
+             state_attr('sensor.atlas_pool_calibration', 'preview') is number }}
+      - variables:
+          boot: "{{ state_attr('sensor.atlas_pool_calibration', 'boot') }}"
+          session: "{{ state_attr('sensor.atlas_pool_calibration', 'session') }}"
+          step: "{{ state_attr('sensor.atlas_pool_calibration', 'step') }}"
+          next_token: "{{ state_attr('sensor.atlas_pool_calibration', 'token') | int + 1 }}"
+          expected_controls: >-
+            {{ dict(state_attr('sensor.atlas_pool_calibration', 'controls'), reference_ready=true) }}
+      - action: switch.turn_on
+        target:
+          entity_id: switch.atlas_pool_reference_ready
+      - wait_template: >-
+          {{ (state_attr('sensor.atlas_pool_calibration', 'token') | int(0)) >= next_token or
+             state_attr('sensor.atlas_pool_calibration', 'boot') != boot }}
+        timeout: "00:00:04"
+        continue_on_timeout: false
+      - condition: template
+        value_template: >-
+          {{ states('sensor.atlas_pool_calibration') not in ['unknown', 'unavailable'] and
+             state_attr('sensor.atlas_pool_calibration', 'boot') == boot and
+             state_attr('sensor.atlas_pool_calibration', 'session') == session and
+             state_attr('sensor.atlas_pool_calibration', 'step') == step and
+             state_attr('sensor.atlas_pool_calibration', 'token') == next_token and
+             state_attr('sensor.atlas_pool_calibration', 'controls') == expected_controls and
+             state_attr('sensor.atlas_pool_calibration', 'result') == 'Confirmation updated' and
+             state_attr('sensor.atlas_pool_calibration', 'busy') == false and
+             state_attr('sensor.atlas_pool_calibration', 'recovery') == false }}
+      - action: button.press
+        target:
+          entity_id: button.atlas_pool_arm
+
+  atlas_pool_exit_calibration:
+    alias: Atlas - exit calibration
+    mode: single
+    sequence:
+      - condition: template
+        value_template: >-
+          {{ is_state('binary_sensor.atlas_pool_maintenance', 'on') and
+             states('sensor.atlas_pool_calibration') not in ['unknown', 'unavailable', 'Restoring pool readings'] and
+             state_attr('sensor.atlas_pool_calibration', 'configuration_ok') == true and
+             state_attr('sensor.atlas_pool_calibration', 'busy') == false }}
+      - variables:
+          boot: "{{ state_attr('sensor.atlas_pool_calibration', 'boot') }}"
+          session: "{{ state_attr('sensor.atlas_pool_calibration', 'session') }}"
+          step: "{{ state_attr('sensor.atlas_pool_calibration', 'step') }}"
+          next_token: "{{ state_attr('sensor.atlas_pool_calibration', 'token') | int + 1 }}"
+          expected_controls: >-
+            {{ dict(state_attr('sensor.atlas_pool_calibration', 'controls'), probes_returned=true) }}
+      - action: switch.turn_on
+        target:
+          entity_id: switch.atlas_pool_probes_returned
+      - wait_template: >-
+          {{ (state_attr('sensor.atlas_pool_calibration', 'token') | int(0)) >= next_token or
+             state_attr('sensor.atlas_pool_calibration', 'boot') != boot }}
+        timeout: "00:00:04"
+        continue_on_timeout: false
+      - condition: template
+        value_template: >-
+          {{ states('sensor.atlas_pool_calibration') not in ['unknown', 'unavailable', 'Restoring pool readings'] and
+             state_attr('sensor.atlas_pool_calibration', 'boot') == boot and
+             state_attr('sensor.atlas_pool_calibration', 'session') == session and
+             state_attr('sensor.atlas_pool_calibration', 'step') == step and
+             state_attr('sensor.atlas_pool_calibration', 'token') == next_token and
+             state_attr('sensor.atlas_pool_calibration', 'controls') == expected_controls and
+             state_attr('sensor.atlas_pool_calibration', 'result') == 'Confirmation updated' and
+             state_attr('sensor.atlas_pool_calibration', 'busy') == false }}
+      - action: button.press
+        target:
+          entity_id: button.atlas_pool_return
+
+# Install home-assistant/custom_components/pool_telemetry into /config/custom_components.
+# Atlas, the master and the host must all synchronize to time.nist.gov.
+pool_telemetry:
+  topic_prefix: pool/atlas_pool

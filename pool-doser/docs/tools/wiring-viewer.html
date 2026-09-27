@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PoolDose — three-harness wiring book</title>
+<style>
+:root{color-scheme:light;--ink:#173344;--muted:#566d7b;--line:#cbd8df;--accent:#15746d}
+*{box-sizing:border-box}body{margin:0;background:#edf2f4;color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+a{color:#086c79;text-underline-offset:3px}button,select,input{font:inherit}button,select,input{padding:9px 13px;border:1px solid #a4b7c3;background:#fff;border-radius:6px}button{cursor:pointer}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #e6ad36;outline-offset:3px}
+main{max-width:2300px;margin:auto;padding:24px}.intro{display:grid;grid-template-columns:1.4fr 1fr;gap:38px;align-items:center;background:#152d3b;color:#fff;padding:30px 34px;border-radius:12px}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#abd3d2;font-weight:700}.intro h1{font-size:clamp(28px,3vw,44px);line-height:1.1;margin:12px 0 16px}.intro p{color:#d0e0e6;max-width:800px}.intro a{color:#b6eeee}.photo{margin:0}.photo img{display:block;width:100%;max-height:280px;object-fit:cover;border-radius:8px}.photo figcaption{font-size:12px;margin-top:7px;color:#c9d9e1}.download{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.download a:first-child{padding:9px 15px;border:1px solid #76999f;border-radius:5px}
+.summary{display:flex;gap:14px;flex-wrap:wrap;padding:15px 0}.summary span{background:#fff;border:1px solid var(--line);border-radius:5px;padding:6px 13px;font-size:14px}.summary b{color:#07685f}
+.toolbar{background:#fff;padding:16px;border:1px solid var(--line);border-radius:8px 8px 0 0}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button[aria-pressed=true]{background:#173b4b;color:#fff;border-color:#173b4b}.tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.tools label{display:flex;align-items:center;gap:8px}.detail{background:#e4f1ee;border:1px solid #a2c6bd;border-radius:7px;padding:16px 20px;margin:14px 0}.detail p{margin:5px 0}.detail .ends{display:grid;grid-template-columns:1fr 1fr;gap:24px}.detail .ends p{font-size:14px}.detail strong{color:#0a514b}.quiet{color:var(--muted);font-size:14px}
+.drawing-sheet{display:none}.drawing-sheet.is-active{display:block}.map{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:0 0 8px 8px}.map svg{display:block;width:100%;height:auto;min-width:1100px}.map.zoomed svg{width:180%;min-width:1800px}.map .endpoint[role=button]{cursor:pointer}.map .endpoint.selected{opacity:1!important}
+.notice{padding:14px 18px;margin:18px 0;background:#fff7e9;border-left:4px solid #c98025;font-size:14px}.notice.warning{background:#fdecea;border-left-color:#b3261e}.readme{background:#fff;border:1px solid var(--line);padding:20px;border-radius:8px;margin:20px 0}.readme h2{font-size:20px;margin:0 0 9px}.readme p{margin:7px 0}.table-heading{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap;margin:28px 0 12px}.table-heading h2{margin:0;font-size:24px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;background:#fff;width:100%;min-width:1050px;font-size:13px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #d8e2e7;padding:12px}thead{background:#193847;color:#fff}tbody tr:nth-child(even){background:#f7fafb}tbody tr.active,tbody tr:hover{background:#fff0c6}tbody tr{cursor:pointer}th:nth-child(1){width:5%}th:nth-child(2){width:13%}th:nth-child(3),th:nth-child(5){width:22%}th:nth-child(4),th:nth-child(6){width:19%}.endcode{font-weight:750;display:inline-block;border:1px solid #a7bac6;border-radius:3px;background:#eaf0f4;padding:0 5px;margin-bottom:4px}.swatch{display:inline-block;width:25px;height:7px;background:var(--wire);border:1px solid #6b7f8a;border-radius:5px;margin:0 6px 2px 0;vertical-align:middle}.swatch[data-color="White/blue stripe"]{background:repeating-linear-gradient(90deg,#fff 0 5px,#217dcb 5px 10px)}.swatch[data-color="Green or bare"]{background:repeating-linear-gradient(90deg,#17643c 0 6px,#b88454 6px 10px)}footer{font-size:13px;color:var(--muted);margin:25px 0}code{font-size:.94em}.print-only{display:none}
+@media(max-width:800px){main{padding:12px}.intro{grid-template-columns:1fr;padding:23px;gap:20px}.photo img{max-height:230px}.detail .ends{grid-template-columns:1fr;gap:4px}.tools label{flex-wrap:wrap}.tools select{max-width:270px}.table-heading input{max-width:240px}}
+@page{size:A3 landscape;margin:10mm}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{background:#fff}main{padding:0;max-width:none}.intro,.summary,.toolbar,.detail,.notice,.readme,.table-heading label,.screen-only,footer{display:none!important}.drawing-sheet{display:block!important;break-after:page}.map{overflow:visible;border:0;border-radius:0}.map svg,.map.zoomed svg{width:100%;min-width:0;max-height:270mm}.wire.muted,.endpoint.muted{opacity:1!important}.wire.selected .halo{stroke:white!important;stroke-width:12!important}.endpoint.selected .screw{fill:white!important;stroke:#607583!important;stroke-width:2!important}.table-wrap{overflow:visible;border:0;border-radius:0}table{min-width:0;font-size:10px}td,th{padding:7px}thead{display:table-header-group}tr{break-inside:avoid}tr[hidden]{display:table-row!important}tbody tr.active,tbody tr:hover{background:inherit}.table-heading{margin:0 0 8px}.table-heading h2{font-size:22px}.print-only{display:block;font-size:11px}.endcode{font-size:11px}}
+</style>
+</head>
+<body><main>
+<header class="intro">
+<div><div class="eyebrow">PoolDose · enclosure wiring book · revision 13</div>
+<h1>Three harnesses.<br>Three box wires.</h1>
+<p>Three stranded 14 AWG wires connect the controls to Wagos inside the metal box: black hot, white neutral and red switched return. The source-power and pump-outlet whips terminate in that box. Select any wire to see both ends.</p>
+<div class="download"><a href="pooldose-physical-wiring.pdf">Download printable PDF</a><a href="harness-cut-list.md">Bench cut list</a><a href="termination-schedule.md">Every wire end</a><a href="build-instructions.html">Assembly instructions</a></div></div>
+<figure class="photo"><a href="images/enclosure-2026-09-18.jpg"><img src="images/enclosure-2026-09-18.jpg" alt="Reference enclosure before wiring: Master Waveshare, Finder, Slave Waveshare, Finder, Phoenix, Mean Well, Schneider breaker from left to right."></a><figcaption>Reference photo · component order retained; drawing spacing expanded.</figcaption></figure>
+</header>
+<p class="notice warning"><strong>Warning.</strong> @@TERMINAL_WARNING@@</p>
+<p class="notice"><strong>Checkout.</strong> Set the Mean Well supply to <strong>5 V</strong>. @@BUILD_CHECKS@@ <a href="build-instructions.html">Assembly and checkout</a> · <a href="pump-calibration.md">Pump calibration</a>.</p>
+<div class="summary"><span><b>3</b> harnesses · A / B / C</span><span><b>3</b> metal-box leads</span><span><b>27</b> IDs / <b>54</b> ends</span><span>Existing devices only</span><span><b>6</b> shared ferrules</span></div>
+<div class="toolbar">
+<nav class="tabs" aria-label="Wiring sheets">@@TABS@@</nav>
+<div class="tools"><label for="wire">Trace wire <select id="wire"><option value="">All wires on sheet</option>@@OPTIONS@@</select></label><button id="clear">Show all wires</button><button id="zoom" aria-pressed="false">Enlarge drawing</button><button id="print">Print all sheets + table</button><a id="svg-download" href="pooldose-overview-wiring.svg">Open this SVG</a></div>
+</div>
+<div id="detail" class="detail" aria-live="polite"><strong>Click a colored wire, screw terminal, or table row.</strong><p>Shared ends list every conductor in one ferrule. Select the screw repeatedly to trace each branch. FITTED marks an end as built in the reference enclosure; DATA identifies specifications to record.</p></div>
+@@SHEETS@@
+<div class="readme"><h2>One ferrule at the branch, single blue ends at small AC terminals</h2>
+<p><strong>Protected hot:</strong> F1 top LOAD holds one installed large-red ferrule with four conductors: A02 → Mean Well L, A05 → W2 COM, A06 → K1 terminal 1 and A07 → W1 COM. All four leads are black 14 AWG. Each destination gets one blue ferrule. A01 still supplies bottom LINE.</p>
+<p><strong>Neutral:</strong> white A08 enters Finder K5 <strong>power terminal 3</strong>. Its installed large-red ferrule also contains A11 to K1 terminal 3, A13 to Mean Well N and A14 to K5 A2. K1 terminal 3 holds A11, A15 to K1 A2 and A16 to detector K4 A2 in another large-red ferrule. All neutral wires stay 14 AWG; all four neutral loads receive single blue ends. <strong>Both terminal-3 groups exceed Finder's rated terminal capacity; see the warning above.</strong></p>
+<p><strong>Finder A1/A2 stay single:</strong> B01/B02 supply A1 from the respective Waveshare NO. A15/A14 supply the two A2 neutrals. Terminal 3 is distinct from A1/A2. Both terminal 4s have no external wire; they become connected to neutral when their 3–4 contacts close. No required neutral path goes through a switching contact. Pump hot still passes through K1 1–2 and K5 1–2 in series.</p>
+<p><strong>Ferrule dimensions from the kit chart (Pittsburgh 70195):</strong> blue 14 AWG: 2.6 mm metal-tube OD / 8 mm barrel; yellow 10 AWG: 3.9 mm / 12 mm; large red 8 AWG: 4.9 mm / 12 mm. Those ODs do not specify the finished crimp dimensions. Large red is used at both four-wire ends and the three-wire K1-3 end. Yellow is used at K5-2 for B04+B05. Sheet 08 shows each group.</p>
+<p><strong>Low voltage:</strong> the red +5 V and black DC-return chains remain PS1 → W2 → W1 using 18 AWG. Their twins at W2 must fit the blue-sized terminal envelope. VCC receives only 5 V DC; AC neutral, DC return and protective ground stay separate. The Master flow tail now records the installed telephone cord and RJ11 coupling.</p>
+<p><strong>Sheet 07 — photographed GPIO harnesses:</strong> plug colors are yellow GPIO1, unused orange GPIO2, red 3.3 V and black GND. On the Master, yellow joins red telephone C09 and black joins green telephone C10; the finished RJ11 tail is heat-shrunk. On the Slave, red joins R1 directly; its other lead joins yellow GPIO1 and orange C13 at the local JS2 splice. Orange C13 alone goes to K4-14; black C14 alone goes to K4-11. Insulate each joint separately. C11/C15 are retired. <a href="build-instructions.html#gpio-tails">GPIO instructions</a>.</p>
+<p><strong>Three box leads:</strong> A01 black OUT, A08 white OUT and B04 red IN. The two black/white/green 14 AWG whips and their Wagos stay in the metal box. No external distribution devices are added. Grounds remain bonded there; neutral and ground remain separate.</p>
+<p><strong>Assembly and testing:</strong> @@BUILD_CHECKS@@ See the <a href="build-instructions.html">assembly instructions</a>.</p>
+<p class="quiet">Revision 13 · 27 IDs / 54 ends · six shared locations. Replaces the former hot and neutral chains. Do not combine earlier cut lists with these branch routes.</p></div>
+<div class="table-heading"><h2>Every wire end</h2><label for="filter">Find <input id="filter" type="search" placeholder="A08, white, PS1, K1…"></label></div>
+<p class="print-only">Harness revision 13 — ferrule branches at existing devices. 27 IDs / 54 ends; six shared ferrules. Set the Mean Well supply to 5 V. @@BUILD_CHECKS@@ SINGLE = one conductor; SHARED = the stated number of conductors in one ferrule. All 120 V wiring stays 14 AWG. FITTED = as built; DATA = specifications to record; CHECK = end preparation. C12 is an integral resistor lead.</p>
+<div class="table-wrap"><table><thead><tr><th>Wire</th><th>Insulation / conductor</th><th>End A · exact location</th><th>A · prepare this end</th><th>End B · exact location</th><th>B · prepare this end</th></tr></thead><tbody>@@ROWS@@</tbody></table></div>
+<footer><p>Manufacturer specifications and construction references are linked in the <a href="build-instructions.html">assembly instructions</a>. Rebuild tools and verification notes are in <a href="tools/README.md">docs/tools</a>. Follow the wire IDs, end-preparation notes and assembly checkout sequence.</p></footer>
+</main>
+<script>
+const wires=@@DATA@@;
+const preparation=@@PREP@@;
+const select=document.querySelector('#wire'), detail=document.querySelector('#detail');
+let activeSheet='overview', selectedWire='';
+function showSheet(key,clear=true){
+  activeSheet=key;
+  document.querySelectorAll('.drawing-sheet').forEach(n=>n.classList.toggle('is-active',n.dataset.sheet===key));
+  document.querySelectorAll('[data-show]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.show===key)));
+  document.querySelector('#svg-download').href=`pooldose-${key}-wiring.svg`;
+  if(clear) choose('',false);
+}
+function choose(id,changeSheet=true){
+  selectedWire=id; select.value=id;
+  const w=wires.find(w=>w.id===id);
+  if(w&&changeSheet&&w.sheet!==activeSheet) showSheet(w.sheet,false);
+  document.querySelectorAll('.wire,.endpoint').forEach(n=>{
+    const selected=!!id&&n.dataset.wires.split(' ').includes(id);
+    n.classList.toggle('selected',selected);n.classList.toggle('muted',!!id&&!selected);
+  });
+  document.querySelectorAll('tr[data-wire]').forEach(n=>n.classList.toggle('active',n.dataset.wire===id));
+  detail.replaceChildren();
+  const title=document.createElement('strong');
+  title.textContent=w?`${w.id} · ${w.color} · ${w.gauge} · ${w.status}`:'Click a colored wire, screw terminal, or table row.';
+  detail.append(title);
+  if(w){
+    const ends=document.createElement('div');ends.className='ends';
+    w.ends.forEach((end,i)=>{
+      const box=document.createElement('div'),label=document.createElement('p'),prep=document.createElement('p');
+      label.textContent=`${i?'B':'A'}: ${w.physical[i]} [${end}]`;
+      prep.textContent=`${w.prep_labels[i]} — ${w.prep_notes[i]}`;box.append(label,prep);ends.append(box);
+    });detail.append(ends);
+  }else{const p=document.createElement('p');p.textContent='Trace a wire between existing device screws. A SHARED screw holds one ferrule containing the listed conductors. Click it repeatedly to trace every branch. FITTED marks an end as built in the reference enclosure; DATA identifies specifications to record.';detail.append(p)}
+}
+document.querySelectorAll('[data-show]').forEach(n=>n.addEventListener('click',()=>showSheet(n.dataset.show)));
+select.addEventListener('change',()=>choose(select.value));
+document.querySelectorAll('.wire,.endpoint').forEach(n=>{
+  const ids=n.dataset.wires.split(' ').filter(Boolean);if(!ids.length)return;
+  n.setAttribute('tabindex','0');n.setAttribute('role','button');n.setAttribute('aria-label',n.querySelector('title')?.textContent||ids.join(', '));
+  const activate=()=>choose(ids[(ids.indexOf(selectedWire)+1)%ids.length]);
+  n.addEventListener('click',activate);n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});
+});
+document.querySelectorAll('tr[data-wire]').forEach(n=>{
+  n.addEventListener('click',()=>choose(n.dataset.wire));
+  n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(n.dataset.wire)}});
+});
+document.querySelector('#clear').addEventListener('click',()=>choose(''));
+document.querySelector('#zoom').addEventListener('click',e=>{
+  const enlarged=e.currentTarget.getAttribute('aria-pressed')!=='true';
+  e.currentTarget.setAttribute('aria-pressed',String(enlarged));e.currentTarget.textContent=enlarged?'Fit drawing':'Enlarge drawing';
+  document.querySelectorAll('.map').forEach(n=>n.classList.toggle('zoomed',enlarged));
+});
+document.querySelector('#filter').addEventListener('input',e=>document.querySelectorAll('tr[data-wire]').forEach(n=>n.hidden=!n.textContent.toLowerCase().includes(e.target.value.toLowerCase())));
+document.querySelector('#print').addEventListener('click',()=>window.print());
+showSheet('overview',false);
+</script>
+</body></html>

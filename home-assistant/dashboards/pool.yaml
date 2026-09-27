@@ -1,0 +1,184 @@
+# Pool dashboard: grouped controls and status on the left, water readings
+# on the right (stacked on phones). Every tile is always shown in this fixed order.
+title: Pool
+views:
+  - title: Pool
+    path: pool
+    icon: mdi:pool
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Control
+            heading_style: title
+          - type: heading
+            heading: Dosing
+            heading_style: subtitle
+          # Tapping a control tile opens its settings; its icon operates it.
+          - type: tile
+            entity: input_boolean.doser_auto_enabled
+            name: Auto
+            grid_options: {columns: 6}
+          - type: tile
+            entity: input_number.doser_dose_oz
+            name: Dose Amount
+            grid_options: {columns: 6}
+          # Emergency stop acts on the first tap, without confirmation.
+          - type: tile
+            entity: script.doser_stop
+            name: STOP
+            icon: mdi:octagon
+            color: red
+            tap_action: &stop
+              action: perform-action
+              perform_action: script.doser_stop
+            icon_tap_action: *stop
+            grid_options: {columns: 6}
+          - type: tile
+            entity: script.doser_dose
+            name: Dose Now
+            icon: mdi:play-circle-outline
+            tap_action: &dose
+              action: perform-action
+              perform_action: script.doser_dose
+              confirmation:
+                text: Start a manual acid dose of the Dose Amount? The doser still applies its flow and safety checks.
+            icon_tap_action: *dose
+            grid_options: {columns: 6}
+          - type: heading
+            heading: Status
+            heading_style: subtitle
+          - type: tile
+            entity: binary_sensor.pool_doser_flow
+            name: Flow
+            icon: mdi:waves
+            grid_options: {columns: 6}
+          - type: tile
+            entity: binary_sensor.pool_doser_outlet_live
+            name: Outlet Live
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_doser_dose_progress
+            name: Dose Progress
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_doser_last_dose
+            name: Last Dose
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_doser_status
+            name: Doser
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_doser_request_readiness
+            name: Readiness
+            grid_options: {columns: 6}
+          - type: heading
+            heading: Tank and Maintenance
+            heading_style: subtitle
+          - type: tile
+            entity: switch.pool_doser_maintenance_lockout
+            name: Maintenance Lockout
+            grid_options: {columns: 6}
+          - type: tile
+            entity: number.pool_doser_tank_level
+            name: Tank Level
+            grid_options: {columns: 6}
+          # The firmware refuses the clear unless lockout is On and outputs are idle.
+          - type: tile
+            entity: binary_sensor.pool_doser_relay_fault
+            name: Relay Fault
+            icon_tap_action:
+              action: perform-action
+              perform_action: button.press
+              target: {entity_id: button.pool_doser_clear_latched_relay_fault}
+              confirmation:
+                text: Clear the latched relay fault? Inspect the relays first; Maintenance Lockout must be On.
+            grid_options: {columns: 6}
+          - type: tile
+            entity: number.pool_doser_tank_capacity
+            name: Tank Capacity
+            grid_options: {columns: 6}
+          # Opens the guided Atlas calibration dashboard (see atlas-pool-kit/README.md).
+          - type: tile
+            entity: binary_sensor.atlas_pool_maintenance
+            name: Sensor Calibration
+            icon: mdi:wrench-outline
+            tap_action: &calibrate
+              action: navigate
+              navigation_path: /atlas-pool-kit/calibration
+            icon_tap_action: *calibrate
+            grid_options: {columns: 6}
+
+          - type: tile
+            entity: button.pool_doser_tank_refilled
+            name: Tank Refilled
+            tap_action: &refilled
+              action: perform-action
+              perform_action: button.press
+              target: {entity_id: button.pool_doser_tank_refilled}
+              confirmation:
+                text: Set Tank Level to full Tank Capacity?
+            icon_tap_action: *refilled
+            grid_options: {columns: 6}
+      - type: grid
+        cards:
+          - type: heading
+            heading: Water
+            heading_style: title
+          - type: heading
+            heading: Atlas
+            heading_style: subtitle
+          - type: tile
+            entity: sensor.atlas_pool_ph
+            name: pH
+            icon: mdi:ph
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.atlas_pool_orp
+            name: ORP
+            icon: mdi:flash-triangle-outline
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.atlas_pool_salinity
+            name: Salinity
+            icon: mdi:shaker-outline
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.atlas_pool_temperature
+            name: Temperature
+            grid_options: {columns: 6}
+          - type: heading
+            heading: Pool Math
+            heading_style: subtitle
+          - type: tile
+            entity: sensor.pool_math_free_chlorine
+            name: Free Chlorine
+            state_content: reading
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_math_total_alkalinity
+            name: Total Alkalinity
+            state_content: reading
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_math_calcium_hardness
+            name: Calcium Hardness
+            state_content: reading
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_math_cya
+            name: Stabilizer / CYA
+            state_content: reading
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_math_borates
+            name: Borates
+            state_content: reading
+            grid_options: {columns: 6}
+          - type: tile
+            entity: sensor.pool_csi
+            name: CSI
+            grid_options: {columns: 6}

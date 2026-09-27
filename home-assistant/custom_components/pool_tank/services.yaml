@@ -1,0 +1,20 @@
+record_acceptance:
+  name: Record dose acceptance
+  description: Subtract the requested ounces only when this dose call's immediate response confirms acceptance.
+  fields:
+    response:
+      required: true
+      selector:
+        object:
+import_baseline:
+  name: Import migration baseline
+  description: Set tank capacity and level from the captured installation values.
+  fields:
+    capacity_oz:
+      required: true
+      selector:
+        number: {min: 0, max: 4096, mode: box}
+    remaining_oz:
+      required: true
+      selector:
+        number: {min: 0, max: 4096, mode: box}

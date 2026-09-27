@@ -1,0 +1,80 @@
+{
+  "revision": 13,
+  "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
+  "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+  "assembly_record": {
+    "basis": "Reference build",
+    "completed_harnesses": [
+      "A",
+      "B",
+      "C"
+    ],
+    "power_up": {
+      "supply": "Mean Well HDR-15-5",
+      "output_v": 5.0,
+      "loaded_output_check": {
+        "measured_v": 5.0,
+        "condition": "All relays closed",
+        "measurement": "DC supply output"
+      }
+    },
+    "build_checks": "After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+    "shared_ferrules": {
+      "F1:LOAD": "Large red",
+      "K5:3": "Large red",
+      "K1:3": "Large red",
+      "K5:2": "Yellow"
+    },
+    "known_limitation": "Known limitation: do not copy the neutral branches at Finder K5 terminal 3 and K1 terminal 3. Finder rates each 22.32 contact terminal for one 6 mm\u00b2 (10 AWG) or two 4 mm\u00b2 (12 AWG) conductors. Four 14 AWG wires at K5-3 (about 8.3 mm\u00b2) and three at K1-3 (about 6.3 mm\u00b2) exceed that rating. The reference enclosure is built this way. A new build should branch neutral on a rated DIN-rail neutral terminal block or other listed distribution so that each Finder terminal stays within its rating, and have the change checked by a qualified electrician.",
+    "remaining_14_awg_device_ferrules": "Blue",
+    "gpio_plug_colors": {
+      "1": "Yellow / GPIO1",
+      "2": "Orange / GPIO2",
+      "3": "Red / 3.3 V",
+      "4": "Black / GND"
+    },
+    "master_flow_tail": "Yellow GPIO1 spliced to RED telephone-cord C09 and black GND to GREEN telephone-cord C10, finished in heat-shrink. An RJ11 coupling at the enclosure bottom connects to a generic Hayward-style flow switch. Cord gauge and numbered contact mapping are not specified.",
+    "slave_gpio": "RED 3.3 V factory lead joined directly to R1; its other lead joins YELLOW GPIO1 and ORANGE C13 at one three-conductor splice; BLACK GND joins BLACK C14. Insulate each joint separately."
+  },
+  "strips": {},
+  "internal_links": [],
+  "requested_shared": {
+    "F1:LOAD": [
+      "A02",
+      "A05",
+      "A06",
+      "A07"
+    ],
+    "K5:3": [
+      "A08",
+      "A11",
+      "A13",
+      "A14"
+    ],
+    "K1:3": [
+      "A11",
+      "A15",
+      "A16"
+    ],
+    "K5:2": [
+      "B04",
+      "B05"
+    ],
+    "W2:VCC": [
+      "C01",
+      "C03"
+    ],
+    "W2:GND": [
+      "C04",
+      "C06"
+    ]
+  },
+  "shared_checks": {
+    "F1:LOAD": "FITTED: one LARGE RED ferrule holding A02/A05/A06/A07, four black 14 AWG wires, tightened and connected as drawn.",
+    "K5:3": "FITTED: one LARGE RED ferrule holding A08/A11/A13/A14, four white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning.",
+    "K1:3": "FITTED: one LARGE RED ferrule holding A11/A15/A16, three white 14 AWG wires, tightened. Reference build only: exceeds the Finder terminal rating; see the known-limitation warning.",
+    "K5:2": "FITTED: one YELLOW ferrule holding B04/B05, two red 14 AWG wires, tightened and connected as drawn.",
+    "W2:VCC": "DATA: record the two-18-AWG twin size/profile within the blue-sized envelope and the Waveshare clamp strip/torque specification.",
+    "W2:GND": "DATA: record the two-18-AWG twin size/profile within the blue-sized envelope and the Waveshare clamp strip/torque specification."
+  }
+}

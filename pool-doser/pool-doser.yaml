@@ -1,0 +1,1584 @@
+# Master: Waveshare ESP32-S3-Relay-1CH-U, SKU 35086. See README.md for wiring.
+
+substitutions:
+  device_name: pool-doser
+  device_friendly_name: "Pool Doser"
+
+  poll_interval: 1s
+
+  max_runtime_min: "15"
+
+  relay_settle_ms: "700"
+
+  relay_a_pin: GPIO47
+  rs485_tx_pin: GPIO17
+  rs485_rx_pin: GPIO18
+  rs485_direction_pin: GPIO21
+  flow_pin: GPIO1
+  flow_on_delay: 500ms
+  flow_off_delay: 500ms
+
+  default_max_single_dose_oz: "13.0"
+  default_pre_run_seconds: "60"
+  default_min_rest_seconds: "1800"
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_friendly_name}
+  min_version: 2026.9.0
+  includes:
+    - pool_doser_control.h
+    - pool_doser_rs485.h
+  on_boot:
+    # Reassert fail-off after GPIO initialization at priority 800.
+    - priority: 700
+      then:
+        - switch.turn_off: relay_a
+    - priority: -100
+      then:
+        - lambda: |-
+            id(settings_ok) = pool_doser::settings_store.begin();
+            const auto &saved = pool_doser::settings_store.state();
+            id(pump_gpd).publish_state(saved.pump_gpd);
+            id(calibration_factor).publish_state(saved.calibration_factor());
+            id(max_single_dose_oz).publish_state(saved.max_single_dose_oz);
+            id(pre_run_s).publish_state(saved.pre_run_s);
+            id(min_rest_s).publish_state(saved.min_rest_s);
+            pool_doser::master_maintenance.request(saved.maintenance != 0);
+            id(maintenance_lockout).publish_state(true);
+            char boot[33];
+            snprintf(boot, sizeof(boot), "%08x%08x%08x%08x",
+                     (unsigned) esphome::random_uint32(), (unsigned) esphome::random_uint32(),
+                     (unsigned) esphome::random_uint32(), (unsigned) esphome::random_uint32());
+            pool_doser::acid_control.begin(boot, millis(), pool_doser::automatic_state);
+            pool_doser::rest_timer.begin(millis());
+            id(blocked_reason) = id(settings_ok) ? "idle" : "configuration_required";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            id(output_rate).publish_state(pool_doser::calibrated_output_rate(
+                id(pump_gpd).state, id(calibration_factor).state));
+        - script.execute: publish_idle_status
+        - sensor.template.publish:
+            id: dose_progress
+            state: 0.0
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 16MB
+  toolchain: esp-idf
+  framework:
+    type: arduino
+
+logger:
+  level: INFO
+  baud_rate: 0
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [pool_clock, pool_storage]
+
+pool_storage:
+
+safe_mode:
+  storage: rtc
+
+# Required throughout the installation; no alternate calendar time source.
+time:
+  - platform: sntp
+    id: nist_time
+    timezone: UTC0
+    servers: [time.nist.gov]
+    update_interval: 5min
+
+pool_clock:
+  id: nist_clock
+  time_id: nist_time
+
+uart:
+  id: rs485_uart
+  tx_pin: ${rs485_tx_pin}
+  rx_pin: ${rs485_rx_pin}
+  flow_control_pin: ${rs485_direction_pin}
+  baud_rate: 9600
+  data_bits: 8
+  parity: NONE
+  stop_bits: 1
+  rx_buffer_size: 256
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  reboot_timeout: 0s
+  on_connect:
+    - lambda: id(nist_clock).resync();
+
+ota:
+  - platform: esphome
+    encryption:  # Require encrypted uploads using the API key below.
+
+# API
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+  reboot_timeout: 0s
+  on_client_disconnected:
+    - lambda: "pool_doser::acid_control.pause();"
+  actions:
+    - action: import_operating_settings
+      supports_response: only
+      variables:
+        pump_rating: float
+        calibration: float
+        single_dose_limit: float
+        pre_run_seconds: float
+        minimum_rest_seconds: float
+      then:
+        - lambda: |-
+            // Deliberate initial configuration while maintenance lockout is on.
+            // It creates or replaces the complete settings record at once.
+            id(settings_import_result) = "refused_busy_or_not_in_maintenance";
+            // The switch remains On while a pending Off awaits radio-off proof.
+            if (!pool_doser::master_maintenance.requested() ||
+                !id(maintenance_lockout).state || id(relay_a).state ||
+                id(dose).is_running() || id(run_sequence).is_running() ||
+                id(stop_dose).is_running() || id(delivery_open)) return;
+            auto next = pool_doser::settings_store.state();
+            id(settings_import_result) = "refused_invalid_settings";
+            if (!pool_doser::calibration_factor_valid(calibration)) return;
+            next.pump_gpd = pump_rating;
+            next.calibration_factor_milli = std::lround(calibration * 1000.0f);
+            next.max_single_dose_oz = single_dose_limit;
+            next.pre_run_s = pre_run_seconds;
+            next.min_rest_s = minimum_rest_seconds;
+            next.maintenance = 1;
+            next.checksum = pool_doser::settings_checksum(next);
+            if (!pool_doser::settings_valid(next)) return;
+            id(settings_ok) = pool_doser::settings_store.save(next);
+            if (!id(settings_ok)) {
+              id(settings_import_result) = "configuration_save_failed";
+              id(blocked_reason) = "configuration_save_failed";
+              id(blocked_reason_text).publish_state(id(blocked_reason));
+              return;
+            }
+            id(pump_gpd).publish_state(next.pump_gpd);
+            id(calibration_factor).publish_state(next.calibration_factor());
+            id(max_single_dose_oz).publish_state(next.max_single_dose_oz);
+            id(pre_run_s).publish_state(next.pre_run_s);
+            id(min_rest_s).publish_state(next.min_rest_s);
+            pool_doser::acid_control.pause();
+            id(settings_import_result) = "imported";
+        - api.respond:
+            data: !lambda |-
+              const auto &s = pool_doser::settings_store.state();
+              root["import_result"] = id(settings_import_result);
+              root["settings_valid"] = pool_doser::settings_store.healthy();
+              root["pump_rating"] = s.pump_gpd;
+              root["calibration"] = s.calibration_factor();
+              root["single_dose_limit"] = s.max_single_dose_oz;
+              root["pre_run_seconds"] = s.pre_run_s;
+              root["minimum_rest_seconds"] = s.min_rest_s;
+              root["maintenance"] = s.maintenance != 0;
+    - action: stop
+      then:
+        - script.execute: operator_stop
+    - action: acid_pause
+      then:
+        - lambda: "pool_doser::acid_control.pause();"
+    - action: acid_observe_ph
+      variables:
+        valid: bool
+        boot: string
+        sample_id: string
+        ph: float
+      then:
+        - lambda: |-
+            const auto clock = id(nist_clock).sample();
+            pool_doser::acid_control.set_clock(millis(), clock.utc_ms, clock.healthy, clock.generation);
+            pool_doser::acid_control.observe(millis(), valid, boot, sample_id, ph);
+    - action: acid_status
+      supports_response: only
+      variables:
+        client_session: string
+      then:
+        - lambda: "pool_doser::acid_control.query(millis(), client_session);"
+        - script.execute: refresh_acid_status
+        - lambda: |-
+            id(auto_request_token) = pool_doser::acid_control.issue(
+              millis(), id(auto_reason) == "ready");
+        - api.respond:
+            data: &acid_response !lambda |-
+              const auto &s = pool_doser::automatic_state;
+              root["response_version"] = 3;
+              root["boot_id"] = pool_doser::acid_control.boot();
+              root["accepted_sequence"] = s.accepted_sequence;
+              root["ready"] = id(auto_reason) == "ready";
+              root["pause_reason"] = id(auto_reason);
+              root["request_token"] = id(auto_request_token);
+              root["request_reply"] = id(auto_request_reply);
+              root["reply_request_id"] = id(auto_reply_request_id);
+              root["latest_request_id"] = s.request_id;
+              root["active_request_id"] = s.result == pool_doser::DoseResult::ACCEPTED ? s.request_id : "";
+              root["result"] = pool_doser::dose_result_name(s.result);
+              root["result_reason"] = s.reason;
+              root["automatic"] = s.automatic != 0;
+              root["requested_oz"] = s.requested_oz;
+              const float ph = pool_doser::acid_control.average(millis());
+              if (std::isfinite(ph)) root["average_ph"] = ph;
+              else root["average_ph"] = nullptr;
+              root["flow_wait_ms"] = pool_doser::acid_control.flow_remaining_ms();
+              root["mix_wait_ms"] = pool_doser::acid_control.mix_remaining_ms();
+              root["rest_wait_ms"] = pool_doser::rest_timer.remaining(millis());
+              root["relay_fault"] = id(relay_fault);
+              root["controller_status"] = id(dose_status).state;
+              const auto clock = id(nist_clock).sample();
+              root["time_source"] = "time.nist.gov";
+              root["clock_healthy"] = clock.healthy;
+              root["clock_epoch"] = clock.generation;
+              if (clock.synchronized) root["clock_sync_age_s"] = clock.sync_age_ms / 1000;
+              else root["clock_sync_age_s"] = nullptr;
+    - action: dose
+      supports_response: optional
+      variables:
+        ounces: float
+      then:
+        - script.execute:
+            id: dose
+            ounces: !lambda "return ounces;"
+            request_id: ""
+        - script.wait: dose
+        - script.execute: refresh_acid_status
+        - api.respond:
+            data: *acid_response
+    - action: automatic_dose
+      supports_response: only
+      variables:
+        request_id: string
+      then:
+        - lambda: |-
+            if (request_id.empty()) {
+              id(auto_request_token).clear();
+              id(auto_reply_request_id).clear();
+              id(auto_request_reply) = "expired_or_unknown_request";
+            } else id(dose).execute(pool_doser::ACID_PULSE_OZ, request_id);
+        - script.wait: dose
+        - script.execute: refresh_acid_status
+        - api.respond:
+            data: *acid_response
+
+# State
+
+globals:
+  - id: settings_import_result
+    type: std::string
+    restore_value: no
+    initial_value: '"none"'
+  - id: auto_reason
+    type: std::string
+    initial_value: '"starting"'
+  - id: auto_request_token
+    type: std::string
+    initial_value: '""'
+  - id: auto_request_reply
+    type: std::string
+    initial_value: '"none"'
+  - id: auto_reply_request_id
+    type: std::string
+    initial_value: '""'
+  - id: auto_check_only
+    type: bool
+    initial_value: "false"
+  - id: sequence_completed
+    type: bool
+    initial_value: "false"
+  - id: rs485_transaction
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+  - id: rs485_abort_issued
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: rs485_expected_ack_count
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+  - id: recovery_transaction
+    type: uint32_t
+    initial_value: "0"
+  - id: recovery_expected_ack_count
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+  - id: settings_ok
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: dose_start_ms
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+  - id: dose_total_ms
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+  - id: dosing_active
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: delivery_open
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: output_voltage_proven
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: shutdown_state_verified
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: relay_fault
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: blocked_reason
+    type: std::string
+    restore_value: no
+    initial_value: '"idle"'
+  - id: relays_off_ms
+    type: uint32_t
+    restore_value: no
+    initial_value: "0"
+
+# Configuration
+
+number:
+  - platform: template
+    name: "Pump Rating"
+    id: pump_gpd
+    # Keep the pump's labeled GPD here; Calibration Factor adjusts run time.
+    unit_of_measurement: "GPD"
+    icon: mdi:tune
+    entity_category: config
+    optimistic: false
+    restore_value: false
+    initial_value: 0
+    min_value: 0
+    max_value: 200
+    step: 0.05
+    mode: box
+    set_action:
+      - lambda: |-
+          if (!pool_doser::state_edit_allowed(
+                id(dose).is_running(), id(run_sequence).is_running(),
+                id(delivery_open))) {
+            id(blocked_reason) = "safety_config_edit_blocked_during_sequence";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            return;
+          }
+          id(pump_gpd).publish_state(x);
+          id(output_rate).publish_state(pool_doser::calibrated_output_rate(
+              id(pump_gpd).state, id(calibration_factor).state));
+          id(save_settings).execute();
+
+  - platform: template
+    name: "Calibration Factor"
+    id: calibration_factor
+    # Runtime multiplier: new factor = old factor × requested / collected.
+    icon: mdi:tune-variant
+    entity_category: config
+    optimistic: false
+    restore_value: false
+    initial_value: 1.000
+    min_value: 0.01
+    max_value: 10
+    step: 0.001
+    mode: box
+    set_action:
+      - lambda: |-
+          if (!pool_doser::state_edit_allowed(
+                id(dose).is_running(), id(run_sequence).is_running(),
+                id(delivery_open))) {
+            id(blocked_reason) = "safety_config_edit_blocked_during_sequence";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            return;
+          }
+          if (!pool_doser::calibration_factor_valid(x)) {
+            id(blocked_reason) = "invalid_calibration_factor";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            return;
+          }
+          id(calibration_factor).publish_state(roundf(x * 1000.0f) / 1000.0f);
+          id(output_rate).publish_state(pool_doser::calibrated_output_rate(
+              id(pump_gpd).state, id(calibration_factor).state));
+          id(save_settings).execute();
+
+  - platform: template
+    name: "Max Single Dose"
+    id: max_single_dose_oz
+    unit_of_measurement: "oz"
+    icon: mdi:alert-circle-outline
+    entity_category: config
+    optimistic: false
+    restore_value: false
+    initial_value: ${default_max_single_dose_oz}
+    min_value: 0.5
+    max_value: 128
+    step: 0.5
+    mode: box
+    set_action:
+      - lambda: |-
+          if (!pool_doser::state_edit_allowed(
+                id(dose).is_running(), id(run_sequence).is_running(),
+                id(delivery_open))) {
+            id(blocked_reason) = "safety_config_edit_blocked_during_sequence";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            return;
+          }
+          id(max_single_dose_oz).publish_state(x);
+          id(save_settings).execute();
+
+  - platform: template
+    name: "Pre-Run Seconds"
+    id: pre_run_s
+    unit_of_measurement: "s"
+    icon: mdi:timer-play-outline
+    entity_category: config
+    optimistic: false
+    restore_value: false
+    initial_value: ${default_pre_run_seconds}
+    min_value: 0
+    max_value: 1800
+    step: 1
+    mode: box
+    set_action:
+      - lambda: |-
+          if (!pool_doser::state_edit_allowed(
+                id(dose).is_running(), id(run_sequence).is_running(),
+                id(delivery_open))) {
+            id(blocked_reason) = "safety_config_edit_blocked_during_sequence";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            return;
+          }
+          id(pre_run_s).publish_state(x);
+          id(save_settings).execute();
+
+  - platform: template
+    name: "Minimum Rest Seconds"
+    id: min_rest_s
+    unit_of_measurement: "s"
+    icon: mdi:sleep
+    entity_category: config
+    optimistic: false
+    restore_value: false
+    initial_value: ${default_min_rest_seconds}
+    min_value: 0
+    max_value: 43200
+    step: 60
+    mode: box
+    set_action:
+      - lambda: |-
+          if (!pool_doser::state_edit_allowed(
+                id(dose).is_running(), id(run_sequence).is_running(),
+                id(delivery_open))) {
+            id(blocked_reason) = "safety_config_edit_blocked_during_sequence";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            return;
+          }
+          id(min_rest_s).publish_state(x);
+          if (x == 0.0f) pool_doser::rest_timer.start(millis(), 0);
+          id(save_settings).execute();
+          id(publish_idle_status).execute();
+
+# Relays — A drives K1, RS485-owned B drives K5; Finder power contacts in series
+
+switch:
+  - platform: gpio
+    pin: ${relay_a_pin}
+    id: relay_a
+    internal: true
+    restore_mode: ALWAYS_OFF
+
+  # Read-only mirror; only run_sequence may energize Relay B.
+  - platform: template
+    id: relay_b
+    internal: true
+    lambda: "return pool_doser::master_link.relay_b_closed;"
+    turn_off_action:
+      - lambda: |-
+          id(shutdown_state_verified) = false;
+          id(rs485_expected_ack_count) =
+            pool_doser::master_link.ack_count;
+          pool_doser::master_link.queue_request(pool_doser::ABORT_B,
+                                                id(rs485_transaction));
+
+  - platform: template
+    name: "Maintenance Lockout"
+    id: maintenance_lockout
+    icon: mdi:lock
+    # Normal operating control: show in Home Assistant's Controls card.
+    optimistic: false
+    restore_mode: DISABLED
+    turn_on_action:
+      - lambda: |-
+          pool_doser::master_maintenance.request(true);
+          id(maintenance_lockout).publish_state(true);
+      - if:
+          condition:
+            lambda: |-
+              return id(run_sequence).is_running() || id(dosing_active) ||
+                     id(delivery_open);
+          then:
+            - lambda: |-
+                id(blocked_reason) = "aborted_maintenance_lockout";
+                id(blocked_reason_text).publish_state(id(blocked_reason));
+            - script.execute: stop_dose
+          else:
+            - script.execute: force_outputs_safe
+      - script.execute: save_settings
+    turn_off_action:
+      - lambda: |-
+          pool_doser::master_maintenance.request(false);
+          // Remain ON until a reply to this request proves the slave radio off.
+          id(maintenance_lockout).publish_state(pool_doser::master_maintenance.locked());
+          id(save_settings).execute();
+
+# Inputs
+
+binary_sensor:
+  - platform: template
+    name: Clock Synchronized
+    id: clock_synchronized
+    entity_category: diagnostic
+    lambda: return id(nist_clock).sample().healthy;
+  # Dedicated normally-open pool flow switch wired directly to GPIO1 and GND.
+  - platform: gpio
+    pin:
+      number: ${flow_pin}
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: flow
+    name: "Flow"
+    device_class: moving
+    filters:
+      - delayed_on: ${flow_on_delay}
+      - delayed_off: ${flow_off_delay}
+    on_state:
+      - lambda: "pool_doser::acid_control.tick(millis(), x);"
+    on_release:
+      - if:
+          condition:
+            lambda: |-
+              return !id(rs485_abort_issued) &&
+                     pool_doser::sequence_requires_flow(
+                id(run_sequence).is_running(), id(dosing_active));
+          then:
+            - lambda: |-
+                id(blocked_reason) = id(dosing_active)
+                  ? "aborted_flow_lost" : "aborted_flow_lost_pre_run";
+                id(blocked_reason_text).publish_state(id(blocked_reason));
+            - script.execute: stop_dose
+
+  - platform: template
+    id: ac_present
+    name: "Outlet Live"
+    icon: mdi:power-socket-us
+    lambda: "return pool_doser::master_link.outlet_live;"
+    on_press:
+      - lambda: |-
+          if (id(dosing_active)) id(output_voltage_proven) = true;
+    on_release:
+      - if:
+          condition:
+            lambda: |-
+              // Once A is commanded off, losing outlet voltage is expected.
+              // Keep the reason that initiated shutdown while awaiting B.
+              if (!id(dosing_active) || !id(relay_a).state) return false;
+              const uint32_t elapsed = millis() - id(dose_start_ms);
+              return elapsed + 750U < id(dose_total_ms);
+          then:
+            - lambda: |-
+                id(blocked_reason) = "aborted_outlet_voltage_lost";
+                id(blocked_reason_text).publish_state(id(blocked_reason));
+            - script.execute: stop_dose
+
+  - platform: template
+    name: "Slave Link Healthy"
+    entity_category: diagnostic
+    lambda: "return pool_doser::master_link.connected();"
+
+  - platform: template
+    name: "Dose Sequence Active"
+    icon: mdi:progress-clock
+    lambda: "return id(run_sequence).is_running() || id(dosing_active);"
+
+  - platform: template
+    name: "Relay Fault"
+    device_class: problem
+    lambda: "return id(relay_fault);"
+
+  - platform: template
+    name: "Configuration Error"
+    device_class: problem
+    entity_category: diagnostic
+    lambda: "return !id(settings_ok);"
+
+# Telemetry
+
+sensor:
+  - platform: template
+    name: Clock Sync Age
+    id: clock_sync_age
+    entity_category: diagnostic
+    unit_of_measurement: s
+    update_interval: 5s
+    lambda: |-
+      const auto clock = id(nist_clock).sample();
+      return clock.synchronized ? float(clock.sync_age_ms) / 1000 : NAN;
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    id: wifi_signal_dbm
+    entity_category: diagnostic
+    update_interval: 30s
+
+  - platform: template
+    name: "Slave WiFi Signal"
+    id: slave_wifi_signal_dbm
+    unit_of_measurement: "dBm"
+    accuracy_decimals: 0
+    device_class: signal_strength
+    state_class: measurement
+    entity_category: diagnostic
+    update_interval: 5s
+    lambda: |-
+      if (!id(maintenance_lockout).state) return NAN;
+      const auto &link = pool_doser::master_link;
+      return pool_doser::slave_wifi_rssi(link.connected(), link.received);
+
+  - platform: template
+    name: "Dose Progress"
+    id: dose_progress
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    icon: mdi:progress-clock
+    update_interval: never
+
+  # Estimated ounces actually pumped by the last dose; RAM only.
+  - platform: template
+    name: "Last Delivered"
+    id: last_delivered_oz
+    unit_of_measurement: "oz"
+    accuracy_decimals: 1
+    icon: mdi:history
+    update_interval: never
+
+  - platform: template
+    name: "Output Rate"
+    id: output_rate
+    # Estimated pump flow rate; keep the name stable to preserve the entity ID.
+    unit_of_measurement: "oz/min"
+    accuracy_decimals: 3
+    icon: mdi:speedometer
+    entity_category: diagnostic
+    update_interval: 30s
+    lambda: "return pool_doser::calibrated_output_rate(id(pump_gpd).state, id(calibration_factor).state);"
+
+text_sensor:
+  - platform: template
+    name: "Request Readiness"
+    id: auto_status
+    icon: mdi:water-sync
+    update_interval: never
+
+  - platform: template
+    name: "Status"
+    id: dose_status
+    icon: mdi:information-outline
+    update_interval: never
+
+  - platform: template
+    name: "Blocked Reason"
+    id: blocked_reason_text
+    icon: mdi:comment-alert-outline
+    entity_category: diagnostic
+    update_interval: never
+
+# Periodic
+
+interval:
+  - interval: 50ms
+    then:
+      - lambda: |-
+          pool_doser::acid_control.tick(millis(), id(flow).has_state() && id(flow).state);
+          auto &link = pool_doser::master_link;
+          auto &maintenance = pool_doser::master_maintenance;
+          const bool maintenance_outputs_safe =
+            !id(relay_a).state && !id(run_sequence).is_running() &&
+            !id(dosing_active) && !id(delivery_open) &&
+            !id(stop_dose).is_running() &&
+            (uint32_t) (millis() - id(relays_off_ms)) >= ${relay_settle_ms}U;
+          link.request_flags = maintenance.flags(maintenance_outputs_safe);
+          link.request_generation = maintenance.generation();
+          link.poll(id(rs485_uart));
+          if (link.peer_changed) {
+            link.peer_changed = false;
+            id(blocked_reason) = "aborted_peer_restart";
+            pool_doser::acid_control.pause();
+            if (id(run_sequence).is_running() || id(delivery_open)) id(stop_dose).execute();
+            else id(force_outputs_safe).execute();
+          }
+          if (maintenance.release(link, maintenance_outputs_safe))
+            id(maintenance_lockout).publish_state(false);
+          link.service_master(id(rs485_uart));
+          if (!link.frame_ready) return;
+          link.frame_ready = false;
+          if (link.received.command != pool_doser::STATUS_RESPONSE) return;
+          link.transaction = link.received.transaction;
+          link.relay_b_closed = link.received.flags & pool_doser::RELAY_B_CLOSED;
+          link.outlet_live = link.received.flags & pool_doser::OUTLET_LIVE;
+          link.active = link.received.flags & pool_doser::B_ACTIVE;
+          link.fault = link.received.fault;
+          if (pool_doser::physical_fault(link.fault) && !id(relay_fault)) {
+            id(latch_relay_fault_safely).execute();
+          }
+          const bool relays_settled =
+            (uint32_t) (millis() - id(relays_off_ms)) >= ${relay_settle_ms}U;
+          if (pool_doser::should_latch_idle_outlet_fault(
+                id(run_sequence).is_running(), id(dosing_active),
+                id(relay_a).state, link.relay_b_closed, link.outlet_live,
+                relays_settled, id(relay_fault))) {
+            // Live output with both relays open is contradictory.
+            id(blocked_reason) = "fault_outlet_live_when_off";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            id(dose_status).publish_state("FAULT - outlet live while relays open");
+            id(latch_relay_fault_safely).execute();
+          }
+          const uint32_t elapsed = millis() - id(dose_start_ms);
+          if (pool_doser::should_abort_for_slave_output(
+                id(dosing_active), id(output_voltage_proven),
+                elapsed, id(dose_total_ms), link.outlet_live, link.active, link.fault,
+                id(rs485_abort_issued))) {
+            id(rs485_abort_issued) = true;
+            id(blocked_reason) = "aborted_slave_output_lost";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            id(stop_dose).execute();
+          }
+
+  - interval: 250ms
+    then:
+      - lambda: |-
+          auto &link = pool_doser::master_link;
+          link.queue_request(pool_doser::STATUS_REQUEST,
+                             id(rs485_transaction));
+          if (pool_doser::should_abort_link_failure(
+                id(run_sequence).is_running(), id(dosing_active),
+                link.connected(), link.request_failed, id(rs485_abort_issued))) {
+            id(rs485_abort_issued) = true;
+            id(blocked_reason) = "aborted_rs485_link_lost";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            id(stop_dose).execute();
+          }
+
+  - interval: 1s
+    then:
+      - lambda: "pool_doser::rest_timer.tick(millis());"
+      - script.execute: refresh_acid_status
+      - if:
+          condition:
+            lambda: |-
+              return !id(dose).is_running() && !id(run_sequence).is_running() &&
+                     !id(stop_dose).is_running() && !id(runtime_guard).is_running() &&
+                     !id(clear_relay_fault).is_running() && !id(dosing_active) &&
+                     !id(delivery_open);
+          then:
+            - script.execute: publish_idle_status
+      - if:
+          condition:
+            lambda: "return id(dosing_active) && id(dose_total_ms) > 0;"
+          then:
+            - sensor.template.publish:
+                id: dose_progress
+                state: !lambda |-
+                  uint32_t el = millis() - id(dose_start_ms);
+                  float p = 100.0f * (float) el / (float) id(dose_total_ms);
+                  return p > 100.0f ? 100.0f : p;
+
+  - interval: ${poll_interval}
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return !id(rs485_abort_issued) &&
+                     pool_doser::should_abort_for_flow(
+                id(run_sequence).is_running(), id(dosing_active),
+                id(flow).has_state(), id(flow).state);
+          then:
+            - lambda: |-
+                id(blocked_reason) = "aborted_flow_lost";
+                id(blocked_reason_text).publish_state(id(blocked_reason));
+            - script.execute: stop_dose
+
+# Logic
+
+script:
+  - id: refresh_acid_status
+    mode: restart
+    then:
+      - lambda: |-
+          const auto clock = id(nist_clock).sample();
+          pool_doser::acid_control.set_clock(millis(), clock.utc_ms, clock.healthy, clock.generation);
+          auto &s = pool_doser::automatic_state;
+          const bool busy = id(dose).is_running() || id(run_sequence).is_running() ||
+            id(stop_dose).is_running() || id(delivery_open) ||
+            id(clear_relay_fault).is_running();
+          if (!id(settings_ok)) id(auto_reason) = "configuration_save_failed";
+          else if (id(relay_fault)) id(auto_reason) = "relay_fault";
+          else if (id(maintenance_lockout).state) id(auto_reason) = "maintenance_lockout";
+          else if (busy) id(auto_reason) = "request_pending";
+          else id(auto_reason) = pool_doser::acid_control.reason(millis(), s);
+          if (id(auto_reason) == "ready") {
+            id(auto_check_only) = true;
+            id(evaluate_dose_request).execute(pool_doser::ACID_PULSE_OZ, false);
+            id(auto_check_only) = false;
+          }
+          if (id(auto_reason) != "ready") pool_doser::acid_control.invalidate_token();
+          const std::string status = id(auto_reason) == "ready" ? "Ready" : "Paused: " + id(auto_reason);
+          if (id(auto_status).state != status) id(auto_status).publish_state(status);
+
+  # Immediate abort only. The HA STOP control owns persistent Auto Off intent.
+  - id: operator_stop
+    mode: restart
+    then:
+      - script.execute: force_outputs_safe
+      - lambda: |-
+          pool_doser::acid_control.pause();
+          id(blocked_reason) = "user_abort";
+          id(blocked_reason_text).publish_state(id(blocked_reason));
+      - script.execute: stop_dose
+
+  # Display only: preserve diagnostic reasons and never change dosing gates.
+  # Called after shutdown and while idle so Resting clears when its timer ends.
+  - id: publish_idle_status
+    mode: restart
+    then:
+      - lambda: |-
+          const char *status;
+          if (!id(settings_ok)) {
+            status = "FAULT - configuration";
+          } else if (id(relay_fault)) {
+            status = "FAULT - relay verification latched";
+          } else if (id(maintenance_lockout).state) {
+            // Retain the explicit confirmation from the recovery action.
+            status = id(dose_status).state == "Fault cleared - maintenance lockout"
+              ? "Fault cleared - maintenance lockout" : "Maintenance lockout";
+          } else if (id(blocked_reason) == "watchdog_timeout") {
+            status = "WATCHDOG - forced off";
+          } else if ((pool_doser::rest_timer.remaining(millis()) != 0)) {
+            status = "Resting";
+          } else {
+            // Idle does not promise a particular request will pass its checks.
+            status = "Idle";
+          }
+          if (id(dose_status).state != status)
+            id(dose_status).publish_state(status);
+
+  # Make outputs safe before any write, wait, or cancellation.
+  - id: force_outputs_safe
+    mode: restart
+    then:
+      - switch.turn_off: relay_a
+      - switch.turn_off: relay_b
+      - lambda: "id(relays_off_ms) = millis();"
+      - script.stop: runtime_guard
+
+  # Physical shutdown precedes the RAM fault latch.
+  - id: latch_relay_fault_safely
+    mode: restart
+    then:
+      - script.execute: force_outputs_safe
+      - lambda: |-
+          id(relay_fault) = true;
+      - script.execute: publish_idle_status
+
+  # Keep the Master latched until fresh replies prove safe Slave recovery.
+  - id: clear_relay_fault
+    mode: single
+    then:
+      - lambda: |-
+          if (!id(maintenance_lockout).state ||
+              id(dose).is_running() || id(run_sequence).is_running() ||
+              id(dosing_active) || id(delivery_open) ||
+              id(stop_dose).is_running() || id(relay_a).state) {
+            id(blocked_reason) = "relay_fault_recovery_requires_lockout_and_safe_outputs";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            id(dose_status).publish_state("Fault clear refused - lockout and idle outputs required");
+            id(clear_relay_fault).stop();
+            return;
+          }
+          // This latch also prevents dose requests if lockout is removed
+          // during either asynchronous exchange.
+          id(relay_fault) = true;
+          id(recovery_transaction) = pool_doser::master_link.transaction;
+          id(dose_status).publish_state("Clearing relay fault");
+          id(recovery_expected_ack_count) = pool_doser::master_link.ack_count;
+          pool_doser::master_link.queue_request(
+            pool_doser::PROBE_STATUS, id(recovery_transaction));
+      - wait_until:
+          condition:
+            lambda: |-
+              return pool_doser::master_link.fresh_ack(
+                pool_doser::PROBE_STATUS, id(recovery_transaction),
+                id(recovery_expected_ack_count));
+          timeout: 1s
+      - lambda: |-
+          const auto &link = pool_doser::master_link;
+          const auto &frame = link.received;
+          // The pre-clear probe may report a fault, but must prove the
+          // physical output is off before CLEAR_FAULT is sent.
+          if (!id(maintenance_lockout).state ||
+              id(dose).is_running() || id(run_sequence).is_running() ||
+              id(dosing_active) || id(delivery_open) ||
+              id(stop_dose).is_running() || id(relay_a).state ||
+              !link.connected() || !link.fresh_ack(
+                pool_doser::PROBE_STATUS, id(recovery_transaction),
+                id(recovery_expected_ack_count)) ||
+              frame.command != pool_doser::STATUS_RESPONSE ||
+              frame.transaction != id(recovery_transaction) ||
+              (frame.flags & (pool_doser::B_ACTIVE |
+                pool_doser::RELAY_B_CLOSED | pool_doser::OUTLET_LIVE))) {
+            id(blocked_reason) = "relay_fault_recovery_safe_probe_failed";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            id(dose_status).publish_state("Fault clear failed - safe Slave state not confirmed");
+            id(clear_relay_fault).stop();
+            return;
+          }
+          id(recovery_expected_ack_count) = link.ack_count;
+          pool_doser::master_link.queue_request(
+            pool_doser::CLEAR_FAULT, id(recovery_transaction));
+      - wait_until:
+          condition:
+            lambda: |-
+              return pool_doser::master_link.fresh_ack(
+                pool_doser::CLEAR_FAULT, id(recovery_transaction),
+                id(recovery_expected_ack_count));
+          timeout: 1s
+      - lambda: |-
+          const auto &link = pool_doser::master_link;
+          const auto &frame = link.received;
+          if (!id(maintenance_lockout).state ||
+              id(dose).is_running() || id(run_sequence).is_running() ||
+              id(dosing_active) || id(delivery_open) ||
+              id(stop_dose).is_running() || id(relay_a).state ||
+              frame.command != pool_doser::STATUS_RESPONSE ||
+              !pool_doser::verified_slave_shutdown(
+                link.connected(), link.fresh_ack(
+                  pool_doser::CLEAR_FAULT, id(recovery_transaction),
+                  id(recovery_expected_ack_count)),
+                frame.transaction == id(recovery_transaction),
+                frame.flags, frame.fault)) {
+            id(blocked_reason) = "relay_fault_recovery_clear_ack_failed";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            id(dose_status).publish_state("Fault clear failed - Slave clear not confirmed");
+            id(clear_relay_fault).stop();
+            return;
+          }
+          id(relay_fault) = false;
+          id(blocked_reason) = "maintenance_lockout";
+          id(blocked_reason_text).publish_state(id(blocked_reason));
+          id(dose_status).publish_state("Fault cleared - maintenance lockout");
+
+  # Called only by deliberate settings/intent actions; unchanged values are skipped.
+  - id: save_settings
+    mode: single
+    then:
+      - lambda: |-
+          pool_doser::Settings next;
+          next.pump_gpd = id(pump_gpd).state;
+          next.calibration_factor_milli = std::lround(id(calibration_factor).state * 1000.0f);
+          next.max_single_dose_oz = id(max_single_dose_oz).state;
+          next.pre_run_s = id(pre_run_s).state;
+          next.min_rest_s = id(min_rest_s).state;
+          next.maintenance = pool_doser::master_maintenance.requested();
+          if (!pool_doser::settings_store.loaded()) {
+            // Edits never save displayed defaults as real settings; the
+            // deliberate import_operating_settings action creates the record.
+            id(settings_ok) = false;
+            id(blocked_reason) = "configuration_required";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+            return;
+          }
+          id(settings_ok) = pool_doser::settings_store.save_edit(next);
+          if (!id(settings_ok)) {
+            id(blocked_reason) = "configuration_save_failed";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+          }
+
+  # Relay A is already open. Missing communication is an interruption.
+  - id: await_slave_shutdown
+    mode: restart
+    then:
+      - wait_until:
+          condition:
+            lambda: |-
+              const auto &frame = pool_doser::master_link.received;
+              const bool fresh_abort = pool_doser::master_link.fresh_ack(
+                pool_doser::ABORT_B, id(rs485_transaction),
+                id(rs485_expected_ack_count));
+              return frame.command == pool_doser::STATUS_RESPONSE &&
+                     pool_doser::verified_slave_shutdown(
+                       pool_doser::master_link.connected(), fresh_abort,
+                       frame.transaction == id(rs485_transaction),
+                       frame.flags, frame.fault);
+          timeout: 750ms
+      - lambda: |-
+          const auto &frame = pool_doser::master_link.received;
+          const bool fresh_abort = pool_doser::master_link.fresh_ack(
+            pool_doser::ABORT_B, id(rs485_transaction),
+            id(rs485_expected_ack_count));
+          id(shutdown_state_verified) =
+            frame.command == pool_doser::STATUS_RESPONSE &&
+            pool_doser::verified_slave_shutdown(
+              pool_doser::master_link.connected(), fresh_abort,
+              frame.transaction == id(rs485_transaction), frame.flags,
+              frame.fault);
+          // Only a fresh, contradictory physical report proves a shutdown fault.
+          if (id(delivery_open) && !id(shutdown_state_verified) && fresh_abort &&
+              pool_doser::master_link.connected() &&
+              (frame.flags & (pool_doser::B_ACTIVE | pool_doser::RELAY_B_CLOSED | pool_doser::OUTLET_LIVE))) {
+            id(relay_fault) = true;
+            id(blocked_reason) = "fault_shutdown_not_verified";
+            id(blocked_reason_text).publish_state(id(blocked_reason));
+          }
+
+  - id: finalize_delivery
+    mode: single
+    then:
+      - lambda: |-
+          auto &s = pool_doser::automatic_state;
+          if (s.result != pool_doser::DoseResult::ACCEPTED) return;
+          // Scale the accepted amount by proven pump run time. Rejected requests
+          // and stops before the pump ran leave the previous value unchanged.
+          if (id(output_voltage_proven) && id(dose_total_ms) > 0) {
+            const uint32_t since_start = millis() - id(dose_start_ms);
+            const uint32_t until_off = id(relays_off_ms) - id(dose_start_ms);
+            const uint32_t ran = std::min(until_off <= since_start ? until_off : since_start,
+                                          id(dose_total_ms));
+            if (ran > 0)
+              id(last_delivered_oz).publish_state(
+                s.requested_oz * float(ran) / float(id(dose_total_ms)));
+          }
+          const auto &link = pool_doser::master_link;
+          const auto &frame = link.received;
+          const bool verified = id(delivery_open) && id(shutdown_state_verified) &&
+            frame.command == pool_doser::STATUS_RESPONSE &&
+            frame.transaction == id(rs485_transaction) && link.connected() && !link.peer_changed;
+          pool_doser::acid_control.finish(millis(), s,
+            id(sequence_completed) && verified, id(blocked_reason));
+          // Rest follows relay proving/delivery only; a pre-run stop delivered nothing.
+          if (id(delivery_open))
+            pool_doser::rest_timer.start(millis(), uint32_t(id(min_rest_s).state * 1000));
+          id(delivery_open) = false;
+          id(output_voltage_proven) = false;
+          id(shutdown_state_verified) = false;
+          id(dosing_active) = false;
+
+  # Evaluate at request time and again immediately before energizing.
+  - id: evaluate_dose_request
+    mode: single
+    parameters:
+      ounces: float
+      pre_start: bool
+    then:
+      - lambda: |-
+          std::string r = "ok";
+          bool latch_relay_fault = false;
+          const float pump_gpd_value = id(pump_gpd).state;
+          const float factor = id(calibration_factor).state;
+          const float cal = pool_doser::calibrated_output_rate(pump_gpd_value, factor);
+          const float max_single = id(max_single_dose_oz).state;
+          const float min_rest = id(min_rest_s).state;
+          const bool relays_settled =
+            (uint32_t) (millis() - id(relays_off_ms)) >= ${relay_settle_ms}U;
+
+          if (!id(settings_ok)) {
+            r = "configuration_save_failed";
+          } else if (id(relay_fault)) {
+            r = "relay_fault";
+          } else if (!pre_start && (id(run_sequence).is_running() ||
+                     id(stop_dose).is_running() || id(delivery_open))) {
+            r = "busy";
+          } else if (!pool_doser::master_link.connected() ||
+                     pool_doser::master_link.request_failed) {
+            r = "slave_link_unavailable";
+          } else if (pool_doser::master_link.fault != pool_doser::FAULT_NONE) {
+            r = "slave_fault";
+          } else if (!relays_settled) {
+            r = "relay_sensors_settling";
+          } else if (id(ac_present).state) {
+            r = "fault_outlet_live_when_off";
+            latch_relay_fault = true;
+          } else if (!(id(flow).has_state() && id(flow).state)) {
+            r = pre_start ? "aborted_flow_lost_pre_run" : "no_flow";
+          } else if (id(maintenance_lockout).state) {
+            r = "maintenance_lockout";
+          } else if (!std::isfinite(pump_gpd_value) ||
+                     !(pump_gpd_value > 0.0f)) {
+            r = "calibration_not_set";
+          } else if (!pool_doser::calibration_factor_valid(factor)) {
+            r = "invalid_calibration_factor";
+          } else if (!std::isfinite(cal) || !(cal > 0.0f)) {
+            r = "calibration_not_set";
+          } else if (!std::isfinite(ounces) || ounces <= 0.0f) {
+            r = "invalid_request";
+          } else if (!std::isfinite(max_single) || max_single <= 0.0f ||
+                     !std::isfinite(min_rest) || min_rest < 0.0f) {
+            r = "invalid_safety_configuration";
+          } else if (ounces > max_single) {
+            r = "exceeds_single_dose_limit";
+          } else {
+            const float runtime_min = ounces / cal;
+            if (!std::isfinite(runtime_min) || runtime_min <= 0.0f) {
+              r = "invalid_runtime";
+            } else if (runtime_min > ${max_runtime_min}) {
+              r = "exceeds_runtime_ceiling";
+            } else if ((pool_doser::rest_timer.remaining(millis()) != 0)) {
+              r = "resting";
+            } else {
+              const float runtime_ms = runtime_min * 60000.0f;
+              if (!std::isfinite(runtime_ms) || runtime_ms < 1.0f ||
+                  runtime_ms > (float) UINT32_MAX) {
+                r = "invalid_runtime";
+              } else if (runtime_ms < (float) pool_doser::MIN_DOSE_MS) {
+                r = "dose_runtime_below_1_second_minimum";
+              } else {
+                id(dose_total_ms) = (uint32_t) runtime_ms;
+              }
+            }
+          }
+
+          if (id(auto_check_only)) {
+            id(auto_reason) = r == "ok" ? "ready" : r;
+            return;
+          }
+          if (latch_relay_fault) {
+            id(latch_relay_fault_safely).execute();
+          }
+          id(blocked_reason) = r;
+          id(blocked_reason_text).publish_state(r);
+
+  - id: dose
+    mode: single
+    parameters:
+      ounces: float
+      request_id: string
+    then:
+      - lambda: |-
+          id(auto_request_token).clear();
+          id(auto_reply_request_id) = request_id;
+          if (!request_id.empty()) {
+            const auto clock = id(nist_clock).sample();
+            pool_doser::acid_control.set_clock(millis(), clock.utc_ms, clock.healthy, clock.generation);
+            if (!pool_doser::acid_control.consume(millis(), request_id)) {
+              id(auto_request_reply) = request_id ==
+                pool_doser::automatic_state.request_id
+                ? "duplicate" : "expired_or_unknown_request";
+              id(dose).stop();
+              return;
+            }
+            // The script itself is running; check the live automatic gates
+            // here, with the shared safety evaluation immediately below.
+            auto &s = pool_doser::automatic_state;
+            const auto reason = pool_doser::acid_control.reason(millis(), s);
+            if (reason != "ready") {
+              id(auto_request_reply) = reason;
+              id(dose).stop();
+              return;
+            }
+          } else {
+            pool_doser::acid_control.invalidate_token();
+          }
+      - script.execute:
+          id: evaluate_dose_request
+          ounces: !lambda "return ounces;"
+          pre_start: false
+      - script.wait: evaluate_dose_request
+      - if:
+          condition:
+            lambda: 'return id(blocked_reason) == "ok";'
+          then:
+            - lambda: |-
+                auto &s = pool_doser::automatic_state;
+                pool_doser::acid_control.accept(s,
+                  request_id.empty() ? pool_doser::acid_control.next_id() : request_id,
+                  ounces, !request_id.empty());
+                id(auto_reply_request_id) = s.request_id;
+                id(auto_request_reply) = "accepted";
+            - script.execute:
+                id: run_sequence
+                ounces: !lambda "return ounces;"
+          else:
+            - lambda: "id(auto_request_reply) = id(blocked_reason);"
+            - text_sensor.template.publish:
+                id: dose_status
+                state: !lambda 'return "Blocked: " + id(blocked_reason);'
+            - logger.log:
+                level: WARN
+                format: "Dose refused: %s"
+                args: ["id(blocked_reason).c_str()"]
+  - id: run_sequence
+    mode: single
+    parameters:
+      ounces: float
+    then:
+      - lambda: |-
+          id(sequence_completed) = false;
+          id(rs485_transaction)++;
+          if (id(rs485_transaction) == 0) id(rs485_transaction) = 1;
+          id(rs485_abort_issued) = false;
+          id(shutdown_state_verified) = false;
+      - text_sensor.template.publish: {id: dose_status, state: "Pre-run"}
+      - delay: !lambda "return id(pre_run_s).state * 1000;"
+      - script.execute:
+          id: evaluate_dose_request
+          ounces: !lambda "return ounces;"
+          pre_start: true
+      - script.wait: evaluate_dose_request
+      - if:
+          condition:
+            lambda: 'return id(blocked_reason) != "ok";'
+          then:
+            - script.execute: stop_dose
+      - if:
+          condition:
+            lambda: 'return id(blocked_reason) == "ok";'
+          then:
+            - lambda: "id(delivery_open) = true;"
+            # Test 1: A open, B closed; outlet must remain dead.
+            - text_sensor.template.publish: {id: dose_status, state: "Testing Relay A"}
+            - switch.turn_off: relay_a
+            - lambda: |-
+                id(rs485_expected_ack_count) =
+                  pool_doser::master_link.ack_count;
+                pool_doser::master_link.queue_request(pool_doser::TEST_CLOSE_B,
+                                                      id(rs485_transaction), 2000);
+            - wait_until:
+                condition:
+                  lambda: |-
+                    return pool_doser::master_link.fresh_ack(
+                      pool_doser::TEST_CLOSE_B, id(rs485_transaction),
+                      id(rs485_expected_ack_count));
+                timeout: 650ms
+            # Allow the detector assertion filter to settle.
+            - delay: 350ms
+            - lambda: |-
+                id(rs485_expected_ack_count) =
+                  pool_doser::master_link.ack_count;
+                pool_doser::master_link.queue_request(
+                  pool_doser::PROBE_STATUS, id(rs485_transaction));
+            - wait_until:
+                condition:
+                  lambda: |-
+                    return pool_doser::master_link.fresh_ack(
+                      pool_doser::PROBE_STATUS, id(rs485_transaction),
+                      id(rs485_expected_ack_count));
+                timeout: 650ms
+            - if:
+                condition:
+                  lambda: |-
+                    return !pool_doser::one_open_relay_proof_passed(
+                      pool_doser::master_link.fresh_ack(
+                        pool_doser::PROBE_STATUS, id(rs485_transaction),
+                        id(rs485_expected_ack_count)),
+                      pool_doser::master_link.transaction ==
+                        id(rs485_transaction),
+                      pool_doser::master_link.relay_b_closed, true,
+                      pool_doser::master_link.outlet_live,
+                      pool_doser::master_link.fault);
+                then:
+                  - lambda: |-
+                      const auto &link = pool_doser::master_link;
+                      const bool physical = link.fresh_ack(pool_doser::PROBE_STATUS,
+                        id(rs485_transaction), id(rs485_expected_ack_count)) &&
+                        !pool_doser::interruption_fault(link.fault);
+                      id(blocked_reason) = physical ? "fault_relay_a_welded" : "aborted_relay_proof_interruption";
+                      id(blocked_reason_text).publish_state(id(blocked_reason));
+                      if (physical) id(latch_relay_fault_safely).execute();
+                  - script.execute: stop_dose
+                else:
+                  - lambda: |-
+                      id(rs485_expected_ack_count) =
+                        pool_doser::master_link.ack_count;
+                      pool_doser::master_link.queue_request(pool_doser::OPEN_B,
+                                                            id(rs485_transaction));
+                  - wait_until:
+                      condition:
+                        lambda: |-
+                          return pool_doser::master_link.fresh_ack(
+                                   pool_doser::OPEN_B, id(rs485_transaction),
+                                   id(rs485_expected_ack_count)) &&
+                                 !pool_doser::master_link.relay_b_closed;
+                      timeout: 650ms
+                  - wait_until:
+                      condition:
+                        lambda: "return !pool_doser::master_link.outlet_live;"
+                      timeout: 500ms
+                  - if:
+                      condition:
+                        lambda: |-
+                          return !pool_doser::master_link.fresh_ack(
+                                   pool_doser::OPEN_B, id(rs485_transaction),
+                                   id(rs485_expected_ack_count)) ||
+                                 pool_doser::master_link.outlet_live ||
+                                 pool_doser::master_link.relay_b_closed;
+                      then:
+                        - lambda: |-
+                            const auto &link = pool_doser::master_link;
+                            const bool physical = link.fresh_ack(pool_doser::OPEN_B,
+                              id(rs485_transaction), id(rs485_expected_ack_count)) &&
+                              !pool_doser::interruption_fault(link.fault);
+                            id(blocked_reason) = physical ? "fault_relay_b_did_not_open" : "aborted_relay_proof_interruption";
+                            id(blocked_reason_text).publish_state(id(blocked_reason));
+                            if (physical) id(latch_relay_fault_safely).execute();
+                        - script.execute: stop_dose
+                      else:
+                        # Test 2: A closed, B open; outlet must remain dead.
+                        - text_sensor.template.publish: {id: dose_status, state: "Testing Relay B"}
+                        - switch.turn_on: relay_a
+                        - script.execute: runtime_guard
+                        - delay: 350ms
+                        - lambda: |-
+                            id(rs485_expected_ack_count) =
+                              pool_doser::master_link.ack_count;
+                            pool_doser::master_link.queue_request(
+                              pool_doser::PROBE_STATUS,
+                              id(rs485_transaction));
+                        - wait_until:
+                            condition:
+                              lambda: |-
+                                return pool_doser::master_link.fresh_ack(
+                                  pool_doser::PROBE_STATUS,
+                                  id(rs485_transaction),
+                                  id(rs485_expected_ack_count));
+                            timeout: 650ms
+                        - if:
+                            condition:
+                              lambda: |-
+                                return !pool_doser::one_open_relay_proof_passed(
+                                  pool_doser::master_link.fresh_ack(
+                                    pool_doser::PROBE_STATUS,
+                                    id(rs485_transaction),
+                                    id(rs485_expected_ack_count)),
+                                  pool_doser::master_link.transaction ==
+                                    id(rs485_transaction),
+                                  pool_doser::master_link.relay_b_closed, false,
+                                  pool_doser::master_link.outlet_live,
+                                  pool_doser::master_link.fault);
+                            then:
+                              - lambda: |-
+                                  const auto &link = pool_doser::master_link;
+                                  const bool physical = link.fresh_ack(pool_doser::PROBE_STATUS,
+                                    id(rs485_transaction), id(rs485_expected_ack_count)) &&
+                                    !pool_doser::interruption_fault(link.fault);
+                                  id(blocked_reason) = physical ? "fault_relay_b_welded" : "aborted_relay_proof_interruption";
+                                  id(blocked_reason_text).publish_state(id(blocked_reason));
+                                  if (physical) id(latch_relay_fault_safely).execute();
+                              - script.execute: stop_dose
+                            else:
+                              # Test 3: A and timed B closed; power must prove.
+                              - switch.turn_off: relay_a
+                              - script.stop: runtime_guard
+                              - lambda: "id(relays_off_ms) = millis();"
+                              - lambda: |-
+                                  id(dose_start_ms) = millis();
+                                  id(output_voltage_proven) = false;
+                              - if:
+                                  condition:
+                                    lambda: |-
+                                      return !pool_doser::delivery_start_interlocks_passed(
+                                        id(settings_ok),
+                                        pool_doser::master_link.connected(),
+                                        pool_doser::master_link.request_failed,
+                                        pool_doser::master_link.fault,
+                                        id(flow).has_state(), id(flow).state,
+                                        id(maintenance_lockout).state,
+                                        id(relay_fault),
+                                        pool_doser::master_link.transaction ==
+                                          id(rs485_transaction),
+                                        id(relay_a).state,
+                                        pool_doser::master_link.active,
+                                        pool_doser::master_link.relay_b_closed,
+                                        pool_doser::master_link.outlet_live);
+                                  then:
+                                    - lambda: |-
+                                        id(blocked_reason) =
+                                          "delivery_start_interlock_changed";
+                                        id(blocked_reason_text).publish_state(
+                                          id(blocked_reason));
+                                    - script.execute: stop_dose
+                                  else:
+                                    - switch.turn_on: relay_a
+                                    - script.execute: runtime_guard
+                                    - lambda: |-
+                                        id(dosing_active) = true;
+                                        id(rs485_expected_ack_count) =
+                                          pool_doser::master_link.ack_count;
+                                        pool_doser::master_link.queue_request(
+                                          pool_doser::DOSE_B,
+                                          id(rs485_transaction), id(dose_total_ms));
+                              - sensor.template.publish: {id: dose_progress, state: 0.0}
+                              - text_sensor.template.publish: {id: dose_status, state: "Dosing"}
+                              - wait_until:
+                                  condition:
+                                    lambda: |-
+                                      return pool_doser::master_link.fresh_ack(
+                                               pool_doser::DOSE_B,
+                                               id(rs485_transaction),
+                                               id(rs485_expected_ack_count)) &&
+                                             pool_doser::master_link.outlet_live &&
+                                             pool_doser::master_link.active &&
+                                             pool_doser::master_link.relay_b_closed;
+                                  timeout: 1s
+                              - if:
+                                  condition:
+                                    lambda: |-
+                                      return pool_doser::master_link.fresh_ack(
+                                               pool_doser::DOSE_B,
+                                               id(rs485_transaction),
+                                               id(rs485_expected_ack_count)) &&
+                                             pool_doser::master_link.outlet_live &&
+                                             pool_doser::master_link.active &&
+                                             pool_doser::master_link.fault == pool_doser::FAULT_NONE;
+                                  then:
+                                    - lambda: |-
+                                        id(output_voltage_proven) = true;
+                                        // Align with the Slave's confirmed start.
+                                        id(dose_start_ms) = millis();
+                                    - delay: !lambda |-
+                                        const uint32_t elapsed = millis() - id(dose_start_ms);
+                                        return elapsed < id(dose_total_ms)
+                                          ? id(dose_total_ms) - elapsed : 0;
+                                    # Include the detector's 200 ms release.
+                                    - wait_until:
+                                        condition:
+                                          lambda: |-
+                                            return pool_doser::master_link.transaction ==
+                                                     id(rs485_transaction) &&
+                                                   !pool_doser::master_link.active &&
+                                                   !pool_doser::master_link.relay_b_closed &&
+                                                   !pool_doser::master_link.outlet_live;
+                                        timeout: 2s
+                                    - if:
+                                        condition:
+                                          lambda: |-
+                                            return pool_doser::master_link.active ||
+                                                   pool_doser::master_link.relay_b_closed ||
+                                                   pool_doser::master_link.outlet_live ||
+                                                   pool_doser::master_link.fault != pool_doser::FAULT_NONE;
+                                        then:
+                                          - lambda: |-
+                                              id(blocked_reason) =
+                                                pool_doser::master_link.fault != pool_doser::FAULT_NONE
+                                                  ? "fault_slave_completion"
+                                                  : "fault_relay_b_welded";
+                                              id(blocked_reason_text).publish_state(id(blocked_reason));
+                                              const auto &link = pool_doser::master_link;
+                                              if (link.connected() && !link.request_failed &&
+                                                  link.transaction == id(rs485_transaction) &&
+                                                  !pool_doser::interruption_fault(link.fault))
+                                                id(latch_relay_fault_safely).execute();
+                                        else:
+                                          - lambda: |-
+                                              const auto &frame =
+                                                pool_doser::master_link.received;
+                                              id(shutdown_state_verified) =
+                                                frame.command == pool_doser::STATUS_RESPONSE &&
+                                                pool_doser::verified_slave_shutdown(
+                                                  pool_doser::master_link.connected(),
+                                                  true,
+                                                  frame.transaction ==
+                                                    id(rs485_transaction),
+                                                  frame.flags, frame.fault);
+                                    - switch.turn_off: relay_a
+                                    - script.stop: runtime_guard
+                                    - lambda: "id(sequence_completed) = id(shutdown_state_verified) && !id(relay_fault);"
+                                    - script.execute: finalize_delivery
+                                    - script.wait: finalize_delivery
+                                    - lambda: "id(relays_off_ms) = millis();"
+                                    - sensor.template.publish: {id: dose_progress, state: 100.0}
+                                    - if:
+                                        condition:
+                                          lambda: "return !id(relay_fault) && id(settings_ok);"
+                                        then:
+                                          - sensor.template.publish: {id: dose_progress, state: 0.0}
+                                          - lambda: |-
+                                              id(blocked_reason) = "idle";
+                                              id(blocked_reason_text).publish_state(id(blocked_reason));
+                                    - script.execute: publish_idle_status
+                                  else:
+                                    - lambda: |-
+                                        const auto &link = pool_doser::master_link;
+                                        const bool physical = link.fresh_ack(pool_doser::DOSE_B,
+                                          id(rs485_transaction), id(rs485_expected_ack_count)) &&
+                                          !pool_doser::interruption_fault(link.fault);
+                                        id(blocked_reason) = physical ? "fault_output_not_proven" : "aborted_relay_proof_interruption";
+                                        id(blocked_reason_text).publish_state(id(blocked_reason));
+                                        if (physical) id(latch_relay_fault_safely).execute();
+                                    - script.execute: stop_dose
+          else:
+            - text_sensor.template.publish:
+                id: dose_status
+                state: !lambda 'return "Aborted: " + id(blocked_reason);'
+            - sensor.template.publish: {id: dose_progress, state: 0.0}
+
+  - id: stop_dose
+    mode: restart
+    then:
+      - script.execute: force_outputs_safe
+      # Off replies now acknowledge STOP; they are not new delivery failures.
+      - lambda: "id(rs485_abort_issued) = true;"
+      - script.stop: dose
+      - script.stop: run_sequence
+      - script.stop: evaluate_dose_request
+      - script.execute: await_slave_shutdown
+      - script.wait: await_slave_shutdown
+      - script.execute: finalize_delivery
+      - script.wait: finalize_delivery
+      - sensor.template.publish: {id: dose_progress, state: 0.0}
+      - script.execute: publish_idle_status
+
+  - id: runtime_guard
+    mode: restart
+    then:
+      - delay: !lambda "return (${max_runtime_min} * 60000U) + 2000U;"
+      - script.stop: dose
+      - script.stop: run_sequence
+      - lambda: |-
+          id(blocked_reason) = "watchdog_timeout";
+          id(blocked_reason_text).publish_state(id(blocked_reason));
+      - switch.turn_off: relay_a
+      - switch.turn_off: relay_b
+      - lambda: |-
+          id(relays_off_ms) = millis();
+          id(rs485_abort_issued) = true;
+      - script.execute: await_slave_shutdown
+      - script.wait: await_slave_shutdown
+      - script.execute: finalize_delivery
+      - script.wait: finalize_delivery
+      - sensor.template.publish: {id: dose_progress, state: 0.0}
+      - script.execute: publish_idle_status
+      - logger.log:
+          level: ERROR
+          format: "WATCHDOG TRIPPED - doser forced off"
+
+button:
+  - platform: template
+    name: "Clear Latched Relay Fault"
+    icon: mdi:lock-open-check
+    entity_category: diagnostic
+    on_press:
+      - script.execute: clear_relay_fault

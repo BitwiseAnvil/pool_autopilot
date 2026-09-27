@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+atlas_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+atlas_python="${POOL_ESPHOME_PYTHON:-python3}"
+cd "$atlas_root"
+atlas_test_binary="$(mktemp /tmp/atlas-engine-tests.XXXXXX)"
+trap 'rm -f -- "$atlas_test_binary"' EXIT
+g++ -std=c++17 -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer \
+  atlas-pool-kit/tests/test_core.cpp -o "$atlas_test_binary"
+"$atlas_test_binary"
+g++ -std=c++17 -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer \
+  tests/test_pool_clock.cpp -o "$atlas_test_binary"
+"$atlas_test_binary"
+"$atlas_python" tests/test_flash_policy.py
+"$atlas_python" tests/test_pool_telemetry.py
+"$atlas_python" atlas-pool-kit/tests/test_startup_order.py
+"$atlas_python" atlas-pool-kit/tests/test_home_assistant.py "$@"

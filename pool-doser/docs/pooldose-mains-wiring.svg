@@ -1,0 +1,426 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1400" viewBox="0 0 2200 1400" role="img" aria-label="A / BLACK hot">
+<title>A / BLACK hot</title><desc>Harness revision 13: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Three box leads: black A01, white A08, red B04.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
+.t-title{font-size:36px;font-weight:700;fill:white}.t-sub{font-size:18px;fill:#cedee7}
+.t-label{font-size:18px;font-weight:700}.t-small{font-size:16px}.t-tiny{font-size:14px}
+.t-micro{font-size:12px}.t-white{fill:white}.t-muted{fill:#677987}
+.wire{cursor:pointer}.wire path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.endpoint{cursor:pointer}.wire.muted,.endpoint.muted{opacity:.12}.wire.selected .halo{stroke:#f3bb42;stroke-width:15}
+.endpoint.selected .screw{fill:#ffe599;stroke:#916012;stroke-width:4}
+.wire:focus,.endpoint:focus{outline:3px solid #e7ac36}.unused{fill:#85939d}
+</style><rect x="0" y="0" width="2200" height="1400" fill="#fff" stroke="none" rx="0" />
+<rect x="0" y="0" width="2200" height="105" fill="#152d3b" stroke="none" rx="0" />
+<text x="35" y="48" class="t-title">02  /  Harness A / BLACK hot branches</text>
+<text x="35" y="80" class="t-sub">F1 top LOAD: one ferrule / four 14 AWG wires → PS1 L, W2 COM, K1 terminal 1 and W1 COM</text>
+<text x="2165" y="46" class="t-sub" text-anchor="end">POOLDose</text>
+<text x="2165" y="77" class="t-sub" text-anchor="end">REV 13</text>
+<text x="35" y="140" class="t-label">BLACK = stranded 14 AWG   ·   every destination is SINGLE BLUE   ·   Waveshare COM is the relay contact, never VCC</text>
+<text x="35" y="172" class="t-small">SINGLE = one conductor   ·   SHARED = listed conductors in ONE ferrule   ·   FITTED = as built   ·   DATA = remaining specification</text>
+<rect x="165" y="551" width="1945" height="35" fill="#dce3e7" stroke="#a8b5bf" rx="2" />
+<path d="M165 559 H2110 M165 578 H2110" fill="none" stroke="#f9fbfc" stroke-width="3" />
+<g class="device" data-device="W1" data-x="170">
+<rect x="170" y="410" width="260" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="185" y="480" width="230" height="194" fill="#29352f" stroke="#70826b" rx="4" />
+<rect x="200" y="488" width="7" height="170" fill="#9dc33b" stroke="none" rx="0" />
+<text x="300.0" y="516" class="t-label" text-anchor="middle" style="fill:#fff">WAVESHARE</text>
+<text x="300.0" y="545" class="t-small" text-anchor="middle" style="fill:#fff">ESP32-S3</text>
+<text x="300.0" y="568" class="t-small" text-anchor="middle" style="fill:#fff">Relay-1CH-U</text>
+<circle cx="245" cy="592" r="7" fill="#75958e" stroke="none" />
+<circle cx="300" cy="592" r="7" fill="#94a950" stroke="none" />
+<circle cx="355" cy="592" r="7" fill="#a25445" stroke="none" />
+<text x="300.0" y="652" class="t-tiny" text-anchor="middle" style="fill:#fff">120 V relay | RS485</text>
+<rect x="194" y="431" width="65" height="20" fill="#263d45" stroke="#74868e" rx="9" />
+<text x="226" y="465" class="t-tiny" text-anchor="middle">USB-C</text>
+<rect x="197" y="401" width="18" height="17" fill="#c5a542" stroke="#94712c" rx="2" />
+</g>
+<g class="device" data-device="K1" data-x="520">
+<rect x="520" y="410" width="175" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="534" y="493" width="147" height="53" fill="#dce1df" stroke="none" rx="3" />
+<rect x="534" y="626" width="147" height="48" fill="#dce1df" stroke="none" rx="3" />
+<text x="607.5" y="590" class="t-title" text-anchor="middle" style="fill:#4d626d">finder</text>
+<text x="607.5" y="614" class="t-micro" text-anchor="middle">22.32.0.120.1320</text>
+</g>
+<g class="device" data-device="W2" data-x="790">
+<rect x="790" y="410" width="260" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="805" y="480" width="230" height="194" fill="#29352f" stroke="#70826b" rx="4" />
+<rect x="820" y="488" width="7" height="170" fill="#9dc33b" stroke="none" rx="0" />
+<text x="920.0" y="516" class="t-label" text-anchor="middle" style="fill:#fff">WAVESHARE</text>
+<text x="920.0" y="545" class="t-small" text-anchor="middle" style="fill:#fff">ESP32-S3</text>
+<text x="920.0" y="568" class="t-small" text-anchor="middle" style="fill:#fff">Relay-1CH-U</text>
+<circle cx="865" cy="592" r="7" fill="#75958e" stroke="none" />
+<circle cx="920" cy="592" r="7" fill="#94a950" stroke="none" />
+<circle cx="975" cy="592" r="7" fill="#a25445" stroke="none" />
+<text x="920.0" y="652" class="t-tiny" text-anchor="middle" style="fill:#fff">120 V relay | RS485</text>
+<rect x="814" y="431" width="65" height="20" fill="#263d45" stroke="#74868e" rx="9" />
+<text x="846" y="465" class="t-tiny" text-anchor="middle">USB-C</text>
+<rect x="817" y="401" width="18" height="17" fill="#c5a542" stroke="#94712c" rx="2" />
+</g>
+<g class="device" data-device="K5" data-x="1140">
+<rect x="1140" y="410" width="175" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="1154" y="493" width="147" height="53" fill="#dce1df" stroke="none" rx="3" />
+<rect x="1154" y="626" width="147" height="48" fill="#dce1df" stroke="none" rx="3" />
+<text x="1227.5" y="590" class="t-title" text-anchor="middle" style="fill:#4d626d">finder</text>
+<text x="1227.5" y="614" class="t-micro" text-anchor="middle">22.32.0.120.1320</text>
+</g>
+<g class="device" data-device="K4" data-x="1390">
+<rect x="1390" y="410" width="140" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="1489" y="530" width="26" height="172" fill="#fff" stroke="#c6cfcd" rx="2" />
+<rect x="1491" y="655" width="28" height="50" fill="#f49a21" stroke="#cc7b0c" rx="3" />
+<text x="1410" y="574" class="t-micro">120 V</text>
+</g>
+<g class="device" data-device="PS1" data-x="1640">
+<rect x="1640" y="410" width="190" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="1655" y="485" width="160" height="202" fill="#414e56" stroke="none" rx="5" />
+<text x="1735.0" y="532" class="t-label" text-anchor="middle" style="fill:#fff">MEAN WELL</text>
+<text x="1735.0" y="565" class="t-small" text-anchor="middle" style="fill:#fff">HDR-15-5</text>
+<text x="1735.0" y="597" class="t-small" text-anchor="middle" style="fill:#fff">5 V / 2.4 A</text>
+<text x="1735.0" y="631" class="t-tiny" text-anchor="middle" style="fill:#fff">AC INPUT ↓</text>
+<text x="1735.0" y="653" class="t-micro" text-anchor="middle" style="fill:#fff">≥5 mm free each side</text>
+<text x="1735.0" y="675" class="t-micro" text-anchor="middle" style="fill:#fff">≥40 mm ↑ / ≥20 mm ↓</text>
+</g>
+<g class="device" data-device="F1" data-x="1920">
+<rect x="1920" y="410" width="175" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<text x="2007.5" y="502" class="t-label" text-anchor="middle" style="fill:#248451">Schneider</text>
+<text x="2007.5" y="531" class="t-small" text-anchor="middle">60106 · C60</text>
+<text x="2007.5" y="560" class="t-small" text-anchor="middle">5 A / 120 V</text>
+<rect x="1963" y="585" width="90" height="55" fill="#25465d" stroke="#153246" rx="4" />
+<rect x="1963" y="585" width="90" height="19" fill="#21949c" stroke="none" rx="3" />
+<text x="2007.5" y="600" class="t-tiny" text-anchor="middle" style="fill:#fff">O - OFF</text>
+</g>
+<rect x="1890" y="1120" width="260" height="205" fill="#eef2f4" stroke="#7b8b95" rx="12" />
+<text x="1908" y="1150" class="t-label">METAL BOX</text>
+<text x="2020" y="1255" class="t-tiny" text-anchor="middle">Wagos: source + outlet whips</text>
+<text x="2020" y="1280" class="t-tiny" text-anchor="middle">Whips: stranded 14 AWG</text>
+<text x="2020" y="1305" class="t-tiny" text-anchor="middle">N and PE remain separate</text>
+<g class="wire" data-wires="A01" tabindex="0" role="button" aria-label="A01: Black, Inside metal box: hot Wago joins source-whip black to separate black A01 lead OUT to F1 bottom LINE clamp; A01 incoming supply">
+<title>A01 · Black · BOX:L → F1:LINE</title>
+<path d="M2090,1190 L2090,925 L2008,925 L2008,745" fill="none" stroke="#fff" stroke-width="12" class="halo"/>
+<path d="M2090,1190 L2090,925 L2008,925 L2008,745" fill="none" stroke="#6a7883" stroke-width="8" />
+<path d="M2090,1190 L2090,925 L2008,925 L2008,745" fill="none" stroke="#202832" stroke-width="5.5" id="wire-A01" data-from="BOX:L" data-to="F1:LINE"/>
+</g>
+<g class="wire" data-wires="A02" tabindex="0" role="button" aria-label="A02: Black, F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches to PS1 bottom RIGHT L, terminal 4">
+<title>A02 · Black · F1:LOAD → PS1:L</title>
+<path d="M2008,435 L1885,435 L1885,875 L1782,875 L1782,745" fill="none" stroke="#fff" stroke-width="12" class="halo"/>
+<path d="M2008,435 L1885,435 L1885,875 L1782,875 L1782,745" fill="none" stroke="#6a7883" stroke-width="8" />
+<path d="M2008,435 L1885,435 L1885,875 L1782,875 L1782,745" fill="none" stroke="#202832" stroke-width="5.5" id="wire-A02" data-from="F1:LOAD" data-to="PS1:L"/>
+</g>
+<g class="wire" data-wires="A05" tabindex="0" role="button" aria-label="A05: Black, F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches to W2 Slave / K3: bottom 2nd screw COM">
+<title>A05 · Black · F1:LOAD → W2:COM</title>
+<path d="M2008,435 L2008,480 L2150,480 L2150,955 L890,955 L890,745" fill="none" stroke="#fff" stroke-width="12" class="halo"/>
+<path d="M2008,435 L2008,480 L2150,480 L2150,955 L890,955 L890,745" fill="none" stroke="#6a7883" stroke-width="8" />
+<path d="M2008,435 L2008,480 L2150,480 L2150,955 L890,955 L890,745" fill="none" stroke="#202832" stroke-width="5.5" id="wire-A05" data-from="F1:LOAD" data-to="W2:COM"/>
+</g>
+<g class="wire" data-wires="A06" tabindex="0" role="button" aria-label="A06: Black, F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches to K1 Finder: top outer LEFT screw 1">
+<title>A06 · Black · F1:LOAD → K1:1</title>
+<path d="M2008,435 L2008,225 L568,225 L568,435" fill="none" stroke="#fff" stroke-width="12" class="halo"/>
+<path d="M2008,435 L2008,225 L568,225 L568,435" fill="none" stroke="#6a7883" stroke-width="8" />
+<path d="M2008,435 L2008,225 L568,225 L568,435" fill="none" stroke="#202832" stroke-width="5.5" id="wire-A06" data-from="F1:LOAD" data-to="K1:1"/>
+</g>
+<g class="wire" data-wires="A07" tabindex="0" role="button" aria-label="A07: Black, F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches to W1 Master / K2: bottom 2nd screw COM">
+<title>A07 · Black · F1:LOAD → W1:COM</title>
+<path d="M2008,435 L2125,435 L2125,285 L455,285 L455,820 L270,820 L270,745" fill="none" stroke="#fff" stroke-width="12" class="halo"/>
+<path d="M2008,435 L2125,435 L2125,285 L455,285 L455,820 L270,820 L270,745" fill="none" stroke="#6a7883" stroke-width="8" />
+<path d="M2008,435 L2125,435 L2125,285 L455,285 L455,820 L270,820 L270,745" fill="none" stroke="#202832" stroke-width="5.5" id="wire-A07" data-from="F1:LOAD" data-to="W1:COM"/>
+</g>
+<text x="230" y="372" class="t-label" text-anchor="middle">W1</text>
+<text x="230" y="396" class="t-micro" text-anchor="middle">MASTER / K2</text>
+<text x="655" y="372" class="t-label" text-anchor="middle">K1</text>
+<text x="655" y="396" class="t-micro" text-anchor="middle">MASTER CONTACTOR</text>
+<text x="850" y="372" class="t-label" text-anchor="middle">W2</text>
+<text x="850" y="396" class="t-micro" text-anchor="middle">SLAVE / K3</text>
+<text x="1275" y="372" class="t-label" text-anchor="middle">K5</text>
+<text x="1275" y="396" class="t-micro" text-anchor="middle">SLAVE CONTACTOR</text>
+<text x="1400" y="372" class="t-label" text-anchor="middle">K4</text>
+<text x="1400" y="396" class="t-micro" text-anchor="middle">DETECTOR</text>
+<text x="1735" y="372" class="t-label" text-anchor="middle">PS1</text>
+<text x="1735" y="396" class="t-micro" text-anchor="middle">5 V SUPPLY</text>
+<text x="2065" y="372" class="t-label" text-anchor="middle">F1</text>
+<text x="2065" y="396" class="t-micro" text-anchor="middle">5 A BREAKER</text>
+<g class="endpoint" data-endpoint="W1:GND" data-wires="" data-prep="" data-status=""><title>W1:GND:   </title>
+<circle cx="325" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M320 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="292" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="325" y="416" class="t-tiny" text-anchor="middle">GND</text>
+</g>
+<g class="endpoint" data-endpoint="W1:VCC" data-wires="" data-prep="" data-status=""><title>W1:VCC:   </title>
+<circle cx="395" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M390 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="362" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="395" y="416" class="t-tiny" text-anchor="middle">VCC</text>
+</g>
+<g class="endpoint" data-endpoint="W1:NO" data-wires="" data-prep="" data-status=""><title>W1:NO:   </title>
+<circle cx="210" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M205 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="177" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="210" y="726" class="t-tiny" text-anchor="middle">NO</text>
+</g>
+<g class="endpoint" data-endpoint="W1:COM" data-wires="A07" data-prep="S14" data-status="FITTED"><title>W1:COM: A07 S14 FITTED</title>
+<circle cx="270" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M265 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="237" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="270" y="726" class="t-tiny" text-anchor="middle">COM</text>
+<rect x="222" y="758" width="96" height="30" fill="#fff" stroke="none" rx="3" />
+<text x="270" y="771" class="t-tiny" text-anchor="middle">A07</text>
+<text x="270" y="785" class="t-micro" text-anchor="middle">SINGLE 14</text>
+<rect x="282" y="740" width="7" height="10" fill="#bec6ca" stroke="#67757e" rx="1" />
+<rect x="289" y="738" width="7" height="14" fill="#217dcb" stroke="none" rx="1" />
+</g>
+<g class="endpoint" data-endpoint="W1:B-" data-wires="" data-prep="" data-status=""><title>W1:B-:   </title>
+<circle cx="330" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M325 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="297" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="330" y="726" class="t-tiny" text-anchor="middle">B-</text>
+</g>
+<g class="endpoint" data-endpoint="W1:A+" data-wires="" data-prep="" data-status=""><title>W1:A+:   </title>
+<circle cx="390" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M385 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="357" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="390" y="726" class="t-tiny" text-anchor="middle">A+</text>
+</g>
+<g class="endpoint" data-endpoint="K1:1" data-wires="A06" data-prep="S14" data-status="FITTED"><title>K1:1: A06 S14 FITTED</title>
+<circle cx="568" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M563 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="535" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="568" y="416" class="t-tiny" text-anchor="middle">1</text>
+<rect x="520" y="448" width="96" height="30" fill="#fff" stroke="none" rx="3" />
+<text x="568" y="461" class="t-tiny" text-anchor="middle">A06</text>
+<text x="568" y="475" class="t-micro" text-anchor="middle">SINGLE 14</text>
+<rect x="580" y="430" width="7" height="10" fill="#bec6ca" stroke="#67757e" rx="1" />
+<rect x="587" y="428" width="7" height="14" fill="#217dcb" stroke="none" rx="1" />
+</g>
+<g class="endpoint" data-endpoint="K1:3" data-wires="" data-prep="" data-status=""><title>K1:3:   </title>
+<circle cx="650" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M645 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="617" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="650" y="416" class="t-tiny" text-anchor="middle">3</text>
+</g>
+<g class="endpoint" data-endpoint="K1:A1" data-wires="" data-prep="" data-status=""><title>K1:A1:   </title>
+<circle cx="568" cy="520" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M563 524 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="535" y="486" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="568" y="501" class="t-tiny" text-anchor="middle">A1</text>
+</g>
+<g class="endpoint" data-endpoint="K1:A2" data-wires="" data-prep="" data-status=""><title>K1:A2:   </title>
+<circle cx="568" cy="650" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M563 654 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="535" y="616" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="568" y="631" class="t-tiny" text-anchor="middle">A2</text>
+</g>
+<g class="endpoint" data-endpoint="K1:2" data-wires="" data-prep="" data-status=""><title>K1:2:   </title>
+<circle cx="568" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M563 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="535" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="568" y="726" class="t-tiny" text-anchor="middle">2</text>
+</g>
+<g class="endpoint" data-endpoint="K1:4" data-wires="" data-prep="" data-status=""><title>K1:4:   </title>
+<circle cx="650" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M645 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="617" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="650" y="726" class="t-tiny" text-anchor="middle">4</text>
+<text x="650" y="773" class="t-micro" text-anchor="middle" style="fill:#677987">no wire</text>
+<text x="650" y="788" class="t-micro" text-anchor="middle" style="fill:#677987">N when closed</text>
+</g>
+<g class="endpoint" data-endpoint="W2:GND" data-wires="" data-prep="" data-status=""><title>W2:GND:   </title>
+<circle cx="945" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M940 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="912" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="945" y="416" class="t-tiny" text-anchor="middle">GND</text>
+</g>
+<g class="endpoint" data-endpoint="W2:VCC" data-wires="" data-prep="" data-status=""><title>W2:VCC:   </title>
+<circle cx="1015" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1010 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="982" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1015" y="416" class="t-tiny" text-anchor="middle">VCC</text>
+</g>
+<g class="endpoint" data-endpoint="W2:NO" data-wires="" data-prep="" data-status=""><title>W2:NO:   </title>
+<circle cx="830" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M825 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="797" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="830" y="726" class="t-tiny" text-anchor="middle">NO</text>
+</g>
+<g class="endpoint" data-endpoint="W2:COM" data-wires="A05" data-prep="S14" data-status="FITTED"><title>W2:COM: A05 S14 FITTED</title>
+<circle cx="890" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M885 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="857" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="890" y="726" class="t-tiny" text-anchor="middle">COM</text>
+<rect x="842" y="758" width="96" height="30" fill="#fff" stroke="none" rx="3" />
+<text x="890" y="771" class="t-tiny" text-anchor="middle">A05</text>
+<text x="890" y="785" class="t-micro" text-anchor="middle">SINGLE 14</text>
+<rect x="902" y="740" width="7" height="10" fill="#bec6ca" stroke="#67757e" rx="1" />
+<rect x="909" y="738" width="7" height="14" fill="#217dcb" stroke="none" rx="1" />
+</g>
+<g class="endpoint" data-endpoint="W2:B-" data-wires="" data-prep="" data-status=""><title>W2:B-:   </title>
+<circle cx="950" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M945 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="917" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="950" y="726" class="t-tiny" text-anchor="middle">B-</text>
+</g>
+<g class="endpoint" data-endpoint="W2:A+" data-wires="" data-prep="" data-status=""><title>W2:A+:   </title>
+<circle cx="1010" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1005 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="977" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1010" y="726" class="t-tiny" text-anchor="middle">A+</text>
+</g>
+<g class="endpoint" data-endpoint="K5:1" data-wires="" data-prep="" data-status=""><title>K5:1:   </title>
+<circle cx="1188" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1183 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1155" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1188" y="416" class="t-tiny" text-anchor="middle">1</text>
+</g>
+<g class="endpoint" data-endpoint="K5:3" data-wires="" data-prep="" data-status=""><title>K5:3:   </title>
+<circle cx="1270" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1265 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1237" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1270" y="416" class="t-tiny" text-anchor="middle">3</text>
+</g>
+<g class="endpoint" data-endpoint="K5:A1" data-wires="" data-prep="" data-status=""><title>K5:A1:   </title>
+<circle cx="1188" cy="520" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1183 524 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1155" y="486" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1188" y="501" class="t-tiny" text-anchor="middle">A1</text>
+</g>
+<g class="endpoint" data-endpoint="K5:A2" data-wires="" data-prep="" data-status=""><title>K5:A2:   </title>
+<circle cx="1188" cy="650" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1183 654 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1155" y="616" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1188" y="631" class="t-tiny" text-anchor="middle">A2</text>
+</g>
+<g class="endpoint" data-endpoint="K5:2" data-wires="" data-prep="" data-status=""><title>K5:2:   </title>
+<circle cx="1188" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1183 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1155" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1188" y="726" class="t-tiny" text-anchor="middle">2</text>
+</g>
+<g class="endpoint" data-endpoint="K5:4" data-wires="" data-prep="" data-status=""><title>K5:4:   </title>
+<circle cx="1270" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1265 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1237" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1270" y="726" class="t-tiny" text-anchor="middle">4</text>
+<text x="1270" y="773" class="t-micro" text-anchor="middle" style="fill:#677987">no wire</text>
+<text x="1270" y="788" class="t-micro" text-anchor="middle" style="fill:#677987">N when closed</text>
+</g>
+<g class="endpoint" data-endpoint="K4:A1" data-wires="" data-prep="" data-status=""><title>K4:A1:   </title>
+<circle cx="1460" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1455 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1427" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1460" y="416" class="t-tiny" text-anchor="middle">A1</text>
+</g>
+<g class="endpoint" data-endpoint="K4:A2" data-wires="" data-prep="" data-status=""><title>K4:A2:   </title>
+<circle cx="1460" cy="520" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1455 524 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1427" y="486" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1460" y="501" class="t-tiny" text-anchor="middle">A2</text>
+</g>
+<g class="endpoint" data-endpoint="K4:11" data-wires="" data-prep="" data-status=""><title>K4:11:   </title>
+<circle cx="1460" cy="600" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1455 604 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1427" y="566" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1460" y="581" class="t-tiny" text-anchor="middle">11</text>
+</g>
+<g class="endpoint" data-endpoint="K4:14" data-wires="" data-prep="" data-status=""><title>K4:14:   </title>
+<circle cx="1460" cy="680" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1455 684 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1427" y="646" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1460" y="661" class="t-tiny" text-anchor="middle">14</text>
+</g>
+<g class="endpoint" data-endpoint="K4:12" data-wires="" data-prep="" data-status=""><title>K4:12:   </title>
+<circle cx="1460" cy="760" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1455 764 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1427" y="726" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1460" y="741" class="t-tiny" text-anchor="middle">12</text>
+<text x="1460" y="788" class="t-micro" text-anchor="middle" style="fill:#84939b">unused</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:+V" data-wires="" data-prep="" data-status=""><title>PS1:+V:   </title>
+<circle cx="1688" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1683 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1655" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1688" y="416" class="t-tiny" text-anchor="middle">+V</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:-V" data-wires="" data-prep="" data-status=""><title>PS1:-V:   </title>
+<circle cx="1782" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1777 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1749" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1782" y="416" class="t-tiny" text-anchor="middle">-V</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:N" data-wires="" data-prep="" data-status=""><title>PS1:N:   </title>
+<circle cx="1688" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1683 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1655" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1688" y="726" class="t-tiny" text-anchor="middle">N</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:L" data-wires="A02" data-prep="S14" data-status="FITTED"><title>PS1:L: A02 S14 FITTED</title>
+<circle cx="1782" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1777 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1749" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1782" y="726" class="t-tiny" text-anchor="middle">L</text>
+<rect x="1734" y="758" width="96" height="30" fill="#fff" stroke="none" rx="3" />
+<text x="1782" y="771" class="t-tiny" text-anchor="middle">A02</text>
+<text x="1782" y="785" class="t-micro" text-anchor="middle">SINGLE 14</text>
+<rect x="1794" y="740" width="7" height="10" fill="#bec6ca" stroke="#67757e" rx="1" />
+<rect x="1801" y="738" width="7" height="14" fill="#217dcb" stroke="none" rx="1" />
+</g>
+<g class="endpoint" data-endpoint="F1:LOAD" data-wires="A02 A05 A06 A07" data-prep="M4_14" data-status="FITTED"><title>F1:LOAD: A02 A05 A06 A07 M4_14 FITTED</title>
+<circle cx="2008" cy="435" r="10" fill="#fff" stroke="#754a96" class="screw" stroke-width="3"/>
+<path d="M2003 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1975" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="2008" y="416" class="t-tiny" text-anchor="middle">LOAD</text>
+<rect x="1960" y="448" width="96" height="45" fill="#fff" stroke="none" rx="3" />
+<text x="2008" y="461" class="t-tiny" text-anchor="middle">A02 A05</text>
+<text x="2008" y="476" class="t-tiny" text-anchor="middle">A06 A07</text>
+<text x="2008" y="490" class="t-micro" text-anchor="middle">4 × 14 / ONE</text>
+<rect x="1978" y="495" width="60" height="16" fill="#e4f1ee" stroke="none" rx="3" />
+<text x="2008" y="507" class="t-micro" text-anchor="middle" style="fill:#0a6856">FITTED</text>
+<rect x="2020" y="430" width="7" height="10" fill="#bec6ca" stroke="#67757e" rx="1" />
+<rect x="2027" y="426" width="12" height="18" fill="#d93136" stroke="none" rx="1" />
+<path d="M2033 428 V442" fill="none" stroke="#fff" stroke-width="1" />
+</g>
+<g class="endpoint" data-endpoint="F1:LINE" data-wires="A01" data-prep="S14" data-status="FITTED"><title>F1:LINE: A01 S14 FITTED</title>
+<circle cx="2008" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M2003 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1975" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="2008" y="726" class="t-tiny" text-anchor="middle">LINE</text>
+<rect x="1960" y="758" width="96" height="30" fill="#fff" stroke="none" rx="3" />
+<text x="2008" y="771" class="t-tiny" text-anchor="middle">A01</text>
+<text x="2008" y="785" class="t-micro" text-anchor="middle">SINGLE 14</text>
+<rect x="2020" y="740" width="7" height="10" fill="#bec6ca" stroke="#67757e" rx="1" />
+<rect x="2027" y="738" width="7" height="14" fill="#217dcb" stroke="none" rx="1" />
+</g>
+<text x="2050" y="905" class="t-tiny" text-anchor="middle">A01</text>
+<text x="1810" y="855" class="t-tiny" text-anchor="middle">A02</text>
+<text x="1500" y="950" class="t-tiny" text-anchor="middle">A05</text>
+<text x="1620" y="205" class="t-tiny" text-anchor="middle">A06</text>
+<text x="340" y="800" class="t-tiny" text-anchor="middle">A07</text>
+<g class="endpoint" data-endpoint="BOX:L" data-wires="A01" data-prep="BOX" data-status="FITTED"><title>BOX:L: A01 BOX FITTED</title>
+<circle cx="2090" cy="1190" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M2085 1194 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="2057" y="1156" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="2090" y="1171" class="t-micro" text-anchor="middle">L OUT</text>
+<rect x="2042" y="1203" width="96" height="30" fill="#fff" stroke="none" rx="3" />
+<text x="2090" y="1216" class="t-tiny" text-anchor="middle">A01</text>
+<text x="2090" y="1230" class="t-micro" text-anchor="middle">BOX</text>
+</g>
+<g class="endpoint" data-endpoint="BOX:N" data-wires="" data-prep="" data-status=""><title>BOX:N:   </title>
+<circle cx="1990" cy="1190" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1985 1194 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1957" y="1156" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1990" y="1171" class="t-micro" text-anchor="middle">N OUT</text>
+</g>
+<g class="endpoint" data-endpoint="BOX:SW" data-wires="" data-prep="" data-status=""><title>BOX:SW:   </title>
+<circle cx="2040" cy="1190" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M2035 1194 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="2007" y="1156" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="2040" y="1171" class="t-micro" text-anchor="middle">J1 IN</text>
+</g>
+<rect x="45" y="1080" width="860" height="143" fill="#eef4f7" stroke="#cfdae2" rx="8" />
+<text x="62" y="1108" class="t-label">Four individual leads leave ONE ferrule at F1 LOAD</text>
+<text x="62" y="1135" class="t-small">A02 → Mean Well L. A05 → Slave W2 COM.</text>
+<text x="62" y="1160" class="t-small">A06 → Master Finder K1 terminal 1. A07 → Master W1 COM.</text>
+<text x="62" y="1185" class="t-small">Each far end is one 14 AWG wire in one blue ferrule.</text>
+<text x="62" y="1210" class="t-small">A01 is the single incoming black lead at bottom LINE.</text>
+<rect x="955" y="1080" width="855" height="143" fill="#eef4f7" stroke="#cfdae2" rx="8" />
+<text x="972" y="1108" class="t-label">Branch ferrule</text>
+<text x="972" y="1135" class="t-small">One LARGE RED ferrule at F1 top LOAD.</text>
+<text x="972" y="1160" class="t-small">A02/A05/A06/A07: four 14 AWG wires in that one end.</text>
+<text x="972" y="1185" class="t-small">Tighten and check each wire for retention.</text>
+<text x="972" y="1210" class="t-small">Kit chart: 8 AWG ferrule label / 12 mm barrel / 4.9 mm OD.</text>
+<text x="35" y="1371" class="t-small">WIRE BY ID · follow the end-preparation notes and assembly checkout · crossings do not connect</text>
+<text x="2165" y="1371" class="t-label" text-anchor="end">This sheet: 1 shared ferrule</text></svg>

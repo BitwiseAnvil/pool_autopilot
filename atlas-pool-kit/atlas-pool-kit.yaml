@@ -1,0 +1,228 @@
+substitutions:
+  device_name: atlas-pool-kit
+
+esphome:
+  name: ${device_name}
+  name_add_mac_suffix: false
+  friendly_name: Atlas Pool Kit
+  min_version: 2026.9.0
+  project:
+    name: local.atlas_pool_kit
+    version: "1.2.0"
+
+esp32:
+  board: adafruit_feather_esp32s3_tft
+  variant: esp32s3
+  flash_size: 4MB
+  toolchain: esp-idf
+  framework:
+    type: esp-idf
+    version: 5.5.5
+    sdkconfig_options:
+      # Match mDNS from interface creation, before the queued Wi-Fi STA_START
+      # handler applies esphome.name. Also covers interface recreation.
+      CONFIG_LWIP_LOCAL_HOSTNAME: '"${device_name}"'
+
+psram:
+  mode: quad
+  speed: 80MHz
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [pool_clock, pool_storage]
+  - source:
+      type: local
+      path: components
+    components: [atlas_pool]
+
+pool_storage:
+
+logger:
+  level: INFO
+  hardware_uart: USB_SERIAL_JTAG
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  reboot_timeout: 0s
+  power_save_mode: NONE
+  on_connect:
+    - lambda: id(nist_clock).resync();
+
+# Required shared source. Do not add alternate servers or HA clock setters.
+time:
+  - platform: sntp
+    id: nist_time
+    timezone: UTC0
+    servers: [time.nist.gov]
+    update_interval: 5min
+
+pool_clock:
+  id: nist_clock
+  time_id: nist_time
+
+ota:
+  - platform: esphome
+    encryption:
+      key: !secret atlas_ota_key
+    on_begin:
+      - lambda: id(atlas).ota_begin();
+    on_error:
+      - lambda: id(atlas).ota_error();
+
+safe_mode:
+  storage: rtc
+
+# Physical power enables, not operator controls. Run before I2C/display setup.
+switch:
+  - platform: gpio
+    id: tft_i2c_power
+    pin: GPIO21
+    internal: true
+    restore_mode: ALWAYS_ON
+    setup_priority: 1000
+  - platform: gpio
+    id: ph_enable
+    pin:
+      number: GPIO12
+      inverted: true
+    internal: true
+    restore_mode: ALWAYS_ON
+    setup_priority: 1000
+  - platform: gpio
+    id: orp_enable
+    pin:
+      number: GPIO11
+      inverted: true
+    internal: true
+    restore_mode: ALWAYS_ON
+    setup_priority: 1000
+  - platform: gpio
+    id: rtd_enable
+    pin: GPIO9
+    internal: true
+    restore_mode: ALWAYS_ON
+    setup_priority: 1000
+  - platform: gpio
+    id: ec_enable
+    pin:
+      number: GPIO10
+      inverted: true
+    internal: true
+    restore_mode: ALWAYS_ON
+    setup_priority: 1000
+  - platform: gpio
+    id: tft_backlight
+    pin:
+      number: GPIO45
+      ignore_strapping_warning: true
+    internal: true
+    restore_mode: ALWAYS_ON
+    setup_priority: 1000
+
+i2c:
+  id: ezo_bus
+  sda: GPIO42
+  scl: GPIO41
+  frequency: 100kHz
+  timeout: 10ms
+  scan: false
+
+atlas_pool:
+  id: atlas
+  clock_id: nist_clock
+  i2c_id: ezo_bus
+  broker: !secret mqtt_host
+  port: !secret mqtt_port
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  # Optional guided dashboard; omit this when only using the discovered controls.
+  dashboard_path: atlas-pool-kit/calibration
+  device_id: atlas_pool
+
+spi:
+  clk_pin: GPIO36
+  mosi_pin: GPIO35
+
+font:
+  - file: fonts/DejaVuSansCondensed-Bold.ttf
+    id: normal_font
+    size: 20
+    glyphs: ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~°µ'
+  - file: fonts/DejaVuSansCondensed-Bold.ttf
+    id: small_font
+    size: 12
+    glyphs: ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~°µ'
+  - file: fonts/DejaVuSansCondensed-Bold.ttf
+    id: reading_font
+    size: 28
+    glyphs: ' -.0123456789CDEHOPRSTalpt'
+  - file: fonts/DejaVuSansCondensed-Bold.ttf
+    id: unit_font
+    size: 18
+    glyphs: ' /FPSUVcmp°µ'
+
+display:
+  - platform: mipi_spi
+    model: ST7789V
+    cs_pin: GPIO7
+    dc_pin: GPIO39
+    reset_pin: GPIO40
+    dimensions:
+      width: 135
+      height: 240
+      # Portrait coordinates; mipi_spi applies the rotation itself.
+      offset_width: 52
+      offset_height: 40
+    rotation: 90
+    invert_colors: true
+    data_rate: 40MHz
+    update_interval: 250ms
+    lambda: |-
+      auto &e = id(atlas).engine;
+      uint32_t now = millis();
+      if (e.maintenance) {
+        it.fill(Color(12, 16, 22));
+        it.printf(4, 2, id(normal_font), Color(255, 190, 40), "MAINTENANCE");
+        it.printf(4, 29, id(small_font), "%s  %s", e.sensor_name(), e.step.c_str());
+        if (e.preview.fresh(now, 10000))
+          it.printf(4, 48, id(normal_font), "%.3f %s", e.preview.value, e.unit());
+        else it.print(4, 48, id(normal_font), "Waiting for preview");
+        it.printf(4, 80, id(small_font), "%.34s", e.status.c_str());
+        it.printf(4, 99, id(small_font), "%.34s", e.result.c_str());
+        it.print(4, 119, id(small_font), "Continue in Home Assistant");
+        return;
+      }
+      const Color colors[] = {Color(232, 80, 48), Color(224, 188, 40), Color(84, 172, 248), Color(40, 174, 86)};
+      int ec_index = 3 + (now / 5000) % 3;
+      const char *labels[] = {"pH", "ORP", "RTD", "EC", "Salt", "TDS"};
+      const char *units[] = {"", "mV", "°F", "µS/cm", "ppm", "ppm"};
+      for (int row=0; row<4; ++row) {
+        int index = row<3 ? row : ec_index;
+        const int top = row * it.get_height() / 4;
+        const int bottom = (row + 1) * it.get_height() / 4;
+        const int middle = (top + bottom) / 2;
+        const int right = it.get_width() - 4;
+        it.filled_rectangle(0, top, it.get_width(), bottom - top, colors[row]);
+        it.print(4, middle, id(reading_font), Color::BLACK, TextAlign::CENTER_LEFT, labels[index]);
+        if (!e.available(index, now))
+          it.print(right, middle, id(normal_font), Color::BLACK, TextAlign::CENTER_RIGHT, "Unavailable");
+        else {
+          float value=e.readings[index].value;
+          if (index==2) value=value*1.8f+32;
+          if (index==4) value*=1000;
+          int precision=index==0 || index==2 ? 2 : 0;
+          int value_right = right;
+          if (units[index][0] != '\0') {
+            int unit_left, unit_top, unit_width, unit_height;
+            it.get_text_bounds(right, middle, units[index], id(unit_font), TextAlign::CENTER_RIGHT,
+                               &unit_left, &unit_top, &unit_width, &unit_height);
+            value_right = unit_left - 4;
+            it.print(right, middle, id(unit_font), Color::BLACK, TextAlign::CENTER_RIGHT, units[index]);
+          }
+          it.printf(value_right, middle, id(reading_font), Color::BLACK, TextAlign::CENTER_RIGHT,
+                    "%.*f", precision, value);
+        }
+      }

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PoolDose assembly details</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;color:#203448;max-width:1050px;margin:24px auto;padding:20px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #aaa;padding:8px;text-align:left}h2{margin-top:30px}.notice{background:#fff3e5;padding:12px;border-left:5px solid #bf6b26}.notice.warning{background:#fdecea;border-left-color:#b3261e}a{color:#0a627d}tr{break-inside:avoid}@media print{body{max-width:none;margin:0}h2,h3{break-after:avoid}}</style>
+<article id="assembly-details">
+<h1>PoolDose ferrule-branch harnesses — revision 13</h1>
+<p>Three harnesses: <strong>A supply, B switching, C low voltage</strong>. <a href="physical-wiring.html">Color drawings</a> · <a href="wiring-schedule.md">27-ID schedule</a> · <a href="termination-schedule.md">54-end list</a> · <a href="harness-cut-list.md">Measurement worksheet</a>.</p>
+<p class="notice warning"><strong>Known limitation: do not copy the neutral branches at Finder K5 terminal 3 and K1 terminal 3.</strong> Finder rates each 22.32 contact terminal for one 6 mm² (10 AWG) or two 4 mm² (12 AWG) conductors. Four 14 AWG wires at K5 terminal 3 (about 8.3 mm²) and three at K1 terminal 3 (about 6.3 mm²) exceed that rating. The reference enclosure is built this way. A new build should branch neutral on a rated DIN-rail neutral terminal block or other listed distribution so that each Finder terminal stays within its rating, and have the change checked by a qualified electrician.</p>
+<p class="notice"><strong>Checkout after assembly.</strong> Set the Mean Well supply to 5 V and measure <strong>5.00 V DC at its output with all relays closed</strong>. Confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown, then calibrate with water using <a href="pump-calibration.md">pump calibration</a>. Wiring completion does not replace these measurements.</p>
+<h2>1. Metal box and existing equipment</h2>
+<p>The source-power whip and pump-outlet whip each contain stranded 14 AWG <strong>black hot, white neutral and green ground</strong> and terminate in the metal box. Their neutrals join there. Their grounds are joined and bonded to the box. Neutral and protective ground remain separate. The source-whip black hot and outlet-whip black hot connect to separate Wagos.</p>
+<p>Exactly three <strong>stranded 14 AWG</strong> harness wires connect those Wagos to the controls: <strong>A01 black OUT to F1 bottom LINE; A08 white OUT to Finder K5 power terminal 3; B04 red IN to the outlet-whip black hot.</strong> Follow the installed Wago conductor/strip instructions; no ferrules are specified at these three box ends. Keep the three harness leads together through the suitable protected entry.</p>
+<p><strong>F1 top LOAD</strong> supplies the four black branches below. Schneider permits <a href="https://www.se.com/us/en/faqs/FA114097/">reverse feeding of the C60</a>. Retain upstream protection appropriate to the source whip, GFCI and disconnect. Preserve the device order in the <a href="images/enclosure-2026-09-18.jpg">reference photo</a>: <strong>W1 Master, K1 Finder, W2 Slave, K5 Finder, K4 detector, PS1 Mean Well, F1 breaker</strong>. Match molded terminal labels. PS1 stays upright with AC terminals down, at least 5 mm free on each side, 40 mm above and 20 mm below. Existing devices total 123.3 mm; including PS1 side gaps, reserve 133.3 mm before end stops/routing. Measure actual clearances on the installed rail.</p>
+<h2>2. Supply branches and independent switching</h2>
+<p>Every 120 V wire is stranded <strong>14 AWG</strong>. Shared ends occur only at the named existing device screws. Each destination at Mean Well L/N, Waveshare COM/NO, Finder A1/A2 and detector A1/A2 has <strong>one wire / one blue ferrule</strong>. No additional distribution device is selected.</p>
+<table><thead><tr><th>Branch point</th><th>All wires in one requested ferrule</th><th>Individual destinations</th></tr></thead><tbody>
+<tr><td>F1 top LOAD</td><td>A02 + A05 + A06 + A07; four black 14 AWG</td><td>A02 → PS1 L; A05 → W2 COM; A06 → K1 terminal 1; A07 → W1 COM</td></tr>
+<tr><td>Finder K5 power terminal 3</td><td>A08 + A11 + A13 + A14; four white 14 AWG</td><td>A08 comes from BOX N; A11 → K1 terminal 3; A13 → PS1 N; A14 → K5 A2</td></tr>
+<tr><td>Finder K1 power terminal 3</td><td>A11 + A15 + A16; three white 14 AWG</td><td>A11 comes from K5 terminal 3; A15 → K1 A2; A16 → K4 A2</td></tr>
+</tbody></table>
+<p><strong>Both Finder terminal 4s have no external wire.</strong> Each becomes connected to neutral when its 3–4 contact closes. All required neutral wires meet directly at terminal 3; no coil or supply neutral depends on a switched contact. Never connect these neutral branches to power terminals 1/2.</p>
+<p>Harness B has five red 14 AWG wires: B01 W1 NO → K1 A1; B02 W2 NO → K5 A1; B03 K1 terminal 2 → K5 terminal 1; B04 K5 terminal 2 → BOX SW → outlet-whip black hot; B05 K5 terminal 2 → K4 A1. B04+B05 share one yellow kit ferrule <strong>at K5 terminal 2</strong>. The coil outputs stay independent. K4 terminal 12 has no connection.</p>
+<p>The 18 AWG low-voltage supply chains remain <strong>PS1 +V → W2 VCC → W1 VCC</strong> in red and <strong>PS1 −V → W2 GND → W1 GND</strong> in black. W2 VCC shares C01+C03; W2 GND shares C04+C06. <strong>120 V goes only to Waveshare's isolated COM/NO relay contacts; VCC receives 5 V DC.</strong> AC neutral, DC GND and equipment ground are separate nets.</p>
+<h3>Finder operating power and front indicators</h3>
+<p>The installed model is <strong>22.32.0.120.1320</strong>. Finder's <a href="https://cdn.findernet.com/app/uploads/IB2232EN.pdf">installation instructions</a> and <a href="https://cdn.findernet.com/app/uploads/S22EN.pdf">Series 22 catalog</a> identify A1/A2 as the coil supply, 1–2 and 3–4 as separate normally open power contacts. A1 receives switched hot from its own controller; A2 receives continuous neutral through A15 at K1 and A14 at K5. Both A1 and A2 stay single blue.</p>
+<p>Coil power operates both contact pairs. The LED follows coil supply and the mechanical window indicates operation; neither needs an extra wire or proves pump-outlet voltage. The 1320 model has no Auto-On-Off selector. Finder's catalog covers stranded/ferruled conductors; its <a href="https://cdn.findernet.com/app/uploads/TecEN.pdf">general guide, page XVI</a>, covers stranded and bootlace-ferrule conductors in box clamps. The installation sheet's separate solid-only note is labeled for field-wiring terminals; whether it applies to these internal chassis runs has not been established. The same sheet lists UL installation conditions for spacing, protection and surges.</p>
+<h2>3. Measure and label the harnesses</h2>
+<ol>
+<li>With all sources disconnected, including USB, lay out the scheduled wire segments alongside the actual devices. Identify both ends and record lengths with service allowance. Compare totals against the wire stock (10 ft of each color in the reference build). Include A01 in the stranded 14 AWG black total.</li>
+<li>Label both ends before grouping. Keep all four F1 LOAD wires together, all four K5-3 wires together and all three K1-3 wires together. A11 is the physical bridge between the two neutral branch points; A14/A15 are separate single-blue coil returns.</li>
+<li>For DATA notes, record the selected ferrule size, barrel length, finished crimp dimensions and tool range. Record the installed terminal's strip and torque instructions. Keep this information with the end schedule.</li>
+<li>Follow the selected ferrule's stripping and crimp instructions, the tool's size range, and the device's insertion and torque instructions. Check retention of each conductor in a shared end. Keep the insulation collar outside the clamp and support the harness independently of the device screws. Do not trim strands or force an oversized end into a clamp.</li>
+<li>Keep A/B mains separate from C low voltage, particularly at adjacent Waveshare relay/data screws. C07/C08 remain an intact Cat6A pair. GPIO harnesses use the solder joints below, including the three-conductor GPIO1/R1 splice.</li>
+</ol>
+<h2>4. Ferrule sizes and terminal notes</h2>
+<p>The <a href="pooldose-ferrules-wiring.svg">shared-ferrule sheet</a> shows <strong>six shared device locations: two four-wire 14 AWG, one three-wire 14 AWG, one two-wire 14 AWG and two two-wire 18 AWG</strong>. There are also <strong>16 single 14 AWG and six single 18 AWG</strong> ends. The GPIO1/R1 branch is a local solder splice; K4-14 now receives one orange C13.</p>
+<p>The Pittsburgh 70195 kit chart lists blue 14 AWG / 8 mm barrel / 2.6 mm tube OD; small red 18 AWG / 8 mm / 1.7 mm OD; yellow 10 AWG / 12 mm / 3.9 mm OD; and large red 8 AWG / 12 mm / 4.9 mm OD. <strong>Tube OD is not the finished crimp size; collar color is not insulation color.</strong> The three- and four-wire 14 AWG ends use large red, and the two-wire K5-2 end uses yellow. Low-voltage twin colors remain unspecified.</p>
+<table><thead><tr><th>Terminal</th><th>End treatment</th><th>Preparation note</th></tr></thead><tbody>
+<tr><td>F1 top LOAD</td><td>One ferrule / four 14 AWG</td><td><strong>FITTED:</strong> one large-red ferrule with all four wires, tightened and connected as drawn. C60 wire guidance: 14 mm strip, 22 lb-in for this current/voltage range, subject to installed markings; check metal-barrel engagement (large-red barrel 12 mm).</td></tr>
+<tr><td>K5 terminal 3 / K1 terminal 3</td><td>One ferrule / four white wires; one ferrule / three white wires</td><td><strong>FITTED (reference build only):</strong> large-red ferrules at both terminal 3s. <strong>Both groups exceed Finder's rated terminal capacity (1 × 10 AWG or 2 × 12 AWG); see the warning above.</strong> Finder wire guidance: 9 mm strip, 0.8 N·m torque.</td></tr>
+<tr><td>K5 terminal 2</td><td>Two red 14 AWG, B04+B05, in one yellow kit ferrule</td><td><strong>FITTED:</strong> yellow ferrule, tightened. Kit chart: 10 AWG label, 12 mm barrel, 3.9 mm tube OD.</td></tr>
+<tr><td>All Finder A1/A2</td><td>Single 14 AWG / blue</td><td>Single blue at every A1/A2. Catalog wire strip 9 mm, torque 0.8 N·m; kit single barrel 8 mm. Verify the actual ferrule, barrel engagement and retention.</td></tr>
+<tr><td>PS1 L/N; +V/−V</td><td>Single 14 AWG; single 18 AWG</td><td>The design limits every terminal to the blue-sized envelope. HDR manual: 18/16/14 AWG copper, at least 80°C insulation, 6 mm wire strip, 0.49 N·m. Check the selected ferrule/barrel against the device; the kit singles are 8 mm long.</td></tr>
+<tr><td>W1/W2 COM/NO</td><td>Single 14 AWG / blue</td><td>Within the single-blue layout constraint. Record the installed clamp's ferrule range, strip and torque.</td></tr>
+<tr><td>W2 VCC/GND</td><td>Two 18 AWG per twin</td><td><strong>DATA:</strong> record the twin size/profile within the blue-sized envelope and the clamp specification. Remaining W1/W2 single/data ends also need that specification.</td></tr>
+<tr><td>K4 A1/A2/11/14</td><td>Single 14 / single 14 / single 18 / single 18 AWG</td><td>Single ferrules 0.2–2.5 mm²; strip 8 mm; torque 0.6–0.8 N·m. A2 is single A16. C14 is black to 11; C13 is orange to 14. Each terminal has one wire.</td></tr>
+<tr><td>F1 bottom LINE</td><td>Single A01, 14 AWG / blue</td><td>C60 wire guidance: 14 mm strip, 22 lb-in for this current/voltage range, subject to installed markings. Check metal-barrel engagement against the device instructions; kit barrel is 8 mm.</td></tr>
+<tr><td>Metal-box ends / Cat6A</td><td>Installed Wagos / cable-dependent ends</td><td>No ferrules specified at the three Wago ends. Identify Cat6A gauge/construction; solid stays bare, stranded requires an accepted matching ferrule.</td></tr>
+</tbody></table>
+<p>The reference build used a Sopoby HSC8 6-4 four-sided square crimper, which covers the nominal 18/14 AWG single sizes. Its listing gives two different upper ranges; record your tool's marked/documented range for the larger bundles.</p>
+<h2 id="gpio-tails">5. Harness C — GPIO harnesses</h2>
+<p><a href="pooldose-signals-wiring.svg">Open sheet 07</a>. Revision 13 uses an <strong>orange/black detector-wire pair</strong>. The pull-up joins GPIO1 at a local solder splice. Detector terminals 14 and 11 each receive one wire.</p>
+<h3>Four-wire J5 plug</h3>
+<p>The plug uses <strong>1 yellow / GPIO1, 2 orange / GPIO2, 3 red / 3.3 V, 4 black / GND</strong>. These are the J5 pin numbers in <a href="https://files.waveshare.com/wiki/ESP32-S3-Relay-1CH/ESP32-S3-Relay-1CH-schematic.pdf">Waveshare's schematic</a>, not a prescribed viewing direction into the loose plug.</p>
+<table><thead><tr><th>Plug lead</th><th>Master W1 — flow tail</th><th>Slave W2 — detector harness</th></tr></thead><tbody>
+<tr><td>1 — yellow — GPIO1</td><td>Spliced to RED telephone-cord C09, then RJ11 flow-switch contact</td><td>Joins R1's other lead and ORANGE C13 together at JS2</td></tr>
+<tr><td>2 — orange — GPIO2</td><td>Unused; individually insulate</td><td>Unused; individually insulate</td></tr>
+<tr><td>3 — red — 3.3 V</td><td>Unused; individually insulate</td><td>Joins one R1 lead directly at JR1</td></tr>
+<tr><td>4 — black — GND</td><td>Spliced to GREEN telephone-cord C10, then the other RJ11 contact</td><td>Joins BLACK C14 at JS3; C14 goes to K4 terminal 11</td></tr>
+</tbody></table>
+<p>The thin orange GPIO2 plug lead stays unused. The larger orange detector wire is C13, connected to yellow GPIO1. Green C10 belongs to the telephone-cord signal return; it is not equipment ground.</p>
+<h3>Master flow-switch harness</h3>
+<p>Join yellow GPIO1 to the telephone cord's red conductor and black GND to green, then finish with an outer heat-shrink. The cord's RJ11 plug connects through the RJ11-to-RJ11 coupling at the enclosure bottom to the generic Hayward-style flow switch. Keep the connector's contact mapping consistent end to end; no numbered RJ11 pinout is specified.</p>
+<p>The Master uses its configured internal pull-up. Its red 3.3 V and orange GPIO2 leads remain individually insulated and unused. No external resistor is added to this flow-switch tail.</p>
+<h3>Slave pull-up — local three-conductor splice</h3>
+<ol>
+<li>With power disconnected and the GPIO plug unplugged, join the <strong>red 3.3 V factory lead directly to either lead of R1</strong> at JR1. R1 is the specified <strong>270 Ω, ¼ W</strong> resistor and has no polarity.</li>
+<li>At <strong>JS2</strong>, join exactly these three conductors: <strong>yellow GPIO1 factory lead + R1's other lead + orange C13</strong>. That resistor lead is labeled C12; it is part of R1, not an extra piece of hookup wire.</li>
+<li>Route <strong>orange C13 alone to K4 terminal 14</strong>, using a single 18 AWG ferrule at that device end.</li>
+<li>Join the <strong>black GND factory lead to black C14</strong> at JS3. Route <strong>C14 alone to K4 terminal 11</strong>, also with a single 18 AWG ferrule.</li>
+<li>Leave K4 terminal 12 unused. Individually insulate the thin orange GPIO2 plug lead.</li>
+</ol>
+<p>The connection arrangement follows the intended pull-up circuit: <strong>red 3.3 V → R1 → yellow GPIO1/orange-output node</strong>. K4 closes that node to black GND through 14–11 when the outlet is powered.</p>
+<p><strong>C11 and C15 are retired.</strong> The brown extension and second orange run are removed from the schedule. There is no shared ferrule at K4-14; the branch is the local JS2 solder splice.</p>
+<h3>Splice and endpoint schedule</h3>
+<table><thead><tr><th>Label</th><th>Conductors / connection</th><th>Preparation</th></tr></thead><tbody>
+<tr><td>JM1</td><td>Master yellow GPIO1 + red telephone C09</td><td>Two-conductor solder splice; individually sleeve</td></tr>
+<tr><td>JM2</td><td>Master black GND + green telephone C10</td><td>Two-conductor solder splice; individually sleeve</td></tr>
+<tr><td>JR1</td><td>Slave red 3.3 V + one R1 lead</td><td>Two-conductor solder splice; individually sleeve</td></tr>
+<tr><td>JS2</td><td>Slave yellow GPIO1 + R1 lead C12 + orange C13</td><td>Three-conductor solder splice; individually sleeve</td></tr>
+<tr><td>JS3</td><td>Slave black GND + black C14</td><td>Two-conductor solder splice; individually sleeve</td></tr>
+<tr><td>K4-14 / K4-11</td><td>Orange C13 / black C14 respectively</td><td>One 18 AWG wire and one single ferrule at each terminal</td></tr>
+<tr><td>RJ11:FLOW / RJ11:RETURN</td><td>Installed contacts reached by red C09 / green C10</td><td>Functional labels; retain the installed connector mapping</td></tr>
+</tbody></table>
+<h3>Splice finishing reference</h3>
+<p>Use the factory-crimped four-position SH1.0 pigtail, the existing R1, and orange/black 18 AWG detector wires. The Master flow tail uses telephone cord and an RJ11 coupling. Factory leads and telephone cord keep their own gauge; do not replace their tiny connector contacts with 18 AWG wire.</p>
+<ol>
+<li>Slide suitable heat-shrink onto the wires before making the joints. Make each solder connection mechanically engaged and fully wetted; remove protruding strand ends. Use electronics-grade rosin flux rather than plumbing flux.</li>
+<li>Individually cover the red/R1 splice, the three-conductor JS2 splice, and the black return splice. Insulation must extend onto intact wire insulation and leave no bare resistor leads. Keep the red 3.3 V side insulated from JS2, then add an outer sleeve over the supported assembly.</li>
+<li>Individually cap unused plug leads. Support the pigtail and detector wires with a relaxed service loop so the connector and soldered joints do not carry cable pull.</li>
+<li>Keep this GPIO assembly in the low-voltage route. K4 A1/A2 retain their separate 14 AWG sensing connections; GPIO wires connect only to K4 11/14.</li>
+</ol>
+<h3>GPIO electrical checks before reconnecting the plugs</h3>
+<p>With power disconnected, the GPIO plugs unplugged and K4 released:</p>
+<table><thead><tr><th>Measurement</th><th>Expected</th></tr></thead><tbody>
+<tr><td>Master yellow GPIO1 to red C09; black GND to green C10</td><td>Continuity on the intended paths through the installed RJ11 assembly.</td></tr>
+<tr><td>Flow-switch contact pair through the RJ11 assembly</td><td>Open at no flow; continuity when the switch is actuated.</td></tr>
+<tr><td>Slave red 3.3 V to yellow GPIO1 (also orange C13)</td><td>256.5–283.5 Ω for the specified 270 Ω ±5% resistor.</td></tr>
+<tr><td>Slave yellow GPIO1 to K4-14; black GND to K4-11</td><td>Continuity on each path after termination.</td></tr>
+<tr><td>Slave yellow GPIO1 to black GND with K4 released</td><td>Open.</td></tr>
+<tr><td>Temporary jumper across K4-11/14, with all power disconnected</td><td>GPIO1 to GND becomes continuity; red 3.3 V to GND measures 256.5–283.5 Ω. Remove the jumper after checking.</td></tr>
+</tbody></table>
+<p>Reconnect the keyed plugs after the checks. Enable the two RS485 termination jumpers, complete system checkout below, and follow the README's <a href="../README.md#before-chemical-service">pre-service checks</a>.</p>
+<h2>6. Harness and system checkout</h2>
+<p>Perform these checks with the Stenner unplugged. Record each measured result; a completed procedure is not a measurement.</p>
+<p>With electronics disconnected, check each wire and shared group against the schedule. Continuity through each branch comes from its scheduled wires. Confirm BOX N remains connected to PS1 N, both Finder A2s and K4 A2 regardless of either contactor state; no required neutral path uses the 3–4 switching contacts. Check hot/neutral, the independent switched-coil leads, all low-voltage nets and exposed metal remain correctly separated. Follow the actual terminal/ferrule instructions for insertion, retention and torque. Restore the listed metal-box connections without adding a neutral-ground bond.</p>
+<p>With power disconnected, verify W1 switches only K1's coil, W2 only K5's coil, and the motor path is F1 → K1 1–2 → K5 1–2 → B04/J1. K4 senses the output after both contacts. The onboard relay contacts switch only coils; the F1 shared hot termination must support the protected feed. Do not treat coil/resistor resistance as an insulation fault or apply insulation-test voltage to connected electronics. Record the measured checkout results with the assembly notes.</p>
+<h2>Manufacturer evidence for existing equipment</h2>
+<p>Sources: <a href="https://cdn.findernet.com/app/uploads/S22EN.pdf">Finder Series 22</a>, <a href="https://cdn.findernet.com/app/uploads/TecEN.pdf">Finder general terminal guidance</a>, <a href="https://www.phoenixcontact.com/en-us/products/relay-module-plc-rsc-120uc21au-2966281">existing Phoenix K4 detector</a>, <a href="https://www.meanwell.com/Upload/PDF/HDR%20DIN%20rail%20power%20supply.pdf">Mean Well HDR installation</a>, <a href="https://www.se.com/us/en/product/60106/multi9-c60-ul489-mcb-1-pole-5-a-c-curve-120-v-10-ka-tunnel-term/">Schneider 60106</a>, <a href="https://www.harborfreight.com/wire-ferrule-assortment-1200-piece-70195.html">Pittsburgh 70195 ferrule kit</a>, <a href="https://www.waveshare.com/product/esp32-s3-relay-1ch.htm">Waveshare product</a> and <a href="https://files.waveshare.com/wiki/ESP32-S3-Relay-1CH/ESP32-S3-Relay-1CH-schematic.pdf">schematic / J5</a>.</p>
+</article></html>

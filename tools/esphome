@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+atlas_python="${POOL_ESPHOME_PYTHON:-python3}"
+if ! "$atlas_python" -c 'import esphome' >/dev/null 2>&1; then
+  printf '%s\n' "ESPHome is not installed for $atlas_python; see the repository README." >&2
+  exit 1
+fi
+exec "$atlas_python" -m esphome "$@"

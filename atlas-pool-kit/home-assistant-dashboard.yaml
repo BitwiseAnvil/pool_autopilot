@@ -1,0 +1,486 @@
+title: Atlas Pool Kit
+views:
+  - title: Pool readings
+    path: pool
+    cards:
+      - type: entities
+        show_header_toggle: false
+        title: Atlas Pool Kit
+        entities:
+          - sensor.atlas_pool_ph
+          - sensor.atlas_pool_orp
+          - sensor.atlas_pool_temperature
+          - sensor.atlas_pool_conductivity
+          - sensor.atlas_pool_salinity
+          - sensor.atlas_pool_tds
+          - binary_sensor.atlas_pool_maintenance
+      - type: history-graph
+        title: pH
+        hours_to_show: 24
+        entities: [sensor.atlas_pool_ph]
+      - type: history-graph
+        title: Water temperature
+        hours_to_show: 24
+        entities: [sensor.atlas_pool_temperature]
+      - type: entities
+        show_header_toggle: false
+        title: Device diagnostics
+        entities:
+          - sensor.atlas_pool_ip
+          - sensor.atlas_pool_rssi
+          - sensor.atlas_pool_uptime
+          - sensor.atlas_pool_firmware
+          - sensor.atlas_pool_compensation
+          - sensor.atlas_pool_k
+          - sensor.atlas_pool_tds_factor
+          - sensor.atlas_pool_last_calibration
+  - title: Historical trends
+    path: history
+    cards:
+      - type: markdown
+        content: >-
+          Home Assistant keeps hourly averages, minimums and maximums indefinitely.
+          These charts use that history. The visible two-year window is not a
+          retention limit; it can be extended to five or ten years. Offline periods
+          have gaps, and calibration previews are excluded. A partly elapsed year
+          is not directly comparable to a complete year's seasonal average.
+      - type: statistics-graph
+        title: pH — monthly trends
+        entities: [sensor.atlas_pool_ph]
+        days_to_show: 731
+        period: month
+        chart_type: line
+        stat_types: [mean, min, max]
+      - type: statistics-graph
+        title: Temperature — monthly trends
+        entities: [sensor.atlas_pool_temperature]
+        days_to_show: 731
+        period: month
+        chart_type: line
+        stat_types: [mean, min, max]
+      - type: statistics-graph
+        title: ORP — monthly trends
+        entities: [sensor.atlas_pool_orp]
+        days_to_show: 731
+        period: month
+        stat_types: [mean, min, max]
+      - type: statistics-graph
+        title: Conductivity — monthly trends
+        entities: [sensor.atlas_pool_conductivity]
+        days_to_show: 731
+        period: month
+        stat_types: [mean, min, max]
+      - type: statistics-graph
+        title: Salinity — monthly trends
+        entities: [sensor.atlas_pool_salinity]
+        days_to_show: 731
+        period: month
+        stat_types: [mean, min, max]
+      - type: statistics-graph
+        title: TDS — monthly trends
+        entities: [sensor.atlas_pool_tds]
+        days_to_show: 731
+        period: month
+        stat_types: [mean, min, max]
+      - type: statistics-graph
+        title: Temperature — yearly comparison
+        entities: [sensor.atlas_pool_temperature]
+        days_to_show: 3653
+        period: year
+        chart_type: bar
+        stat_types: [mean, min, max]
+  - title: Calibration
+    path: calibration
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |-
+              {% set page = states('sensor.atlas_pool_calibration_step') %}
+              {% set probe = state_attr('sensor.atlas_pool_calibration', 'sensor') %}
+              {% set step = state_attr('sensor.atlas_pool_calibration', 'step') %}
+              {% set preview = state_attr('sensor.atlas_pool_calibration', 'preview') %}
+              {% if page == 'idle' %}
+              ## Pool monitoring is on
+              To calibrate a probe, choose a procedure and press **Start calibration**.
+              {% elif page in ['offline', 'unknown', 'unavailable'] %}
+              ## Waiting for Atlas
+              Controls will appear when Atlas reconnects.
+              {% elif page == 'fault' %}
+              ## Atlas needs attention
+              Calibration is paused. Check **Advanced setup** for the device result.
+              {% elif page == 'returning' %}
+              ## Returning to pool readings…
+              Keep all probes in pool water. This page will update automatically.
+              {% elif page == 'saving' %}
+              ## Saving and checking…
+              Keep the probe where it is. Wait for the next step.
+              {% elif page == 'maintenance' %}
+              ## Pool readings are paused
+              Put all probes back in pool water, then press **Exit calibration**.
+              {% elif page == 'cleared' %}
+              ## Calibration cleared
+              {{ 'Temperature (RTD)' if probe == 'RTD' else probe }} calibration has been erased.
+              Put all probes back in pool water, then press **Exit calibration**.
+              {% elif page == 'recovery' %}
+              ## Calibration was interrupted
+              A save may already have happened. Check the result below before continuing.
+              You can also put the probes back and **Exit calibration**.
+              {% elif page == 'done' %}
+              ## Calibration saved
+              Put all probes back in pool water, then press **Exit calibration**.
+              {% elif page == 'confirm' %}
+              ## Save this reference?
+              **{{ 'Temperature' if probe == 'RTD' else probe }}: {{ state_attr('sensor.atlas_pool_calibration', 'reference') }} {{ '°C' if probe == 'RTD' else state_attr('sensor.atlas_pool_calibration', 'preview_unit') }}**
+
+              Press **Save calibration** now. If this times out, press **Reading is steady** again.
+              {% else %}
+              ## {{ 'Temperature (RTD)' if probe == 'RTD' else probe }} calibration
+              {% if page == 'rtd' %}
+              Put the temperature probe in water with a **known temperature**.
+              Enter that temperature below. Use **0 °C only for a properly prepared ice bath**.
+              {% elif page.startswith('ph_') %}
+              Rinse the pH probe and put it in the **{{ {'mid': 'midpoint', 'low': 'low', 'high': 'high'}[step] }} buffer**.
+              Enter the buffer's pH below.
+              {% if step == 'mid' %}
+              Saving the midpoint replaces any previous pH calibration points.
+              {% endif %}
+              {% elif page == 'orp' %}
+              Rinse the ORP probe and put it in the reference solution.
+              Enter the solution's **mV** below.
+              {% elif page == 'ec_dry' %}
+              Clean and completely **dry the EC probe**. Leave it out of liquid for this step.
+              {% elif page.startswith('ec_') %}
+              {% if step == 'high' %}
+              The low point is saved. **The high point is still required.**
+              {% endif %}
+              Rinse the EC probe and put it in the **{{ 'high' if step == 'high' else 'low' if step == 'low' else 'reference' }} solution**. Remove bubbles.
+              Enter its conductivity at **25 °C**, or its documented temperature-corrected value.
+              {% endif %}
+
+              {% if preview is number %}
+              **Current reading: {{ preview | round(2) }} {{ '°C' if probe == 'RTD' else state_attr('sensor.atlas_pool_calibration', 'preview_unit') }}**
+
+              When the reading stops changing, press **Reading is steady**.
+              {% else %}
+              **Waiting for a fresh reading…**
+              {% endif %}
+              {% endif %}
+              {% set result = state_attr('sensor.atlas_pool_calibration', 'result') or '' %}
+              {% if result.startswith('Refused:') and not (page == 'idle' and 'no matching session' in result) %}
+              {% if 'end the current session first' in result %}
+              Calibration is already open. Continue above, or press **Exit calibration**.
+              {% else %}
+              **Action not completed:** {{ result[9:] }}.
+              {% endif %}
+              {% endif %}
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: idle
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: select.atlas_pool_calibration_method
+                  name: Procedure
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: idle
+              - condition: state
+                entity: select.atlas_pool_calibration_method
+                state:
+                  - pH - 3 points
+                  - pH - midpoint only
+                  - pH - midpoint and low
+                  - pH - midpoint and high
+            card:
+              type: vertical-stack
+              cards:
+                - type: markdown
+                  content: Measure the buffer temperature before starting. Turn on the temperature-probe option only
+                    if that probe is in the same buffer.
+                - type: entities
+                  show_header_toggle: false
+                  entities:
+                    - entity: number.atlas_pool_buffer_temperature
+                      name: Buffer temp.
+                    - entity: switch.atlas_pool_rtd_in_buffer
+                      name: Temperature probe
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: idle
+            card:
+              type: button
+              name: Start calibration
+              icon: mdi:flask-outline
+              show_state: false
+              tap_action:
+                action: perform-action
+                perform_action: button.press
+                target:
+                  entity_id: button.atlas_pool_begin
+              hold_action:
+                action: none
+              icon_height: 32px
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: rtd
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: number.atlas_pool_rtd_reference
+                  name: Known temp.
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: orp
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: number.atlas_pool_orp_reference
+                  name: Solution
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: ph_mid
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: number.atlas_pool_ph_mid
+                  name: Buffer pH
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: ph_low
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: number.atlas_pool_ph_low
+                  name: Buffer pH
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: ph_high
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: number.atlas_pool_ph_high
+                  name: Buffer pH
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state:
+                  - ec_low
+                  - ec_single
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: number.atlas_pool_ec_low
+                  name: Solution
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: ec_high
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: number.atlas_pool_ec_high
+                  name: Solution
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state:
+                  - ph_mid
+                  - ph_low
+                  - ph_high
+                  - orp
+                  - rtd
+                  - ec_dry
+                  - ec_low
+                  - ec_high
+                  - ec_single
+              - condition: state
+                entity: sensor.atlas_pool_preview
+                state_not:
+                  - unknown
+                  - unavailable
+            card:
+              type: button
+              name: Reading is steady
+              icon: mdi:check
+              show_state: false
+              tap_action:
+                action: perform-action
+                perform_action: script.turn_on
+                target:
+                  entity_id: script.atlas_pool_prepare_calibration
+              hold_action:
+                action: none
+              icon_height: 32px
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: confirm
+            card:
+              type: button
+              name: Save calibration
+              icon: mdi:content-save
+              show_state: false
+              tap_action:
+                action: perform-action
+                perform_action: button.press
+                target:
+                  entity_id: button.atlas_pool_apply
+              hold_action:
+                action: none
+              icon_height: 32px
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state: recovery
+            card:
+              type: vertical-stack
+              cards:
+                - type: markdown
+                  content: '{{ state_attr(''sensor.atlas_pool_calibration'', ''result'') or ''Check the probe and
+                    its reference.'' }}'
+                - type: entities
+                  show_header_toggle: false
+                  entities:
+                    - entity: switch.atlas_pool_recovery_acknowledged
+                      name: I checked the probe and the result
+                - type: conditional
+                  conditions:
+                    - condition: state
+                      entity: switch.atlas_pool_recovery_acknowledged
+                      state: 'on'
+                  card:
+                    type: button
+                    name: Continue calibration
+                    icon: mdi:play
+                    show_state: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: button.press
+                      target:
+                        entity_id: button.atlas_pool_resume
+                    hold_action:
+                      action: none
+                    icon_height: 32px
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.atlas_pool_calibration_step
+                state:
+                  - ph_mid
+                  - ph_low
+                  - ph_high
+                  - orp
+                  - rtd
+                  - ec_dry
+                  - ec_low
+                  - ec_high
+                  - ec_single
+                  - confirm
+                  - done
+                  - maintenance
+                  - recovery
+                  - cleared
+            card:
+              type: button
+              name: Exit calibration
+              icon: mdi:exit-to-app
+              show_state: false
+              tap_action:
+                action: perform-action
+                perform_action: script.turn_on
+                target:
+                  entity_id: script.atlas_pool_exit_calibration
+                confirmation:
+                  text: Are ALL probes back in pool water? This ends calibration and resumes pool readings. Any points
+                    already saved will be kept.
+                  confirm_text: Yes, exit
+                  dismiss_text: Stay here
+              hold_action:
+                action: none
+              icon_height: 32px
+  - title: Advanced setup
+    path: advanced
+    cards:
+      - type: entities
+        show_header_toggle: false
+        title: Circuit configuration
+        entities:
+          - sensor.atlas_pool_k
+          - sensor.atlas_pool_tds_factor
+          - number.atlas_pool_tds_factor
+          - switch.atlas_pool_ec_config_confirmed
+          - button.atlas_pool_initialize_k1
+          - button.atlas_pool_set_tds_factor
+          - button.atlas_pool_configure_monitoring
+      - type: markdown
+        content: >-
+          End the calibration session before changing circuit configuration. Set K1.0
+          only if the installed probe is K1.0. The proposed TDS factor starts at
+          0.54; **this does not overwrite the circuit** unless explicitly applied.
+          TDS and salinity are separate readings; salinity is Atlas's value × 1,000 in ppm.
+          Configure monitoring checks Celsius scale, disabled RTD logging, and EC
+          outputs, and writes only settings that differ. After a restart, inspect
+          the circuit's calibration status and start a new procedure if needed;
+          procedure progress is kept only during the current session.
+      - type: entities
+        show_header_toggle: false
+        title: Clear calibration
+        entities:
+          - select.atlas_pool_clear_sensor
+          - switch.atlas_pool_clear_confirmed
+          - button.atlas_pool_clear
+      - type: markdown
+        content: >-
+          Begin a session for the sensor first. This advanced action deletes that
+          circuit's calibration; it is not required for routine calibration. After
+          clearing, end the session and begin a new procedure from its first step.
+      - type: entities
+        title: Manual controls and diagnostics
+        show_header_toggle: false
+        entities:
+          - entity: sensor.atlas_pool_control_result
+            name: Last device result
+          - entity: switch.atlas_pool_reference_ready
+            name: Probe is in the reference and steady
+          - entity: button.atlas_pool_arm
+            name: Prepare reference for saving
+          - entity: button.atlas_pool_cancel
+            name: Stop session and keep readings paused
+          - entity: switch.atlas_pool_probes_returned
+            name: All probes are back in pool water
+          - entity: button.atlas_pool_return
+            name: Return to pool readings
+          - sensor.atlas_pool_ph_calibration
+          - sensor.atlas_pool_orp_calibration
+          - sensor.atlas_pool_rtd_calibration
+          - sensor.atlas_pool_ec_calibration

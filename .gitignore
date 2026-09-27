@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+/artifacts/
+secrets.yaml
+.esphome/
+.claude/settings.local.json
+
+# Local Mosquitto state and credentials from home-assistant/mosquitto/.
+home-assistant/mosquitto/.env
+home-assistant/mosquitto/config/passwords
+home-assistant/mosquitto/data/
+home-assistant/mosquitto/log/

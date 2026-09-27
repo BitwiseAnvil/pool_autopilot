@@ -1,0 +1,28 @@
+# Example configuration.yaml. Add the homeassistant: packages line and the
+# lovelace: dashboards to your own file; see home-assistant/README.md.
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+homeassistant:
+  packages: !include_dir_named packages
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Both dashboards are read from files, so the repository defines them exactly.
+lovelace:
+  dashboards:
+    pool-dashboard:
+      mode: yaml
+      filename: dashboards/pool.yaml
+      title: Pool
+      icon: mdi:pool
+      show_in_sidebar: true
+    atlas-pool-kit:
+      mode: yaml
+      filename: dashboards/atlas-pool-kit.yaml
+      title: Atlas Pool Kit
+      icon: mdi:flask
+      show_in_sidebar: false
