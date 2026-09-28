@@ -120,7 +120,7 @@ struct Request {
 };
 enum class Kind { ID, CAL_STATUS, SCALE, LOGGER, K, FACTOR, LAYOUT, WRITE_SCALE, WRITE_LOGGER, WRITE_LAYOUT, READY, CONFIG_DONE,
                   COMP, READ, WRITE_CAL, CHECK_CAL, VERIFY, WRITE_K, CHECK_K,
-                  WRITE_FACTOR, CHECK_FACTOR, CYCLE_END };
+                  WRITE_FACTOR, CHECK_FACTOR, SLOPE, CYCLE_END };
 struct Op { int sensor; Kind kind; std::string command; uint32_t delay{300}; bool preview{false}; };
 
 class Engine {
@@ -130,6 +130,10 @@ class Engine {
   Reading preview{};
   std::array<bool,4> online{};
   std::array<int,4> calibration{{-1,-1,-1,-1}};
+  // EZO-pH Slope,? (datasheet p. 51): acid %, base %, zero offset mV. Updated
+  // by the circuit only when calibrated, so it is read at startup and after
+  // each pH calibration point, never written.
+  std::array<float,3> ph_slope{{NAN,NAN,NAN}};
   std::array<std::string,4> identity{}, errors{};
   std::string boot, result, status, method, step, request_id, last_calibration{"No calibration performed"};
   uint32_t token{1}, session{0}, completed{0};
@@ -225,6 +229,7 @@ class Engine {
       next_=now;
       status="Restoring pool readings";
       result="Return confirmed; restoring configuration and acquiring a new cycle";
+      enqueue(0,Kind::SLOPE,"Slope,?");
       // Maintenance intent is saved Off only after a fresh cycle proves every reading.
       return_cycles_=0;
       return true;
@@ -294,6 +299,7 @@ class Engine {
       if (!r.confirmed) return refuse("acknowledge that an interrupted write may have completed");
       stop_queue(); recovery=false; armed=false; preview={};
       enqueue(selected,Kind::CAL_STATUS,"Cal,?");
+      if (selected==0) enqueue(0,Kind::SLOPE,"Slope,?");
       next_=now;
       result="Inspect circuit status and fresh reference readings; re-arm deliberately if another write is needed";
       return save_intent(maintenance);
@@ -304,6 +310,7 @@ class Engine {
       stop_queue(); armed=false; pending_=true; clearing_=true;
       result=std::string(NAME[selected])+" calibration clear pending";
       if (!save_intent(true)) { pending_=false; return false; }
+      if (selected==0) ph_slope={{NAN,NAN,NAN}};
       enqueue(selected,Kind::WRITE_CAL,"Cal,clear",900);
       return true;
     }
@@ -331,6 +338,8 @@ class Engine {
     // acknowledge it explicitly before the calibration write, even if its old
     // response was discarded while draining the bus.
     if (selected==0 || selected==3) enqueue(selected,Kind::COMP,"",300,true);
+    // The stored slope is stale once a pH write may have landed; re-read after verification.
+    if (selected==0) ph_slope={{NAN,NAN,NAN}};
     enqueue(selected,Kind::WRITE_CAL,command,900);
     return true;
   }
@@ -347,6 +356,8 @@ class Engine {
       if (code==254 && age(now,started_)<3500) { read_at_=now+100; return; }
       active_=false;
       if (discard_) { discard_=false; return; }
+      // Slope is diagnostic only; a failed query never disables pH readings.
+      if (current_.kind==Kind::SLOPE && code!=1) { ph_slope={{NAN,NAN,NAN}}; return; }
       if (code!=1) { fail(current_.sensor,code==254 ? "response deadline" : code==2 ? "syntax error" : code==255 ? "no data" : "I2C/frame error"); return; }
       complete(payload,now);
     }
@@ -466,6 +477,7 @@ class Engine {
   void initialize(int s) {
     init_ok_[s]=true; ready_[s]=false;
     enqueue(s,Kind::ID,"i"); enqueue(s,Kind::CAL_STATUS,"Cal,?");
+    if (s==0) enqueue(s,Kind::SLOPE,"Slope,?");
     if (s==2) { scale_ok_=false; enqueue(s,Kind::SCALE,"S,?"); enqueue(s,Kind::LOGGER,"D,?"); }
     if (s==3) {
       layout={};
@@ -502,6 +514,7 @@ class Engine {
   }
   void fail(int s,const std::string &why) {
     errors[s]=why; init_ok_[s]=ready_[s]=false; comp_ok_[s]=false;
+    if (s==0) ph_slope={{NAN,NAN,NAN}};
     invalidate(s);
     if (s==2) scale_ok_=false;
     if (s==3) layout={};
@@ -573,6 +586,7 @@ class Engine {
   void finish_point(uint32_t now) {
     last_calibration=result+"; boot "+boot.substr(0,8)+" at "+std::to_string(now/1000)+" s";
     pending_=false; advance(); status=step=="done" ? "Procedure complete; return required" : "Next reference: "+step;
+    if (selected==0) enqueue(0,Kind::SLOPE,"Slope,?");
     next_=now+1000;
   }
   void complete(const std::string &p,uint32_t now) {
@@ -599,6 +613,7 @@ class Engine {
           if (clearing_) {
             ok=n==0;
             if (ok) { pending_=false; recovery=true; completed=0; step="done"; result=std::string(NAME[s])+" calibration cleared and read back; end session before restarting"; last_calibration=result; status="Calibration cleared"; }
+            if (ok && s==0) enqueue(0,Kind::SLOPE,"Slope,?");
           } else if (s==3 && method=="ec_2" && step=="low") {
             // Atlas EC datasheet p. 70: Cal,low stages a reference without
             // changing readings. ACK + a valid status query permit the high
@@ -639,6 +654,20 @@ class Engine {
         if (ok && current_.kind==Kind::CHECK_FACTOR) { pending_=false; result="TDS factor "+decimal(n)+" verified; confirm return to pool"; status="Maintenance"; }
         break;
       case Kind::LAYOUT: reported_layout_=p; ok=layout.parse(p); break;
+      case Kind::SLOPE: {
+        // ?Slope,acid,base,offset; the example on p. 51 shows a space before the offset.
+        auto f=csv(p);
+        std::array<float,3> slope{{NAN,NAN,NAN}};
+        bool parsed=f.size()==4 && (f[0]=="?Slope" || f[0]=="?SLOPE");
+        for (size_t i=1;parsed && i<f.size();++i) {
+          std::string field=f[i];
+          field.erase(0,field.find_first_not_of(' '));
+          if (!field.empty()) field.erase(field.find_last_not_of(' ')+1);
+          parsed=numeric(field,slope[i-1]);
+        }
+        ph_slope=parsed ? slope : std::array<float,3>{{NAN,NAN,NAN}};
+        break; // Diagnostic only: an unexpected reply never disables pH readings.
+      }
       case Kind::WRITE_SCALE:
       case Kind::WRITE_LOGGER:
       case Kind::WRITE_LAYOUT: ok=p.empty(); break;

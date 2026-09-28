@@ -94,6 +94,7 @@ struct Bus : IO {
     reply="";
     if (c=="i") reply=std::string("?i,")+NAME[s]+",2.17";
     else if (c=="Cal,?") reply="?Cal,"+std::to_string(counts[s]);
+    else if (c=="Slope,?" && s==0) reply=counts[0] ? "?Slope,98.2,97.8,-1.2" : "?Slope,100.0,100.0,0.0";
     else if (c=="D,?") reply="?D,"+std::to_string(logger_interval);
     else if (c=="S,?") reply=forced_scale.empty() ? "?S,C" : forced_scale;
     else if (c=="K,?") reply="?K,"+decimal(probe_k);
@@ -235,6 +236,46 @@ void other_procedures() {
   Rig rtd; rtd.run(25000); rtd.session("rtd");
   auto wrong=rtd.req("arm"); wrong.reference=32; wrong.unit="F"; assert(!rtd.e.request(wrong,rtd.now));
   rtd.point(0); assert(rtd.e.step=="done");
+}
+void ph_slope_diagnostics() {
+  Rig r; r.run(25000);
+  // Uncalibrated circuit reports the ideal slope (datasheet p. 68).
+  assert(r.e.ph_slope[0]==100 && r.e.ph_slope[1]==100 && r.e.ph_slope[2]==0);
+  for (int s=1;s<4;++s)
+    for (const auto &command: r.bus.commands) assert(command.first!=s || command.second!="Slope,?");
+  // Slope is queried at startup only, not every monitoring cycle.
+  size_t queries=0;
+  for (const auto &command: r.bus.commands) queries+=command==std::make_pair(0,std::string("Slope,?"));
+  assert(queries==1);
+  r.run(60000);
+  queries=0;
+  for (const auto &command: r.bus.commands) queries+=command==std::make_pair(0,std::string("Slope,?"));
+  assert(queries==1 && r.bus.writes==0 && r.bus.settings_writes==0 && r.bus.saves==0);
+
+  // Each accepted pH point re-reads the stored slope; a write first invalidates it.
+  r.session("ph_1");
+  auto arm=r.req("arm"); arm.reference=7; assert(r.e.request(arm,r.now));
+  auto apply=r.req("apply"); apply.reference=7; assert(r.e.request(apply,r.now));
+  assert(std::isnan(r.e.ph_slope[0]) && std::isnan(r.e.ph_slope[2]));
+  r.until([&]{return !r.e.busy() && std::isfinite(r.e.ph_slope[0]);});
+  assert(r.e.step=="done" && r.e.ph_slope[0]==98.2f && r.e.ph_slope[1]==97.8f && r.e.ph_slope[2]==-1.2f);
+  assert(r.send("return")); r.until([&]{return !r.e.maintenance;});
+  assert(r.e.available(0,r.now) && r.e.ph_slope[2]==-1.2f);
+
+  // The datasheet example spaces the offset; malformed or rejected replies are
+  // diagnostic-only and never disable pH readings.
+  const std::array<std::pair<const char *,int>,6> replies{{{"?Slope,99.7,100.3, -0.89",1},{"?Slope,99.7,100.3",1},
+    {"?Slope,x,100.3,-0.89",1},{"?Cal,3",1},{"",2},{"",-1}}};
+  for (const auto &reply: replies) {
+    Rig q;
+    if (reply.second==1) q.bus.response_payload[{0,"Slope,?"}]=reply.first;
+    else q.bus.response_status[{0,"Slope,?"}]=reply.second;
+    q.run(30000);
+    assert(q.e.available(0,q.now) && q.e.errors[0].empty());
+    if (std::string(reply.first)=="?Slope,99.7,100.3, -0.89")
+      assert(q.e.ph_slope[0]==99.7f && q.e.ph_slope[1]==100.3f && q.e.ph_slope[2]==-0.89f);
+    else for (float v: q.e.ph_slope) assert(std::isnan(v));
+  }
 }
 void replay_and_expiry() {
   Rig r; r.run(25000); r.session("orp");
@@ -948,6 +989,7 @@ int main(int argc,char **argv) {
     else if (std::string(argv[1])=="return") return_cycle_isolation();
     else if (std::string(argv[1])=="discovery") mqtt_discovery_retry();
     else if (std::string(argv[1])=="identity") identity_responses();
+    else if (std::string(argv[1])=="slope") ph_slope_diagnostics();
     else if (std::string(argv[1])=="startup") automatic_monitoring_startup();
     else if (std::string(argv[1])=="factor_recovery") factor_configuration_recovery();
     else if (std::string(argv[1])=="configuration_retry") configuration_retry_readback();
@@ -956,7 +998,7 @@ int main(int argc,char **argv) {
     return 0;
   }
   parsing(); identity_responses(); normal_and_rollover(); missing_temperature(); ec_layout_and_fields(); deadline_and_compensation();
-  ph_workflow(); other_procedures(); replay_and_expiry(); interrupted_ram_session(); configuration_and_storage(); boot_clear_and_ota();
+  ph_workflow(); ph_slope_diagnostics(); other_procedures(); replay_and_expiry(); interrupted_ram_session(); configuration_and_storage(); boot_clear_and_ota();
   errors_and_uncertain_writes(); reference_and_compensation_guards(); verification_and_reboot_guards();
   mqtt_sample_expiry(); utc_timestamps(); mqtt_discovery_retry();
   staged_ec_low_point(); return_cycle_isolation(); return_saves_only_after_fresh_cycle(); automatic_monitoring_startup(); circuit_write_policy();

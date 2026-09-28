@@ -213,6 +213,8 @@ void AtlasPool::snapshot_(uint32_t now) {
     j["compensation_source"]=engine.maintenance && engine.selected>=0 ? "calibration reference" : engine.compensation_assumed ? "assumed 25 C" : "local RTD";
     j["rtd_age_s"]=engine.readings[2].valid ? float(::atlas_pool::age(now,engine.readings[2].at))/1000 : NAN;
     j["k"]=engine.k; j["tds_factor"]=engine.tds_factor;
+    auto slope=j["ph_slope"].to<JsonObject>();
+    slope["acid"]=engine.ph_slope[0]; slope["base"]=engine.ph_slope[1]; slope["offset_mv"]=engine.ph_slope[2];
     j["firmware"]="atlas-pool-kit/1.2.0"; j["esphome"]=ESPHOME_VERSION;
     j["reset_reason"]=int(esp_reset_reason());
     char ip[network::IP_ADDRESS_BUFFER_SIZE];
@@ -288,8 +290,9 @@ bool AtlasPool::publish_discovery_(uint8_t index) {
     return publish_("homeassistant/sensor/"+device_+"/"+key+"/config",data.c_str(),true,1);
   }
   // Discovery command templates read the session context from this diagnostic entity.
-  const char *keys[]={"calibration","preview","preview_age","compensation","tds_factor","k","firmware","ip","rssi","uptime","reset_reason","ph_calibration","orp_calibration","rtd_calibration","ec_calibration","last_calibration","control_result"};
-  const char *titles[]={"Calibration","Calibration Preview","Preview Age","Compensation Temperature","TDS Factor","EC Probe K","Firmware","IP Address","Wi-Fi Signal","Uptime","Restart Reason","pH Calibration Points","ORP Calibration Points","RTD Calibration Points","EC Wet Calibration Points","Last Calibration Result","Calibration Control Result"};
+  const char *keys[]={"calibration","preview","preview_age","compensation","tds_factor","k","firmware","ip","rssi","uptime","reset_reason","ph_calibration","orp_calibration","rtd_calibration","ec_calibration","last_calibration","control_result","ph_acid_slope","ph_base_slope","ph_zero_offset"};
+  const char *titles[]={"Calibration","Calibration Preview","Preview Age","Compensation Temperature","TDS Factor","EC Probe K","Firmware","IP Address","Wi-Fi Signal","Uptime","Restart Reason","pH Calibration Points","ORP Calibration Points","RTD Calibration Points","EC Wet Calibration Points","Last Calibration Result","Calibration Control Result","pH Acid Slope","pH Base Slope","pH Zero Offset"};
+  const char *slope_fields[]={"acid","base","offset_mv"};
   const char *fields[]={"status","preview","preview_age_s","compensation_c","tds_factor","k","firmware","ip","rssi","uptime_s","reset_reason",nullptr,nullptr,nullptr,nullptr};
   if (index<Sequence::MAINTENANCE) {
     int i=index-Sequence::READING_COUNT;
@@ -298,11 +301,12 @@ bool AtlasPool::publish_discovery_(uint8_t index) {
       j["name"]=titles[i]; j["unique_id"]=device_+"_"+key; j["default_entity_id"]="sensor.atlas_pool_"+key;
       if (i!=16) j["entity_category"]="diagnostic";
       j["state_topic"]=base_+"/diagnostics";
-      j["value_template"]=i==16 ? std::string("{{ value_json.result }}") : i==15 ? std::string("{{ value_json.last_calibration }}") : i<11 ? std::string("{{ value_json.")+fields[i]+" }}" : std::string("{{ value_json.circuits['")+::atlas_pool::NAME[i-11]+"'].calibration }}";
+      j["value_template"]=i>=17 ? std::string("{{ value_json.ph_slope.")+slope_fields[i-17]+" }}" : i==16 ? std::string("{{ value_json.result }}") : i==15 ? std::string("{{ value_json.last_calibration }}") : i<11 ? std::string("{{ value_json.")+fields[i]+" }}" : std::string("{{ value_json.circuits['")+::atlas_pool::NAME[i-11]+"'].calibration }}";
       if (i==0) j["json_attributes_topic"]=base_+"/diagnostics";
       if (i==2 || i==9) j["unit_of_measurement"]="s";
       if (i==3) j["unit_of_measurement"]="°C";
       if (i==8) { j["unit_of_measurement"]="dBm"; j["device_class"]="signal_strength"; }
+      if (i>=17) { j["unit_of_measurement"]=i==19 ? "mV" : "%"; j["suggested_display_precision"]=i==19 ? 2 : 1; }
       j["availability_topic"]=base_+"/availability"; j["expire_after"]=30;
       device(j);
     });

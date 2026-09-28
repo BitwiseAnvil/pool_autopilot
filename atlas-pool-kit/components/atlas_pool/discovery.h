@@ -7,7 +7,7 @@ namespace atlas_pool {
 // availability. Resume at that item so retries do not refill it with the prefix.
 class DiscoverySequence {
  public:
-  static constexpr uint8_t READING_COUNT=6, DIAGNOSTIC_COUNT=17;
+  static constexpr uint8_t READING_COUNT=6, DIAGNOSTIC_COUNT=20;
   static constexpr uint8_t MAINTENANCE=READING_COUNT+DIAGNOSTIC_COUNT;
   static constexpr uint8_t CONTROLS=MAINTENANCE+1;
   static constexpr uint8_t AVAILABILITY=CONTROLS+CONTROL_COUNT, COUNT=AVAILABILITY+1;

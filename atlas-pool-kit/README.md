@@ -149,8 +149,16 @@ for all six.
 Diagnostic sensors: `calibration` (status, with diagnostics as attributes),
 `preview`, `preview_age`, `compensation`, `tds_factor`, `k`, `firmware`, `ip`,
 `rssi`, `uptime`, `reset_reason`, `ph_calibration`, `orp_calibration`,
-`rtd_calibration`, `ec_calibration`, `last_calibration` and `control_result`,
-plus `binary_sensor.atlas_pool_maintenance`.
+`rtd_calibration`, `ec_calibration`, `last_calibration`, `control_result`,
+`ph_acid_slope`, `ph_base_slope` and `ph_zero_offset`, plus
+`binary_sensor.atlas_pool_maintenance`.
+
+The three slope sensors report the EZO-pH `Slope,?` query (Atlas EZO-pH
+datasheet pp. 25, 51, 68–70): acid and base response as a percentage of an
+ideal probe, and the zero-point offset in mV. Atlas expects a healthy probe
+above 95% with an offset within ±5 mV; above 10 mV causes noticeable errors.
+The circuit updates slope only when calibrated, so the kit reads it at startup
+and after each pH calibration point. It is a read-only query.
 
 The 27 configuration controls:
 
