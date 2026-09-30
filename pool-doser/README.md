@@ -44,17 +44,19 @@ The shared rules for runtime state, flash writes and time are in
 
 See the [bill of materials](BOM.md). In brief: two Waveshare
 ESP32-S3-Relay-1CH-U controllers, two Finder 22.32.0.120.1320 contactors, a
-Phoenix Contact 2966281 outlet-live detector, a Mean Well HDR-15-5 5 V supply,
+Phoenix Contact 2966281 outlet-live detector, a Mean Well MDR-20-5 5 V supply
+(it replaced an HDR-15-5 that added noise to the Atlas pH reading),
 a Schneider 5 A C60 breaker, a normally-open paddle flow switch, a 270 Ω
 pull-up resistor and 14/18 AWG hookup wire. The Master and Slave share an
 intact Cat6A twisted pair for RS485 with both onboard 120 Ω terminators on.
 
 ## Wiring book
 
-The enclosure uses three harnesses: **A** black/white supply, **B** red
-switching and **C** low voltage, with 27 wire IDs and 54 ends. Every 120 V
+The enclosure uses three harnesses: **A** black/white/green supply, **B** red
+switching and **C** low voltage, with 28 wire IDs and 56 ends. Every 120 V
 wire is stranded 14 AWG; shared ends are one ferrule at an existing device
-screw; exactly three leads cross into the metal junction box.
+screw; exactly four leads cross into the metal junction box, including green
+A17 from the ground Wago to the Mean Well FG terminal.
 
 > [!WARNING]
 > The neutral branches at Finder K5 terminal 3 (four 14 AWG wires) and K1
@@ -87,7 +89,7 @@ The generators and PDF export are described in [docs/tools](docs/tools/README.md
 | Pump power | F1 protected hot → K1 1–2 → K5 1–2 → switched output → receptacle → pump |
 | Master coil | F1 hot → Master relay COM/NO → K1 A1; K1 A2 → neutral |
 | Slave coil | F1 hot → Slave relay COM/NO → K5 A1; K5 A2 → neutral |
-| Controller supply | F1 hot/neutral → Mean Well L/N; +V/−V → both controllers' 5 V/GND |
+| Controller supply | F1 hot/neutral → Mean Well L/N; box ground → Mean Well FG; +V/−V → both controllers' 5 V/GND |
 | Outlet detector | K4 A1/A2 across the final switched output; its 11–14 contact between Slave GPIO1 and GND, with 270 Ω from GPIO1 to 3.3 V |
 | Flow switch | Normally-open contact between Master GPIO1 and GND (internal pull-up); an open cable reports no flow |
 | RS485 | Master A+ ↔ Slave A+, B− ↔ B− on one intact twisted pair |

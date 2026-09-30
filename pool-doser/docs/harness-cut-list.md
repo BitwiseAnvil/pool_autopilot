@@ -1,4 +1,4 @@
-# Harness cutting and measurement worksheet — revision 13
+# Harness cutting and measurement worksheet — revision 14
 
 Use this worksheet for measurement records. Blank length/continuity fields are not test results.
 
@@ -23,6 +23,7 @@ C09/C10 are installed red/green telephone-cord conductors. C13/C14 are orange/bl
 | A14 | White / 14 AWG MTW, 600 V | K5:3 → K5:A2 | ____ | ☐ | ☐ |
 | A15 | White / 14 AWG MTW, 600 V | K1:3 → K1:A2 | ____ | ☐ | ☐ |
 | A16 | White / 14 AWG MTW, 600 V | K1:3 → K4:A2 | ____ | ☐ | ☐ |
+| A17 | Green / 14 AWG MTW, 600 V | BOX:G → PS1:FG | ____ | ☐ | ☐ |
 | B01 | Red / 14 AWG MTW, 600 V | W1:NO → K1:A1 | ____ | ☐ | ☐ |
 | B02 | Red / 14 AWG MTW, 600 V | W2:NO → K5:A1 | ____ | ☐ | ☐ |
 | B03 | Red / 14 AWG MTW, 600 V | K1:2 → K5:1 | ____ | ☐ | ☐ |

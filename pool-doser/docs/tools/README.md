@@ -1,6 +1,6 @@
 # Rebuilding the wiring book
 
-Harness revision 13 documents ferrule branches at the existing devices. All
+Harness revision 14 documents ferrule branches at the existing devices. All
 120 V wires are stranded 14 AWG, and each small AC terminal receives one wire
 in one blue ferrule. The reference build uses large red ferrules at F1 LOAD,
 K1-3 and K5-3, yellow at K5-2 and blue at the remaining 14 AWG device ends;
@@ -17,8 +17,8 @@ python3 docs/tools/build_physical_wiring.py
 python3 tests/test_wiring_documentation.py
 ```
 
-There are **27 A/B/C wire IDs / 54 ends**. Only A01, A08 and B04 cross the metal-box
-boundary. BOX endpoints represent existing in-box Wagos, not added external
+There are **28 A/B/C wire IDs / 56 ends**. Only A01, A08, B04 and green A17
+(ground Wago → Mean Well MDR-20-5 FG) cross the metal-box boundary. BOX endpoints represent existing in-box Wagos, not added external
 distribution stops. The graph checks model both Finder contact pairs in all
 four switching states, proving continuous neutral, independent coil control
 and two series pump-hot contacts. Drawing checks verify endpoints, insulation
@@ -50,7 +50,7 @@ large red.
 The reference photo is `docs/images/enclosure-2026-09-18.jpg`. The tools use
 it locally; they do not upload it. Routes are not measured cut lengths.
 Neutral branches are at K5-3 and K1-3, with single blue ends at both Finder
-A2s, PS1 N and K4 A2. K4 A2 receives A16; B05 is single at K4 A1. Both Finder
+A2s, PS1 N and K4 A2. The PS1 FG terminal receives single green A17. K4 A2 receives A16; B05 is single at K4 A1. Both Finder
 terminal 4s are externally unwired, but become neutral when their respective
 3–4 contact closes. The shared-ferrule sheet details all six groups.
 

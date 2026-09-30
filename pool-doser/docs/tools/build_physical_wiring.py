@@ -14,7 +14,7 @@ BY_ID = {w['id']: w for w in WIRES}
 WIDTH, HEIGHT = 2200, 1400
 DEVICES = [('W1', 170, 260, 'MASTER / K2'), ('K1', 520, 175, 'MASTER CONTACTOR'),
            ('W2', 790, 260, 'SLAVE / K3'), ('K5', 1140, 175, 'SLAVE CONTACTOR'),
-           ('K4', 1390, 140, 'OUTLET DETECTOR'), ('PS1', 1640, 190, '5 V SUPPLY'),
+           ('K4', 1390, 140, 'OUTLET DETECTOR'), ('PS1', 1590, 240, '5 V SUPPLY'),
            ('F1', 1920, 175, '5 A BREAKER')]
 POINTS = {}
 PINS = {}
@@ -29,34 +29,37 @@ for name, x, width, _ in DEVICES:
     elif name == 'K4':
         pins = {pin: (x+70, y) for pin, y in [('A1', 435), ('A2', 520), ('11', 600), ('14', 680), ('12', 760)]}
     elif name == 'PS1':
-        pins = {'+V': (x+48, 435), '-V': (x+142, 435), 'N': (x+48, 745), 'L': (x+142, 745)}
+        # MDR-20: output +V, −V, DC OK on top; input FG, N, L on the bottom.
+        pins = {'+V': (x+40, 435), '-V': (x+120, 435), 'DC OK': (x+200, 435),
+                'FG': (x+40, 745), 'N': (x+120, 745), 'L': (x+200, 745)}
     else:
         pins = {'LOAD': (x+88, 435), 'LINE': (x+88, 745)}
     PINS[name] = pins
     POINTS.update({f'{name}:{pin}': pos for pin,pos in pins.items()})
 POINTS.update({
-    'BOX:L': (2090,1190), 'BOX:N': (1990,1190), 'BOX:SW': (2040,1190),
+    'BOX:L': (2090,1190), 'BOX:N': (1990,1190), 'BOX:SW': (2040,1190), 'BOX:G': (1930,1190),
 })
 ROUTES = {
     'A01': [(2090,925),(2008,925)],
-    'A02': [(1885,435),(1885,875),(1782,875)],
+    'A02': [(1885,435),(1885,875),(1790,875)],
     'A05': [(2008,480),(2150,480),(2150,955),(890,955)],
     'A06': [(2008,225),(568,225)],
     'A07': [(2125,435),(2125,285),(455,285),(455,820),(270,820)],
-    'A08': [(1870,1190),(1870,260),(1330,260),(1330,435)],
+    'A08': [(1880,1190),(1880,260),(1330,260),(1330,435)],
     'A11': [(1270,220),(650,220)],
-    'A13': [(1230,435),(1230,340),(1620,340),(1620,830),(1688,830)],
+    'A13': [(1230,435),(1230,340),(1850,340),(1850,830),(1710,830)],
     'A14': [(1270,560),(1335,560),(1335,650)],
     'A15': [(725,435),(725,650)],
-    'A16': [(610,435),(610,300),(1565,300),(1565,520)],
+    'A16': [(610,435),(610,300),(1558,300),(1558,520)],
+    'A17': [(1860,1190),(1860,1050),(1630,1050)],
     'B01': [(210,820),(465,820),(465,520)],
     'B02': [(830,820),(1085,820),(1085,520)],
     'B03': [(568,890),(740,890),(740,270),(1188,270)],
     'B05': [(1225,745),(1225,695),(1350,695),(1350,310),(1460,310)],
     'B04': [(1188,990),(2040,990)],
-    'C01': [(1688,240),(1015,240)],
+    'C01': [(1630,240),(1015,240)],
     'C03': [(1085,435),(1085,290),(395,290)],
-    'C04': [(1782,225),(945,225)],
+    'C04': [(1710,225),(945,225)],
     'C06': [(915,435),(915,290),(325,290)],
     'C07': [(390,850),(1010,850)], 'C08': [(330,920),(950,920)],
 }
@@ -64,7 +67,7 @@ TAGS = {
     'A01': (2050,905), 'A02': (1810,855), 'A05': (1500,950),
     'A06': (1620,205), 'A07': (340,800), 'A08': (1810,240),
     'A11': (955,200), 'A13': (1510,320), 'A14': (1360,610),
-    'A15': (670,630), 'A16': (1010,280),
+    'A15': (670,630), 'A16': (1010,280), 'A17': (1745,1035),
     'B01': (335,802), 'B02': (955,802), 'B03': (945,250),
     'B05': (1410,290), 'B04': (1820,970),
     'C01': (1480,220), 'C03': (710,270),
@@ -91,7 +94,7 @@ class Canvas:
         self.text(35,48,f'{number}  /  {title}', 'title')
         self.text(35,80,subtitle,'sub')
         self.text(2165,46,'POOLDose', 'sub', 'end')
-        self.text(2165,77,'REV 13', 'sub', 'end')
+        self.text(2165,77,'REV 14', 'sub', 'end')
 
     def text(self, x, y, value, cls='small', anchor=None, fill=None):
         extra = (f' text-anchor="{anchor}"' if anchor else '') + (f' style="fill:{fill}"' if fill else '')
@@ -140,8 +143,8 @@ class Canvas:
             elif name=='PS1':
                 self.rect(x+15,485,w-30,202,'#414e56',rx=5)
                 self.text(x+w/2,532,'MEAN WELL','label','middle','#fff')
-                self.text(x+w/2,565,'HDR-15-5','small','middle','#fff')
-                self.text(x+w/2,597,'5 V / 2.4 A','small','middle','#fff')
+                self.text(x+w/2,565,'MDR-20-5','small','middle','#fff')
+                self.text(x+w/2,597,'5 V / 3 A','small','middle','#fff')
                 self.text(x+w/2,631,'AC INPUT ↓','tiny','middle','#fff')
                 self.text(x+w/2,653,'≥5 mm free each side','micro','middle','#fff')
                 self.text(x+w/2,675,'≥40 mm ↑ / ≥20 mm ↓','micro','middle','#fff')
@@ -156,7 +159,7 @@ class Canvas:
 
     def labels(self):
         # Keep headings alongside top entry wires rather than masking the paths.
-        positions = {'W1':230,'K1':655,'W2':850,'K5':1275,'K4':1400,'PS1':1735,'F1':2065}
+        positions = {'W1':230,'K1':655,'W2':850,'K5':1275,'K4':1400,'PS1':1765,'F1':2065}
         for name,x,w,role in DEVICES:
             center=positions[name]
             self.text(center,372,name,'label','middle')
@@ -193,7 +196,7 @@ class Canvas:
         else:
             self.path(f'M{x-5} {y+4} l10 -8','#788a94',2)
         label=key if key.startswith('J') else key.split(':')[-1]
-        if key.startswith('BOX:'): label={'L':'L OUT','N':'N OUT','SW':'J1 IN'}[key.split(':')[1]]
+        if key.startswith('BOX:'): label={'L':'L OUT','N':'N OUT','SW':'J1 IN','G':'PE OUT'}[key.split(':')[1]]
         label_x=x+65 if label_side=='right' else x
         self.rect(label_x-33,y-34,66,20,'#fff',rx=3)
         self.text(label_x,y-19,label,'tiny' if not key.startswith('BOX:') else 'micro','middle')
@@ -218,7 +221,7 @@ class Canvas:
             if key in {'K1:4','K5:4'}:
                 self.text(x,y+28,'no wire','micro','middle','#677987')
                 self.text(x,y+43,'N when closed','micro','middle','#677987')
-            elif key=='K4:12': self.text(x,y+28,'unused','micro','middle','#84939b')
+            elif key in {'K4:12','PS1:DC OK'}: self.text(x,y+28,'unused','micro','middle','#84939b')
         self.items.append('</g>')
 
     def terminals(self):
@@ -228,7 +231,8 @@ class Canvas:
     def box(self):
         self.rect(1890,1120,260,205,'#eef2f4','#7b8b95',12)
         self.text(1908,1150,'METAL BOX','label')
-        # Same three boundary points on both mains sheets; inactive ones are references only.
+        # Same L/N/SW boundary points on every AC sheet; inactive ones are references only.
+        # The ground Wago appears only on sheet 02, where A17 is drawn.
         self.text(2020,1255,'Wagos: source + outlet whips','tiny','middle')
         self.text(2020,1280,'Whips: stranded 14 AWG','tiny','middle')
         self.text(2020,1305,'N and PE remain separate','tiny','middle')
@@ -251,7 +255,7 @@ class Canvas:
 
 
 def overview():
-    c=Canvas('overview','01','Three harnesses. Three box wires.','Ferrule branches at existing devices · all 120 V wires are 14 AWG · small AC terminals each receive one blue ferrule')
+    c=Canvas('overview','01','Three harnesses. Four box wires.','Ferrule branches at existing devices · all 120 V wires are 14 AWG · small AC terminals each receive one blue ferrule')
     c.legend('A  AC supply   /   B  Switching   /   C  Low voltage      ·      device order matches the enclosure photo')
     c.note(45,215,1650,'Ferrules and checkout', [
         'Three LARGE RED ferrules: F1 LOAD, K5-3 and K1-3. One YELLOW: K5-2. Remaining 14 AWG device ends: BLUE.',
@@ -265,7 +269,7 @@ def overview():
         'Wiring scope: see end notes.'])
     c.hardware();c.labels();c.terminals()
     for x,name,lines in [
-        (50,'A — AC SUPPLY',['Black hot + separate white neutral.', 'Larger screws carry the branch ferrules.', 'Sheets 02–03.']),
+        (50,'A — AC SUPPLY',['Black hot, white neutral, green PS1 ground.', 'Larger screws carry the branch ferrules.', 'Sheets 02–03.']),
         (475,'B — SWITCHING',['Red coil leads + outlet return.', 'K5-2 shares B04 + B05.', 'Sheet 04.']),
         (900,'C — LOW VOLTAGE',['5 V, RS485 + GPIO tails.', 'PS1 → W2 → W1 power chains.', 'Sheets 05–07.'])]:
         c.note(x,850,400,name,lines)
@@ -273,34 +277,36 @@ def overview():
         'A01  BLACK / 14 AWG   OUT → F1 bottom LINE.  A02 leaves the top LOAD terminal.',
         'A08  WHITE / 14 AWG   OUT → K5 POWER terminal 3. Both whip neutrals join inside the box.',
         'B04  RED / 14 AWG       IN ← final switched output.  Wago → outlet-whip BLACK.',
+        'A17  GREEN / 14 AWG   OUT → Mean Well PS1 FG. Ground Wago with both whip grounds.',
         'Two 3-wire whips end in the box; all whip and 120 V harness wires are stranded 14 AWG.',
         'Whip grounds are joined and bonded to the metal box.'])
     c.rect(1380,850,765,430,'#edf2f5','#8194a1',16)
     c.text(1410,890,'METAL JUNCTION BOX','label')
-    c.text(1410,923,'Wagos join the source/outlet whips to three control leads.','small')
+    c.text(1410,923,'Wagos join the source/outlet whips to four control leads.','small')
     # These are functional internal references, not additional harness cut lengths.
-    for y,color,label in [(977,'#202832','A01 · BLACK OUT → F1 bottom LINE'),(1030,'#fff','A08 · WHITE OUT → controls'),(1083,'#d93136','B04 · RED IN → outlet-whip BLACK')]:
+    for y,color,label in [(967,'#202832','A01 · BLACK OUT → F1 bottom LINE'),(1012,'#fff','A08 · WHITE OUT → controls'),(1057,'#d93136','B04 · RED IN → outlet-whip BLACK'),(1102,'#26834b','A17 · GREEN OUT → PS1 FG')]:
         c.path(f'M1400 {y} H1600','#6a7883',10);c.path(f'M1400 {y} H1600',color,7)
         c.text(1625,y+6,label,'small')
-    c.path('M1420 1150 H1740','#6a7883',10);c.path('M1420 1150 H1740','#fff',6)
-    c.text(1760,1156,'Neutral → outlet whip','small')
+    c.path('M1420 1160 H1740','#6a7883',10);c.path('M1420 1160 H1740','#fff',6)
+    c.text(1760,1166,'Neutral → outlet whip','small')
     c.path('M1420 1210 H1740 M1570 1210 V1240 H1740','#17643c',6)
     c.text(1760,1216,'Ground → outlet whip','small')
     c.text(1760,1246,'PE → metal-box bond','small')
-    c.text(35,1324,'Neutral and PE are separate nets. The green reference stays INSIDE the metal box; it is not a harness lead.','label')
+    c.text(35,1324,'Neutral and PE are separate nets. Green A17 is the only harness PE lead: ground Wago → PS1 FG.','label')
     return c.finish()
 
 
 def mains():
-    c=Canvas('mains','02','Harness A / BLACK hot branches','F1 top LOAD: one ferrule / four 14 AWG wires → PS1 L, W2 COM, K1 terminal 1 and W1 COM')
-    c.legend('BLACK = stranded 14 AWG   ·   every destination is SINGLE BLUE   ·   Waveshare COM is the relay contact, never VCC')
+    c=Canvas('mains','02','Harness A / BLACK hot branches + GREEN ground','F1 top LOAD: one ferrule / four 14 AWG wires → PS1 L, W2 COM, K1 terminal 1 and W1 COM · A17 box ground → PS1 FG')
+    c.legend('BLACK = stranded 14 AWG   ·   GREEN A17 = PE   ·   every destination is SINGLE BLUE   ·   Waveshare COM is the relay contact, never VCC')
     c.hardware();c.box();c.draw_wires()
-    for key in ('BOX:L','BOX:N','BOX:SW'): c.endpoint(key)
+    for key in ('BOX:L','BOX:N','BOX:SW','BOX:G'): c.endpoint(key)
     c.note(45,1080,860,'Four individual leads leave ONE ferrule at F1 LOAD',[
         'A02 → Mean Well L. A05 → Slave W2 COM.',
         'A06 → Master Finder K1 terminal 1. A07 → Master W1 COM.',
         'Each far end is one 14 AWG wire in one blue ferrule.',
-        'A01 is the single incoming black lead at bottom LINE.'])
+        'A01 is the single incoming black lead at bottom LINE.',
+        'A17 green: box ground Wago → PS1 FG, single blue.'])
     c.note(955,1080,855,'Branch ferrule',[
         'One LARGE RED ferrule at F1 top LOAD.',
         'A02/A05/A06/A07: four 14 AWG wires in that one end.',
@@ -364,7 +370,7 @@ def dc():
         'PS1 +V and W1 VCC each have one single-ferruled wire.'])
     c.note(1030,900,1110,'Existing terminal checks',[
         'DATA: record Waveshare single/twin wire ranges, strip and torque.',
-        'PS1 stays single on +V; confirm the actual ferrule/barrel.',
+        'PS1 stays single on +V; DC OK stays unused.',
         'Use the top VCC screw, not GPIO 3V3.',
         'The requested shared end is visible at W2; no added connector is drawn.'])
     return c.finish()
@@ -526,8 +532,8 @@ def ferrules():
         y=600+i*65;c.rect(40,y,2110,61,'#eef4f7' if i%2==0 else '#fff',rx=4)
         c.text(55,y+36,a,'label');c.text(355,y+36,b,'small');c.text(700,y+36,color,'small');c.text(1050,y+36,status,'small')
     c.note(45,1110,2100,'14 AWG ferrules: three large red, one yellow, remaining device ends blue',[
-        'Mean Well L/N, Waveshare COM/NO, detector A1/A2 and all Finder A1/A2: one 14 AWG wire in one blue ferrule.',
-        '14 AWG groups: two four-wire red, one three-wire red, one two-wire yellow and 16 single blue ends.',
+        'Mean Well L/N/FG, Waveshare COM/NO, detector A1/A2 and all Finder A1/A2: one 14 AWG wire in one blue ferrule.',
+        '14 AWG groups: two four-wire red, one three-wire red, one two-wire yellow and 17 single blue ends.',
         'Kit chart: large red = 8 AWG label / 12 mm / 4.9 mm OD; yellow = 10 AWG label / 12 mm / 3.9 mm OD.',
         'K4-14: one orange C13. K4-11: one black C14. The GPIO1/R1 branch is soldered locally at JS2; no shared ferrule at K4.',
         'Finder 22.32 contact terminals are rated for 1 × 10 AWG or 2 × 12 AWG. K5-3 and K1-3 exceed that; use a rated neutral terminal block instead.'])
@@ -536,7 +542,7 @@ def ferrules():
 
 def svg_document(body,title,height=HEIGHT):
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" role="img" aria-label="{E(title)}">
-<title>{E(title)}</title><desc>Harness revision 13: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Three box leads: black A01, white A08, red B04.</desc><style>{CSS}</style>{body}</svg>'''
+<title>{E(title)}</title><desc>Harness revision 14: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Four box leads: black A01, white A08, red B04, green A17 to the PS1 FG terminal.</desc><style>{CSS}</style>{body}</svg>'''
 
 
 def main():
@@ -548,17 +554,17 @@ def main():
     combined='\n'.join(f'<g transform="translate(0 {i*HEIGHT})">{body}</g>' for i,(_,_,body) in enumerate(sheets))
     (DOCS/'pooldose-wiring-diagram.svg').write_text(svg_document(combined,'PoolDose complete harness book',HEIGHT*len(sheets))+'\n')
     rows=[]
-    md=['# PoolDose end-by-end termination schedule — revision 13',
-        '', 'Generated from the revision-13 harness schedule.',
+    md=['# PoolDose end-by-end termination schedule — revision 14',
+        '', 'Generated from the revision-14 harness schedule.',
         '', '> [!WARNING]', '> '+TERMINAL_WARNING,
-        '', '**27 IDs / 54 ends; six shared ferrules.**',
+        '', '**28 IDs / 56 ends; six shared ferrules.**',
         BUILD_CHECKS,
         'Three large-red ferrules at F1 LOAD/K5-3/K1-3; one yellow at K5-2; all remaining 14 AWG device ends blue.',
         'Master flow tail: yellow GPIO1 to RED telephone C09; black GND to GREEN telephone C10. Slave: local R1/GPIO1 splice to one ORANGE C13, with BLACK C14 return. C11/C15 are retired.',
         'Existing devices only; all 120 V wires stay 14 AWG. One blue ferrule at every small AC terminal.',
-        'Three stranded 14 AWG control leads at the in-box Wagos: A01 black OUT, A08 white OUT, B04 red IN. Two separate stranded 14 AWG whips connect source power and the pump outlet to this box; their neutrals join and their grounds are already bonded there.',
+        'Four stranded 14 AWG control leads at the in-box Wagos: A01 black OUT, A08 white OUT, B04 red IN, A17 green OUT to the PS1 FG terminal. Two separate stranded 14 AWG whips connect source power and the pump outlet to this box; their neutrals join and their grounds are already bonded there.',
         '', 'S14/S18 = SINGLE; M2_14/M3_14/M4_14 = TWO/THREE/FOUR 14 AWG conductors in one kit ferrule; T18 = two 18 AWG conductors in one twin; RJ11 = installed phone contact. FITTED = as built; DATA = specifications to record; CHECK = end preparation.',
-        'Installed 14 AWG ferrules: three large red/12 mm, one yellow/12 mm and 16 single blue/8 mm. Low-voltage single 18 AWG uses small red/8 mm. Collar color is not insulation color.',
+        'Installed 14 AWG ferrules: three large red/12 mm, one yellow/12 mm and 17 single blue/8 mm. Low-voltage single 18 AWG uses small red/8 mm. Collar color is not insulation color.',
         '', '| Wire | Insulation / conductor | End A | A treatment | End B | B treatment |','|---|---|---|---|---|---|']
     for r in WIRES:
         a,b=r['prep'];swatch=f'<span class="swatch" style="--wire:{r["hex"]}" data-color="{E(r["color"])}"></span>'
@@ -572,7 +578,7 @@ def main():
     md += ['','C12 is an integral R1 lead, not an extra cut length. Factory pigtails and retained box wiring are described separately.',
            'See [assembly instructions](build-instructions.html) for the terminal preparation and checkout procedure.','']
     (DOCS/'termination-schedule.md').write_text('\n'.join(md))
-    (DOCS/'wiring-hardware.json').write_text(json.dumps({'revision':13,'connection_review':CONNECTION_REVIEW,'design_status':DESIGN_STATUS,'assembly_record':ASSEMBLY_RECORD,'strips':STRIPS,'internal_links':INTERNAL_LINKS,'requested_shared':SHARED_ENDS,'shared_checks':SHARED_CHECKS},indent=2)+'\n')
+    (DOCS/'wiring-hardware.json').write_text(json.dumps({'revision':14,'connection_review':CONNECTION_REVIEW,'design_status':DESIGN_STATUS,'assembly_record':ASSEMBLY_RECORD,'strips':STRIPS,'internal_links':INTERNAL_LINKS,'requested_shared':SHARED_ENDS,'shared_checks':SHARED_CHECKS},indent=2)+'\n')
     (DOCS/'wiring-connections.json').write_text(json.dumps(WIRES,indent=2,ensure_ascii=False)+'\n')
     template=(DOCS/'tools/wiring-viewer.html').read_text()
     substitutions={
@@ -586,7 +592,7 @@ def main():
     for token,value in substitutions.items(): template=template.replace(token,value)
     (DOCS/'physical-wiring.html').write_text(template)
     # A bench worksheet includes length blanks instead of invented photo-derived measurements.
-    cut=['# Harness cutting and measurement worksheet — revision 13',
+    cut=['# Harness cutting and measurement worksheet — revision 14',
          '', 'Use this worksheet for measurement records. Blank length/continuity fields are not test results.',
          '', BUILD_CHECKS,
          '', 'Measure each route on the de-energized assembly. Reference crimper: Sopoby HSC8 6-4; record the actual tool range for each end.',

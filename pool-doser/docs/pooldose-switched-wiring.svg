@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1400" viewBox="0 0 2200 1400" role="img" aria-label="B / switching">
-<title>B / switching</title><desc>Harness revision 13: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Three box leads: black A01, white A08, red B04.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
+<title>B / switching</title><desc>Harness revision 14: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Four box leads: black A01, white A08, red B04, green A17 to the PS1 FG terminal.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
 .t-title{font-size:36px;font-weight:700;fill:white}.t-sub{font-size:18px;fill:#cedee7}
 .t-label{font-size:18px;font-weight:700}.t-small{font-size:16px}.t-tiny{font-size:14px}
 .t-micro{font-size:12px}.t-white{fill:white}.t-muted{fill:#677987}
@@ -12,7 +12,7 @@
 <text x="35" y="48" class="t-title">04  /  Harness B / switched wires</text>
 <text x="35" y="80" class="t-sub">B01–B05 · all RED 14 AWG · independent coil jumpers and series pump-power path</text>
 <text x="2165" y="46" class="t-sub" text-anchor="end">POOLDose</text>
-<text x="2165" y="77" class="t-sub" text-anchor="end">REV 13</text>
+<text x="2165" y="77" class="t-sub" text-anchor="end">REV 14</text>
 <text x="35" y="140" class="t-label">B01 = Master → K1 coil   ·   B02 = Slave → K5 coil   ·   B03 = series power link   ·   B04/B05 = final output + detector</text>
 <text x="35" y="172" class="t-small">SINGLE = one conductor   ·   SHARED = listed conductors in ONE ferrule   ·   FITTED = as built   ·   DATA = remaining specification</text>
 <rect x="165" y="551" width="1945" height="35" fill="#dce3e7" stroke="#a8b5bf" rx="2" />
@@ -67,15 +67,15 @@
 <rect x="1491" y="655" width="28" height="50" fill="#f49a21" stroke="#cc7b0c" rx="3" />
 <text x="1410" y="574" class="t-micro">120 V</text>
 </g>
-<g class="device" data-device="PS1" data-x="1640">
-<rect x="1640" y="410" width="190" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
-<rect x="1655" y="485" width="160" height="202" fill="#414e56" stroke="none" rx="5" />
-<text x="1735.0" y="532" class="t-label" text-anchor="middle" style="fill:#fff">MEAN WELL</text>
-<text x="1735.0" y="565" class="t-small" text-anchor="middle" style="fill:#fff">HDR-15-5</text>
-<text x="1735.0" y="597" class="t-small" text-anchor="middle" style="fill:#fff">5 V / 2.4 A</text>
-<text x="1735.0" y="631" class="t-tiny" text-anchor="middle" style="fill:#fff">AC INPUT ↓</text>
-<text x="1735.0" y="653" class="t-micro" text-anchor="middle" style="fill:#fff">≥5 mm free each side</text>
-<text x="1735.0" y="675" class="t-micro" text-anchor="middle" style="fill:#fff">≥40 mm ↑ / ≥20 mm ↓</text>
+<g class="device" data-device="PS1" data-x="1590">
+<rect x="1590" y="410" width="240" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="1605" y="485" width="210" height="202" fill="#414e56" stroke="none" rx="5" />
+<text x="1710.0" y="532" class="t-label" text-anchor="middle" style="fill:#fff">MEAN WELL</text>
+<text x="1710.0" y="565" class="t-small" text-anchor="middle" style="fill:#fff">MDR-20-5</text>
+<text x="1710.0" y="597" class="t-small" text-anchor="middle" style="fill:#fff">5 V / 3 A</text>
+<text x="1710.0" y="631" class="t-tiny" text-anchor="middle" style="fill:#fff">AC INPUT ↓</text>
+<text x="1710.0" y="653" class="t-micro" text-anchor="middle" style="fill:#fff">≥5 mm free each side</text>
+<text x="1710.0" y="675" class="t-micro" text-anchor="middle" style="fill:#fff">≥40 mm ↑ / ≥20 mm ↓</text>
 </g>
 <g class="device" data-device="F1" data-x="1920">
 <rect x="1920" y="410" width="175" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
@@ -131,8 +131,8 @@
 <text x="1275" y="396" class="t-micro" text-anchor="middle">SLAVE CONTACTOR</text>
 <text x="1400" y="372" class="t-label" text-anchor="middle">K4</text>
 <text x="1400" y="396" class="t-micro" text-anchor="middle">DETECTOR</text>
-<text x="1735" y="372" class="t-label" text-anchor="middle">PS1</text>
-<text x="1735" y="396" class="t-micro" text-anchor="middle">5 V SUPPLY</text>
+<text x="1765" y="372" class="t-label" text-anchor="middle">PS1</text>
+<text x="1765" y="396" class="t-micro" text-anchor="middle">5 V SUPPLY</text>
 <text x="2065" y="372" class="t-label" text-anchor="middle">F1</text>
 <text x="2065" y="396" class="t-micro" text-anchor="middle">5 A BREAKER</text>
 <g class="endpoint" data-endpoint="W1:GND" data-wires="" data-prep="" data-status=""><title>W1:GND:   </title>
@@ -358,28 +358,41 @@
 <text x="1460" y="788" class="t-micro" text-anchor="middle" style="fill:#84939b">unused</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:+V" data-wires="" data-prep="" data-status=""><title>PS1:+V:   </title>
-<circle cx="1688" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1683 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1655" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1688" y="416" class="t-tiny" text-anchor="middle">+V</text>
+<circle cx="1630" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1625 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1597" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1630" y="416" class="t-tiny" text-anchor="middle">+V</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:-V" data-wires="" data-prep="" data-status=""><title>PS1:-V:   </title>
-<circle cx="1782" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1777 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1749" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1782" y="416" class="t-tiny" text-anchor="middle">-V</text>
+<circle cx="1710" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1705 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1677" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1710" y="416" class="t-tiny" text-anchor="middle">-V</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:DC OK" data-wires="" data-prep="" data-status=""><title>PS1:DC OK:   </title>
+<circle cx="1790" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1785 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1757" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1790" y="416" class="t-tiny" text-anchor="middle">DC OK</text>
+<text x="1790" y="463" class="t-micro" text-anchor="middle" style="fill:#84939b">unused</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:FG" data-wires="" data-prep="" data-status=""><title>PS1:FG:   </title>
+<circle cx="1630" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1625 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1597" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1630" y="726" class="t-tiny" text-anchor="middle">FG</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:N" data-wires="" data-prep="" data-status=""><title>PS1:N:   </title>
-<circle cx="1688" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1683 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1655" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1688" y="726" class="t-tiny" text-anchor="middle">N</text>
+<circle cx="1710" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1705 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1677" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1710" y="726" class="t-tiny" text-anchor="middle">N</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:L" data-wires="" data-prep="" data-status=""><title>PS1:L:   </title>
-<circle cx="1782" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1777 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1749" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1782" y="726" class="t-tiny" text-anchor="middle">L</text>
+<circle cx="1790" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1785 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1757" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1790" y="726" class="t-tiny" text-anchor="middle">L</text>
 </g>
 <g class="endpoint" data-endpoint="F1:LOAD" data-wires="" data-prep="" data-status=""><title>F1:LOAD:   </title>
 <circle cx="2008" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>

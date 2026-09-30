@@ -1,7 +1,7 @@
 {
-  "revision": 13,
-  "connection_review": "Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.",
-  "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
+  "revision": 14,
+  "connection_review": "Revision 14 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts, the local GPIO1 pull-up splice and a separate PS1 FG ground lead.",
+  "design_status": "Reference build: all three harnesses assembled with the ferrules below and the Mean Well MDR-20-5 supply set to 5 V. After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.",
   "assembly_record": {
     "basis": "Reference build",
     "completed_harnesses": [
@@ -10,7 +10,7 @@
       "C"
     ],
     "power_up": {
-      "supply": "Mean Well HDR-15-5",
+      "supply": "Mean Well MDR-20-5",
       "output_v": 5.0,
       "loaded_output_check": {
         "measured_v": 5.0,

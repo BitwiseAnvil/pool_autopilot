@@ -88,7 +88,7 @@ def main():
         # Printing must ignore selection, zoom and filters; never print an incomplete harness.
         page.emulate_media(media='print')
         assert page.locator('.drawing-sheet:visible').count() == 8
-        assert page.locator('tr[data-wire]:visible').count() == 27
+        assert page.locator('tr[data-wire]:visible').count() == 28
         assert page.locator('.wire.muted').first.evaluate('(n) => getComputedStyle(n).opacity') == '1'
         page.pdf(path=str(DOCS/'pooldose-physical-wiring.pdf'),print_background=True,
                  prefer_css_page_size=True,display_header_footer=False)
@@ -108,7 +108,7 @@ def main():
             page.screenshot(path=str(args.screenshots/'mobile.png'),full_page=False)
         assert not errors, errors
         browser.close()
-    print('Browser checks passed: 27 paths, both endpoints, sheet navigation, local GPIO splice selection, shared ferrules, single-blue neutral destinations, filtering, mobile and complete print output.')
+    print('Browser checks passed: 28 paths, both endpoints, sheet navigation, local GPIO splice selection, shared ferrules, single-blue neutral destinations, filtering, mobile and complete print output.')
     print(f'Exported {DOCS / "pooldose-physical-wiring.pdf"}')
 
 

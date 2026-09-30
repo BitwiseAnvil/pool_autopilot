@@ -1,4 +1,4 @@
-# PoolDose wiring schedule — harness revision 13
+# PoolDose wiring schedule — harness revision 14
 
 **Ferrule-branch layout, using only the existing devices.**
 
@@ -12,7 +12,7 @@
 [Color drawings](physical-wiring.html) · [PDF](pooldose-physical-wiring.pdf) ·
 [Every wire end](termination-schedule.md) · [Assembly instructions](build-instructions.html).
 
-After assembly, set the Mean Well supply to **5 V** and measure **5.00 V DC at
+After assembly, set the Mean Well MDR-20-5 supply to **5 V** and measure **5.00 V DC at
 the supply output with all relays closed**. Then check communication, outlet
 sensing, a normal timed run, STOP and flow-loss shutdown, and calibrate with
 water as described in [pump calibration](pump-calibration.md).
@@ -25,7 +25,7 @@ identifies specifications to record and CHECK identifies assembly checks.
 
 Every 120 V wire is stranded **14 AWG**, including coil and detector leads.
 Every small AC terminal receives one wire in one blue ferrule: Waveshare COM/NO,
-Mean Well L/N, detector A1/A2 and all Finder A1/A2 terminals. The 18 AWG wire
+Mean Well L/N/FG, detector A1/A2 and all Finder A1/A2 terminals. The 18 AWG wire
 remains on the low-voltage/GPIO circuits. No 10 AWG wire is introduced.
 
 | Branch point | Wires inside ONE ferrule | Outgoing connections |
@@ -47,11 +47,11 @@ No required neutral path goes through a contact. Both coils therefore retain
 neutral regardless of either contactor's state. The 1–2 poles remain the two
 series pump-hot contacts. Never connect a neutral branch to terminal 1 or 2.
 
-## Three wires at the metal box
+## Four wires at the metal box
 
 The source-power and pump-outlet whips both terminate in the metal box. Each
 has stranded 14 AWG **black hot, white neutral and green ground**. Their grounds
-are already joined and bonded to the box; their neutrals join inside. The source
+are joined on a ground Wago and bonded to the box; their neutrals join inside. The source
 and outlet hot conductors stay on separate Wagos. Neutral and PE remain separate.
 
 | Lead | Direction | Insulation / gauge | Connection |
@@ -59,11 +59,14 @@ and outlet hot conductors stay on separate Wagos. Neutral and PE remain separate
 | A01 | OUT | Black, 14 AWG stranded MTW, 600 V | Source-hot Wago → F1 bottom LINE |
 | A08 | OUT | White, 14 AWG stranded MTW, 600 V | Neutral Wago → Finder K5 terminal 3 neutral branch |
 | B04 | IN | Red, 14 AWG stranded MTW, 600 V | K5 terminal 2 → switched-return Wago → outlet-whip black |
+| A17 | OUT | Green, 14 AWG stranded MTW, 600 V | Ground Wago → Mean Well PS1 FG (⏚) |
 
-The feeder stays in the metal box. These are three separate control-harness
+The feeder stays in the metal box. These are four separate control-harness
 leads. No extra neutral lead or branch connection is added inside the box.
+A17 is the only protective-earth conductor in the harness: Mean Well requires
+the MDR-20 FG terminal to be connected to protective earth.
 Follow the installed Wago strip/conductor instructions; no ferrules are specified
-at the three box ends. Retain the existing protected entry and source protection.
+at the four box ends. Retain the existing protected entry and source protection.
 
 F1 stays bottom-fed: **bottom LINE receives A01; top LOAD is the four-wire hot
 branch.** Schneider permits [reverse feeding](https://www.se.com/us/en/faqs/FA114097/).
@@ -82,7 +85,7 @@ published terminal specifications and the ferrule barrel lengths.
 | W2:GND | C04 + C06 | Black / 18 AWG | DATA: record twin size/profile within the blue-sized envelope |
 
 Six shared locations: two four-wire, one three-wire, one two-wire 14 AWG, and
-two two-wire 18 AWG. All 16 single 14 AWG ends use the blue-single symbol;
+two two-wire 18 AWG. All 17 single 14 AWG ends use the blue-single symbol;
 all six single 18 AWG ends use the small-red-single symbol. Barrel length,
 crimper range and each device's end note still apply. Collar color is separate
 from wire insulation color. Crossings alone do not make connections.
@@ -94,12 +97,12 @@ multiple-conductor selection table.
 
 ## Device order and terminal labels
 
-**W1 Master / K2 → K1 Finder → W2 Slave / K3 → K5 Finder → K4 detector → PS1 Mean Well → F1 breaker**.
+**W1 Master / K2 → K1 Finder → W2 Slave / K3 → K5 Finder → K4 detector → PS1 Mean Well MDR-20-5 → F1 breaker**.
 Waveshare bottom: NO, COM, B−, A+, left to right; top: GND left, VCC right.
 J5 is the separate GPIO connector. Finder A1/A2 are the 120 V coil supply;
 1–2 and 3–4 are distinct normally open contact pairs. K4 Phoenix 2966281:
-input A1/A2, dry output 11/14, 12 unused. PS1 HDR-15-5: +V top left, −V top
-right, N bottom left and L bottom right. F1: LOAD top, LINE bottom.
+input A1/A2, dry output 11/14, 12 unused. PS1 MDR-20-5: +V top left, −V top
+middle, DC OK top right (unused); FG bottom left, N bottom middle and L bottom right. F1: LOAD top, LINE bottom.
 
 B01 and B02 each supply one Finder A1 from its own Waveshare NO. A15 and A14
 supply the respective A2 neutrals, each as a single blue end. Finder's LED and
@@ -108,7 +111,7 @@ conductors. Its [installation sheet](https://cdn.findernet.com/app/uploads/IB223
 has a separate solid-only note for field-wiring terminals; whether that note
 applies to these internal chassis runs has not been established.
 
-## Harness A — protected hot branches and neutral branches
+## Harness A — protected hot branches, neutral branches and supply ground
 
 | Wire | From | To | AWG | Color | Function |
 |---|---|---|---|---|---|
@@ -123,6 +126,7 @@ applies to these internal chassis runs has not been established.
 | A14 | K5:3 | K5:A2 | 14 AWG MTW, 600 V | White | Slave coil neutral; single blue at A2 |
 | A15 | K1:3 | K1:A2 | 14 AWG MTW, 600 V | White | Master coil neutral; single blue at A2 |
 | A16 | K1:3 | K4:A2 | 14 AWG MTW, 600 V | White | Detector neutral; single blue at A2 |
+| A17 | BOX:G | PS1:FG | 14 AWG MTW, 600 V | Green | Protective earth from the box ground Wago; single blue at Mean Well FG |
 
 ## Harness B — independent switching and pump return
 
@@ -184,14 +188,16 @@ Green C10 is a telephone-cord signal return, distinct from equipment ground.
 
 ## Counts and revision scope
 
-**27 connection IDs / 54 ends.** 14 AWG ferrules: three large red
+**28 connection IDs / 56 ends.** 14 AWG ferrules: three large red
 (two four-wire ends and one three-wire end), one yellow (the two-wire end),
-and 16 single blue ends in the schedule. Harness C now has two shared
+and 17 single blue ends in the schedule. Harness C now has two shared
 two-18-AWG ferrules at W2 VCC/GND and six single-18-AWG ends, including K4-11
 and K4-14. There are **six shared device ferrules**. JS2 is a solder splice.
 
 A03/A04/A09/A10/A12/C02/C05 remain retired. **C11/C15 are now retired**;
 JS1/JS4 extension joints are superseded by the photographed JR1/JS2 layout.
-Revision 13 records the photographed GPIO harnesses. It preserves revision
-12's 14 AWG routes, independent coil control and series pump contacts.
+Revision 14 replaces the Mean Well HDR-15-5 with an MDR-20-5 and adds green A17
+from the box ground Wago to its FG terminal. Revision 13 recorded the
+photographed GPIO harnesses; revision 12's 14 AWG routes, independent coil
+control and series pump contacts are unchanged.
 Use the current GPIO sheet and cut list together; firmware is unchanged.

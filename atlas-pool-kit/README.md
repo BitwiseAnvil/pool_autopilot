@@ -32,6 +32,13 @@ The I²C bus uses SDA GPIO42 and SCL GPIO41 at 100 kHz. GPIO21 powers the TFT
 and I²C connector; GPIO45 is the backlight. All four circuits are expected:
 returning from calibration waits for a fresh reading from all six measurements.
 
+**Power.** In the reference enclosure the kit runs from the doser's 5 V
+DIN-rail supply, a Mean Well MDR-20-5. The supply matters for pH: the
+original Mean Well HDR-15-5 made the pH reading swing about 0.07 pH from
+minimum to maximum on average, and the MDR-20-5 cut that to about a quarter,
+roughly 0.025 pH. See the
+[Pool Doser BOM](../pool-doser/BOM.md#power-supply).
+
 ## What you need
 
 - ESPHome **2026.9.0** (pinned in the repository's `requirements.txt`). See the

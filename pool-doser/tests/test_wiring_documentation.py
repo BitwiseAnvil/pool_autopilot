@@ -12,8 +12,8 @@ from wiring_data import STRIPS, INTERNAL_LINKS, SHARED_ENDS, SHARED_CHECKS, CONN
 
 wires=load_wires()
 by_id={w['id']:w for w in wires}
-expected={f'A{i:02}' for i in (1,2,5,6,7,8,11,13,14,15,16)}|{f'B{i:02}' for i in range(1,6)}|{f'C{i:02}' for i in range(1,16) if i not in (2,5,11,15)}
-assert len(wires)==len(by_id)==27 and set(by_id)==expected
+expected={f'A{i:02}' for i in (1,2,5,6,7,8,11,13,14,15,16,17)}|{f'B{i:02}' for i in range(1,6)}|{f'C{i:02}' for i in range(1,16) if i not in (2,5,11,15)}
+assert len(wires)==len(by_id)==28 and set(by_id)==expected
 assert json.loads((ROOT/'docs/wiring-connections.json').read_text())==wires
 assert all(w['gauge']=='14 AWG MTW, 600 V' for w in wires if w['harness'] in 'AB')
 assert all('18 AWG' in w['gauge'] for w in wires if w['harness']=='C' and w['id'] not in {'C07','C08','C09','C10','C12'})
@@ -27,10 +27,13 @@ assert by_id['C13']['color']=='Orange' and by_id['C14']['color']=='Black'
 assert by_id['C13']['ends']==['JS2','K4:14']
 assert not any('?' in p for w in wires for p in w['prep'])
 
-# Exactly three harness conductors at the inner metal box. No control-area PE
-# or additional neutral return is quietly introduced by a drawing revision.
+# Exactly four harness conductors at the inner metal box. The only PE lead is
+# green A17 to the Mean Well FG terminal; no additional neutral return is
+# quietly introduced by a drawing revision.
 box={w['id']:(next(e for e in w['ends'] if e.startswith('BOX:')),w['color']) for w in wires if any(e.startswith('BOX:') for e in w['ends'])}
-assert box=={'A01':('BOX:L','Black'),'A08':('BOX:N','White'),'B04':('BOX:SW','Red')}
+assert box=={'A01':('BOX:L','Black'),'A08':('BOX:N','White'),'B04':('BOX:SW','Red'),'A17':('BOX:G','Green')}
+assert by_id['A17']['ends']==['BOX:G','PS1:FG'] and by_id['A17']['sheet']=='mains'
+assert [w['id'] for w in wires if w['color']=='Green' and w['harness']=='A']==['A17']
 assert not any('PE' in e or 'FEED:' in e for w in wires for e in w['ends'])
 
 # Every shared group lives at a photographed device screw. Requested placement
@@ -59,7 +62,7 @@ assert occupancy['K4:A1']==['B05']
 assert occupancy['K5:2']==['B04','B05']
 assert by_id['B04']['ends']==['K5:2','BOX:SW']
 assert by_id['B05']['ends']==['K5:2','K4:A1']
-for terminal in ('PS1:L','PS1:N','W1:COM','W1:NO','W2:COM','W2:NO',
+for terminal in ('PS1:L','PS1:N','PS1:FG','W1:COM','W1:NO','W2:COM','W2:NO',
                  'K1:A1','K1:A2','K5:A1','K5:A2','K4:A1','K4:A2'):
     assert len(occupancy[terminal])==1,(terminal,occupancy[terminal])
     row=by_id[occupancy[terminal][0]]
@@ -82,8 +85,8 @@ for node in data_nodes | fitted_nodes:
         assert row['connection_review']==CONNECTION_REVIEW
         assert row['design_status']==DESIGN_STATUS
 counts=Counter(p for w in wires for p in w['prep'])
-assert sum(counts.values())==54
-assert counts=={'S14':16,'S18':6,'M4_14':8,'M3_14':3,'M2_14':2,'T18':4,'BOX':3,'DATA':4,'J':5,'RJ11':2,'R':1}, counts
+assert sum(counts.values())==56
+assert counts=={'S14':17,'S18':6,'M4_14':8,'M3_14':3,'M2_14':2,'T18':4,'BOX':4,'DATA':4,'J':5,'RJ11':2,'R':1}, counts
 
 # Traverse the conductor graph to prove distribution, separation and independent
 # switching. Fixed device contact edges are added only for the requested state.
@@ -98,6 +101,7 @@ def net(start, contacts=()):
     return seen
 
 assert net('BOX:L')=={'BOX:L','F1:LINE'}
+assert net('BOX:G')=={'BOX:G','PS1:FG'}
 assert net('F1:LOAD')=={'F1:LOAD','PS1:L','W2:COM','K1:1','W1:COM'}
 neutral={'BOX:N','PS1:N','K4:A2','K5:A2','K1:A2','K5:3','K1:3'}
 assert net('BOX:N')==neutral
@@ -113,11 +117,11 @@ for master in (False,True):
         live=net('F1:LOAD',contacts)
         assert ('BOX:SW' in live)==(master and slave)
         assert ('K4:A1' in live)==(master and slave)
-        assert 'BOX:N' not in live and 'PS1:+V' not in live
+        assert 'BOX:N' not in live and 'PS1:+V' not in live and 'BOX:G' not in live
         assert ('K1:A1' in live)==master and ('K5:A1' in live)==slave
         returned=net('BOX:N',contacts)
         assert returned==neutral | ({'K1:4'} if master else set()) | ({'K5:4'} if slave else set())
-        assert not returned & live
+        assert not returned & live and 'BOX:G' not in returned
 assert net('PS1:+V')=={'PS1:+V','W2:VCC','W1:VCC'}
 assert net('PS1:-V')=={'PS1:-V','W2:GND','W1:GND'}
 assert net('JS2')=={'JS2','K4:14','R1:SENSE'}
@@ -219,7 +223,8 @@ for name in ('README.md','BOM.md','docs/wiring-schedule.md','docs/build-instruct
     assert not re.search(r'221-615|REMOVED_|S14\?|S18\?|S10\?|\bD\?',text,re.I),name
     assert not re.search(r'CR14|CR18|XH1|XN1|XCP|34138|34137|UT 4|FBS [23]-6|3044102|3030336|3030242|3200836|3200807',text),name
     assert not re.search(r'revision[ -]6|31 IDs|62 ends|factory bridge',text,re.I),name
-assert '123.3' in (ROOT/'BOM.md').read_text()
+assert '128.3' in (ROOT/'BOM.md').read_text()
+assert 'HDR-15-5' not in (ROOT/'docs/termination-schedule.md').read_text()
 # The combined harness book is generated once; no duplicate legacy copy.
 assert not (ROOT/'docs/pooldose-physical-terminal-map.svg').exists()
-print('Harness checks passed: 27 wires / 54 ends; six shared ferrules; local GPIO1/R1 splice and single detector ends; independent coils, continuous neutral and series pump contacts in all four states.')
+print('Harness checks passed: 28 wires / 56 ends; PS1 FG ground lead; six shared ferrules; local GPIO1/R1 splice and single detector ends; independent coils, continuous neutral and series pump contacts in all four states.')

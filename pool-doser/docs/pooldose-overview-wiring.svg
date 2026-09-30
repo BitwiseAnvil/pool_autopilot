@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1400" viewBox="0 0 2200 1400" role="img" aria-label="Start / three harnesses">
-<title>Start / three harnesses</title><desc>Harness revision 13: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Three box leads: black A01, white A08, red B04.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
+<title>Start / three harnesses</title><desc>Harness revision 14: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Four box leads: black A01, white A08, red B04, green A17 to the PS1 FG terminal.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
 .t-title{font-size:36px;font-weight:700;fill:white}.t-sub{font-size:18px;fill:#cedee7}
 .t-label{font-size:18px;font-weight:700}.t-small{font-size:16px}.t-tiny{font-size:14px}
 .t-micro{font-size:12px}.t-white{fill:white}.t-muted{fill:#677987}
@@ -9,10 +9,10 @@
 .wire:focus,.endpoint:focus{outline:3px solid #e7ac36}.unused{fill:#85939d}
 </style><rect x="0" y="0" width="2200" height="1400" fill="#fff" stroke="none" rx="0" />
 <rect x="0" y="0" width="2200" height="105" fill="#152d3b" stroke="none" rx="0" />
-<text x="35" y="48" class="t-title">01  /  Three harnesses. Three box wires.</text>
+<text x="35" y="48" class="t-title">01  /  Three harnesses. Four box wires.</text>
 <text x="35" y="80" class="t-sub">Ferrule branches at existing devices · all 120 V wires are 14 AWG · small AC terminals each receive one blue ferrule</text>
 <text x="2165" y="46" class="t-sub" text-anchor="end">POOLDose</text>
-<text x="2165" y="77" class="t-sub" text-anchor="end">REV 13</text>
+<text x="2165" y="77" class="t-sub" text-anchor="end">REV 14</text>
 <text x="35" y="140" class="t-label">A  AC supply   /   B  Switching   /   C  Low voltage      ·      device order matches the enclosure photo</text>
 <text x="35" y="172" class="t-small">SINGLE = one conductor   ·   SHARED = listed conductors in ONE ferrule   ·   FITTED = as built   ·   DATA = remaining specification</text>
 <rect x="45" y="215" width="1650" height="143" fill="#eef4f7" stroke="#cfdae2" rx="8" />
@@ -79,15 +79,15 @@
 <rect x="1491" y="655" width="28" height="50" fill="#f49a21" stroke="#cc7b0c" rx="3" />
 <text x="1410" y="574" class="t-micro">120 V</text>
 </g>
-<g class="device" data-device="PS1" data-x="1640">
-<rect x="1640" y="410" width="190" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
-<rect x="1655" y="485" width="160" height="202" fill="#414e56" stroke="none" rx="5" />
-<text x="1735.0" y="532" class="t-label" text-anchor="middle" style="fill:#fff">MEAN WELL</text>
-<text x="1735.0" y="565" class="t-small" text-anchor="middle" style="fill:#fff">HDR-15-5</text>
-<text x="1735.0" y="597" class="t-small" text-anchor="middle" style="fill:#fff">5 V / 2.4 A</text>
-<text x="1735.0" y="631" class="t-tiny" text-anchor="middle" style="fill:#fff">AC INPUT ↓</text>
-<text x="1735.0" y="653" class="t-micro" text-anchor="middle" style="fill:#fff">≥5 mm free each side</text>
-<text x="1735.0" y="675" class="t-micro" text-anchor="middle" style="fill:#fff">≥40 mm ↑ / ≥20 mm ↓</text>
+<g class="device" data-device="PS1" data-x="1590">
+<rect x="1590" y="410" width="240" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
+<rect x="1605" y="485" width="210" height="202" fill="#414e56" stroke="none" rx="5" />
+<text x="1710.0" y="532" class="t-label" text-anchor="middle" style="fill:#fff">MEAN WELL</text>
+<text x="1710.0" y="565" class="t-small" text-anchor="middle" style="fill:#fff">MDR-20-5</text>
+<text x="1710.0" y="597" class="t-small" text-anchor="middle" style="fill:#fff">5 V / 3 A</text>
+<text x="1710.0" y="631" class="t-tiny" text-anchor="middle" style="fill:#fff">AC INPUT ↓</text>
+<text x="1710.0" y="653" class="t-micro" text-anchor="middle" style="fill:#fff">≥5 mm free each side</text>
+<text x="1710.0" y="675" class="t-micro" text-anchor="middle" style="fill:#fff">≥40 mm ↑ / ≥20 mm ↓</text>
 </g>
 <g class="device" data-device="F1" data-x="1920">
 <rect x="1920" y="410" width="175" height="350" fill="#edf0ee" stroke="#94a3aa" rx="7" />
@@ -108,8 +108,8 @@
 <text x="1275" y="396" class="t-micro" text-anchor="middle">SLAVE CONTACTOR</text>
 <text x="1400" y="372" class="t-label" text-anchor="middle">K4</text>
 <text x="1400" y="396" class="t-micro" text-anchor="middle">DETECTOR</text>
-<text x="1735" y="372" class="t-label" text-anchor="middle">PS1</text>
-<text x="1735" y="396" class="t-micro" text-anchor="middle">5 V SUPPLY</text>
+<text x="1765" y="372" class="t-label" text-anchor="middle">PS1</text>
+<text x="1765" y="396" class="t-micro" text-anchor="middle">5 V SUPPLY</text>
 <text x="2065" y="372" class="t-label" text-anchor="middle">F1</text>
 <text x="2065" y="396" class="t-micro" text-anchor="middle">5 A BREAKER</text>
 <g class="endpoint" data-endpoint="W1:GND" data-wires="" data-prep="" data-status=""><title>W1:GND:   </title>
@@ -292,28 +292,41 @@
 <text x="1460" y="788" class="t-micro" text-anchor="middle" style="fill:#84939b">unused</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:+V" data-wires="" data-prep="" data-status=""><title>PS1:+V:   </title>
-<circle cx="1688" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1683 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1655" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1688" y="416" class="t-tiny" text-anchor="middle">+V</text>
+<circle cx="1630" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1625 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1597" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1630" y="416" class="t-tiny" text-anchor="middle">+V</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:-V" data-wires="" data-prep="" data-status=""><title>PS1:-V:   </title>
-<circle cx="1782" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1777 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1749" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1782" y="416" class="t-tiny" text-anchor="middle">-V</text>
+<circle cx="1710" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1705 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1677" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1710" y="416" class="t-tiny" text-anchor="middle">-V</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:DC OK" data-wires="" data-prep="" data-status=""><title>PS1:DC OK:   </title>
+<circle cx="1790" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1785 439 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1757" y="401" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1790" y="416" class="t-tiny" text-anchor="middle">DC OK</text>
+<text x="1790" y="463" class="t-micro" text-anchor="middle" style="fill:#84939b">unused</text>
+</g>
+<g class="endpoint" data-endpoint="PS1:FG" data-wires="" data-prep="" data-status=""><title>PS1:FG:   </title>
+<circle cx="1630" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1625 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1597" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1630" y="726" class="t-tiny" text-anchor="middle">FG</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:N" data-wires="" data-prep="" data-status=""><title>PS1:N:   </title>
-<circle cx="1688" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1683 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1655" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1688" y="726" class="t-tiny" text-anchor="middle">N</text>
+<circle cx="1710" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1705 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1677" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1710" y="726" class="t-tiny" text-anchor="middle">N</text>
 </g>
 <g class="endpoint" data-endpoint="PS1:L" data-wires="" data-prep="" data-status=""><title>PS1:L:   </title>
-<circle cx="1782" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
-<path d="M1777 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
-<rect x="1749" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
-<text x="1782" y="726" class="t-tiny" text-anchor="middle">L</text>
+<circle cx="1790" cy="745" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
+<path d="M1785 749 l10 -8" fill="none" stroke="#788a94" stroke-width="2" />
+<rect x="1757" y="711" width="66" height="20" fill="#fff" stroke="none" rx="3" />
+<text x="1790" y="726" class="t-tiny" text-anchor="middle">L</text>
 </g>
 <g class="endpoint" data-endpoint="F1:LOAD" data-wires="" data-prep="" data-status=""><title>F1:LOAD:   </title>
 <circle cx="2008" cy="435" r="10" fill="#fff" stroke="#607583" class="screw" stroke-width="3"/>
@@ -329,7 +342,7 @@
 </g>
 <rect x="50" y="850" width="400" height="118" fill="#eef4f7" stroke="#cfdae2" rx="8" />
 <text x="67" y="878" class="t-label">A — AC SUPPLY</text>
-<text x="67" y="905" class="t-small">Black hot + separate white neutral.</text>
+<text x="67" y="905" class="t-small">Black hot, white neutral, green PS1 ground.</text>
 <text x="67" y="930" class="t-small">Larger screws carry the branch ferrules.</text>
 <text x="67" y="955" class="t-small">Sheets 02–03.</text>
 <rect x="475" y="850" width="400" height="118" fill="#eef4f7" stroke="#cfdae2" rx="8" />
@@ -342,31 +355,35 @@
 <text x="917" y="905" class="t-small">5 V, RS485 + GPIO tails.</text>
 <text x="917" y="930" class="t-small">PS1 → W2 → W1 power chains.</text>
 <text x="917" y="955" class="t-small">Sheets 05–07.</text>
-<rect x="50" y="1030" width="1250" height="168" fill="#eef4f7" stroke="#cfdae2" rx="8" />
+<rect x="50" y="1030" width="1250" height="193" fill="#eef4f7" stroke="#cfdae2" rx="8" />
 <text x="67" y="1058" class="t-label">Only these leads cross the metal-box boundary</text>
 <text x="67" y="1085" class="t-small">A01  BLACK / 14 AWG   OUT → F1 bottom LINE.  A02 leaves the top LOAD terminal.</text>
 <text x="67" y="1110" class="t-small">A08  WHITE / 14 AWG   OUT → K5 POWER terminal 3. Both whip neutrals join inside the box.</text>
 <text x="67" y="1135" class="t-small">B04  RED / 14 AWG       IN ← final switched output.  Wago → outlet-whip BLACK.</text>
-<text x="67" y="1160" class="t-small">Two 3-wire whips end in the box; all whip and 120 V harness wires are stranded 14 AWG.</text>
-<text x="67" y="1185" class="t-small">Whip grounds are joined and bonded to the metal box.</text>
+<text x="67" y="1160" class="t-small">A17  GREEN / 14 AWG   OUT → Mean Well PS1 FG. Ground Wago with both whip grounds.</text>
+<text x="67" y="1185" class="t-small">Two 3-wire whips end in the box; all whip and 120 V harness wires are stranded 14 AWG.</text>
+<text x="67" y="1210" class="t-small">Whip grounds are joined and bonded to the metal box.</text>
 <rect x="1380" y="850" width="765" height="430" fill="#edf2f5" stroke="#8194a1" rx="16" />
 <text x="1410" y="890" class="t-label">METAL JUNCTION BOX</text>
-<text x="1410" y="923" class="t-small">Wagos join the source/outlet whips to three control leads.</text>
-<path d="M1400 977 H1600" fill="none" stroke="#6a7883" stroke-width="10" />
-<path d="M1400 977 H1600" fill="none" stroke="#202832" stroke-width="7" />
-<text x="1625" y="983" class="t-small">A01 · BLACK OUT → F1 bottom LINE</text>
-<path d="M1400 1030 H1600" fill="none" stroke="#6a7883" stroke-width="10" />
-<path d="M1400 1030 H1600" fill="none" stroke="#fff" stroke-width="7" />
-<text x="1625" y="1036" class="t-small">A08 · WHITE OUT → controls</text>
-<path d="M1400 1083 H1600" fill="none" stroke="#6a7883" stroke-width="10" />
-<path d="M1400 1083 H1600" fill="none" stroke="#d93136" stroke-width="7" />
-<text x="1625" y="1089" class="t-small">B04 · RED IN → outlet-whip BLACK</text>
-<path d="M1420 1150 H1740" fill="none" stroke="#6a7883" stroke-width="10" />
-<path d="M1420 1150 H1740" fill="none" stroke="#fff" stroke-width="6" />
-<text x="1760" y="1156" class="t-small">Neutral → outlet whip</text>
+<text x="1410" y="923" class="t-small">Wagos join the source/outlet whips to four control leads.</text>
+<path d="M1400 967 H1600" fill="none" stroke="#6a7883" stroke-width="10" />
+<path d="M1400 967 H1600" fill="none" stroke="#202832" stroke-width="7" />
+<text x="1625" y="973" class="t-small">A01 · BLACK OUT → F1 bottom LINE</text>
+<path d="M1400 1012 H1600" fill="none" stroke="#6a7883" stroke-width="10" />
+<path d="M1400 1012 H1600" fill="none" stroke="#fff" stroke-width="7" />
+<text x="1625" y="1018" class="t-small">A08 · WHITE OUT → controls</text>
+<path d="M1400 1057 H1600" fill="none" stroke="#6a7883" stroke-width="10" />
+<path d="M1400 1057 H1600" fill="none" stroke="#d93136" stroke-width="7" />
+<text x="1625" y="1063" class="t-small">B04 · RED IN → outlet-whip BLACK</text>
+<path d="M1400 1102 H1600" fill="none" stroke="#6a7883" stroke-width="10" />
+<path d="M1400 1102 H1600" fill="none" stroke="#26834b" stroke-width="7" />
+<text x="1625" y="1108" class="t-small">A17 · GREEN OUT → PS1 FG</text>
+<path d="M1420 1160 H1740" fill="none" stroke="#6a7883" stroke-width="10" />
+<path d="M1420 1160 H1740" fill="none" stroke="#fff" stroke-width="6" />
+<text x="1760" y="1166" class="t-small">Neutral → outlet whip</text>
 <path d="M1420 1210 H1740 M1570 1210 V1240 H1740" fill="none" stroke="#17643c" stroke-width="6" />
 <text x="1760" y="1216" class="t-small">Ground → outlet whip</text>
 <text x="1760" y="1246" class="t-small">PE → metal-box bond</text>
-<text x="35" y="1324" class="t-label">Neutral and PE are separate nets. The green reference stays INSIDE the metal box; it is not a harness lead.</text>
+<text x="35" y="1324" class="t-label">Neutral and PE are separate nets. Green A17 is the only harness PE lead: ground Wago → PS1 FG.</text>
 <text x="35" y="1371" class="t-small">WIRE BY ID · follow the end-preparation notes and assembly checkout · crossings do not connect</text>
 <text x="2165" y="1371" class="t-label" text-anchor="end">6 requested shared ferrules</text></svg>

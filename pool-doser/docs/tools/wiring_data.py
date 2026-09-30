@@ -4,7 +4,7 @@ import re
 
 DOCS = Path(__file__).resolve().parents[1]
 HARNESSES = {'A': 'AC supply', 'B': 'Switching', 'C': 'Low voltage'}
-CONNECTION_REVIEW = 'Revision 13 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts and the local GPIO1 pull-up splice.'
+CONNECTION_REVIEW = 'Revision 14 electrical graph checks pass: independent coil control, continuous neutral, two series pump contacts, the local GPIO1 pull-up splice and a separate PS1 FG ground lead.'
 BUILD_CHECKS = ('After assembly, measure 5.00 V at the DC supply output with all relays closed, then confirm Home Assistant/RS485 communication, outlet sensing, a normal timed run, STOP and flow-loss shutdown. '
                 'Calibrate with water before chemical service; see pump-calibration.md. Completed wiring does not replace these measurements.')
 TERMINAL_WARNING = ('Known limitation: do not copy the neutral branches at Finder K5 terminal 3 and K1 terminal 3. '
@@ -12,12 +12,12 @@ TERMINAL_WARNING = ('Known limitation: do not copy the neutral branches at Finde
                     'Four 14 AWG wires at K5-3 (about 8.3 mm²) and three at K1-3 (about 6.3 mm²) exceed that rating. '
                     'The reference enclosure is built this way. A new build should branch neutral on a rated DIN-rail neutral terminal block '
                     'or other listed distribution so that each Finder terminal stays within its rating, and have the change checked by a qualified electrician.')
-DESIGN_STATUS = ('Reference build: all three harnesses assembled with the ferrules below and the Mean Well supply set to 5 V. '
+DESIGN_STATUS = ('Reference build: all three harnesses assembled with the ferrules below and the Mean Well MDR-20-5 supply set to 5 V. '
                  + BUILD_CHECKS)
 ASSEMBLY_RECORD = {
     'basis': 'Reference build',
     'completed_harnesses': ['A', 'B', 'C'],
-    'power_up': {'supply': 'Mean Well HDR-15-5', 'output_v': 5.0,
+    'power_up': {'supply': 'Mean Well MDR-20-5', 'output_v': 5.0,
                  'loaded_output_check': {'measured_v': 5.0, 'condition': 'All relays closed', 'measurement': 'DC supply output'}},
     'build_checks': BUILD_CHECKS,
     'shared_ferrules': {'F1:LOAD': 'Large red', 'K5:3': 'Large red', 'K1:3': 'Large red', 'K5:2': 'Yellow'},
@@ -48,9 +48,10 @@ DESCRIPTIONS = {
     'BOX:L': 'Inside metal box: hot Wago joins source-whip black to separate black A01 lead OUT',
     'BOX:N': 'Inside metal box: neutral Wago joins source-whip neutral, outlet-whip neutral and white A08 lead OUT',
     'BOX:SW': 'Inside metal box: switched-hot Wago joins red B04 lead IN to outlet-whip black',
+    'BOX:G': 'Inside metal box: ground Wago joins both whip grounds, the box bond and green A17 lead OUT',
     'F1:LINE': 'F1 bottom LINE clamp; A01 incoming supply', 'F1:LOAD': 'F1 top LOAD clamp; one installed large-red ferrule with four black 14 AWG branches',
-    'PS1:+V': 'PS1 top LEFT +V, terminal 1', 'PS1:-V': 'PS1 top RIGHT −V, terminal 2',
-    'PS1:N': 'PS1 bottom LEFT N, terminal 3', 'PS1:L': 'PS1 bottom RIGHT L, terminal 4',
+    'PS1:+V': 'PS1 top LEFT +V', 'PS1:-V': 'PS1 top MIDDLE −V',
+    'PS1:FG': 'PS1 bottom LEFT FG (⏚)', 'PS1:N': 'PS1 bottom MIDDLE N', 'PS1:L': 'PS1 bottom RIGHT L',
     'K4:A1': 'K4 top outer A1 input clamp', 'K4:A2': 'K4 top inner A2 input clamp',
     'K4:11': 'K4 bottom inner 11 common', 'K4:14': 'K4 bottom middle 14 normally open',
     'JM1': 'JM1: Master J5-1 GPIO1 YELLOW factory lead to RED telephone-cord conductor C09; photographed splice',
@@ -114,7 +115,7 @@ def preparation_note(endpoint, code):
         limit = ' A1/A2: one 14 AWG wire in one blue ferrule; no branch at this coil terminal.' if endpoint.endswith((':A1', ':A2')) else ''
         return 'Single blue 14 AWG ferrule. Catalog strip 9 mm, torque 0.8 N·m; kit barrel 8 mm.' + limit
     if device == 'PS1':
-        return ('Single blue 14 AWG ferrule. ' if code=='S14' else 'Single 18 AWG ferrule. ') + 'The design limits all Mean Well terminals to a blue-single-14-AWG ferrule envelope; confirm the selected ferrule/barrel. Published wire strip 6 mm, torque 0.49 N·m; kit barrel is 8 mm.'
+        return ('Single blue 14 AWG ferrule. ' if code=='S14' else 'Single 18 AWG ferrule. ') + 'The design limits all Mean Well terminals to a blue-single-14-AWG ferrule envelope; confirm the selected ferrule/barrel. MDR manual: copper, at least 80°C insulation, 6.5 mm strip, 5.0 lb-in (0.57 N·m); kit barrel is 8 mm.'
     if device == 'F1':
         return PREPARATION[code] + ' C60 wire guidance: 14 mm strip and 22 lb-in for this current/voltage range, subject to installed markings. Kit blue barrel is 8 mm; check the metal-barrel engagement against the device instructions.'
     if device in {'W1','W2'}:
@@ -147,6 +148,6 @@ def load_wires():
                          'FITTED: low-voltage wiring as built; end notes retain remaining terminal specifications')
         row['connection_review'] = CONNECTION_REVIEW
         row['design_status'] = DESIGN_STATUS
-        row['revision'] = 13
+        row['revision'] = 14
         result.append(row)
     return result
