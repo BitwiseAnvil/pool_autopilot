@@ -546,7 +546,7 @@ def svg_document(body,title,height=HEIGHT):
 
 
 def main():
-    sheets=[('overview','Start / three harnesses',overview()),('mains','A / BLACK hot',mains()),
+    sheets=[('overview','Start / three harnesses',overview()),('mains','A / BLACK hot + ground',mains()),
             ('neutral','A / WHITE neutral',neutral()),('switched','B / switching',switched()),('dc','C / RED +5 V',dc()),('returns','C / BLACK return + data',returns()),
             ('signals','C / GPIO + pull-up',signals()),('ferrules','Shared ferrules',ferrules())]
     for key,title,body in sheets:

@@ -66,9 +66,10 @@ The source-power and pump-outlet whips each have three stranded 14 AWG conductor
 from the in-box hot Wago to F1 bottom LINE**; **A02 is 14 AWG black
 from F1 top LOAD**. This bottom-fed arrangement is permitted by Schneider's
 [C60 reverse-feed guidance](https://www.se.com/us/en/faqs/FA114097/).
-The other box-boundary leads are **A08 white 14 AWG out** and **B04 red 14 AWG
-back in to the outlet-whip black hot**. Both whip neutrals join inside the box.
-Both whip grounds are joined and bonded to the box. The source-whip black hot
+The other box-boundary leads are **A08 white 14 AWG out**, **B04 red 14 AWG
+back in to the outlet-whip black hot** and **A17 green 14 AWG out to the Mean
+Well FG terminal**. Both whip neutrals join inside the box.
+Both whip grounds and A17 are joined on a ground Wago and bonded to the box. The source-whip black hot
 and outlet-whip black hot connect to separate Wagos.
 
 Retain upstream protection appropriate to the source whip; F1 protects its
@@ -127,7 +128,7 @@ this. Use copper wire rated at least 80 °C, strip 6.5 mm and tighten to
   0.25–6 mm² (23–10 AWG) and its headline bullets 0.08–10 mm² (28–7 AWG);
   both include the 18/14 AWG single-ferrule sizes. Record your tool's actual
   range alongside the selected shared ferrules.
-- Wagos inside the metal box for the three harness connections, following
+- Wagos inside the metal box for the four harness connections, following
   their conductor range and strip length.
 
 Use 14 AWG wire from item 8 on the F1-protected 120 V circuits:
@@ -156,7 +157,7 @@ to measure the revision-14 A/B/C routes and total each color against the
 
 ## Existing-hardware harness scope
 
-Wagos remain inside the metal box for the three harness connections. The
+Wagos remain inside the metal box for the four harness connections. The
 [wiring book](docs/physical-wiring.html) shows ferrule branches at F1 LOAD and
 Finder K1/K5 power terminal 3.
 

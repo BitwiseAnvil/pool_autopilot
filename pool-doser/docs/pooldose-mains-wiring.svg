@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1400" viewBox="0 0 2200 1400" role="img" aria-label="A / BLACK hot">
-<title>A / BLACK hot</title><desc>Harness revision 14: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Four box leads: black A01, white A08, red B04, green A17 to the PS1 FG terminal.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1400" viewBox="0 0 2200 1400" role="img" aria-label="A / BLACK hot + ground">
+<title>A / BLACK hot + ground</title><desc>Harness revision 14: ferrule branches at F1 LOAD, K5 power terminal 3 and K1 power terminal 3. One ferrule enters the clamp at each shared endpoint. Small AC terminals each receive one 14 AWG wire in a blue ferrule. Rail order W1, K1, W2, K5, K4, PS1, F1; sheet 07 is an enlarged GPIO connection view. Four box leads: black A01, white A08, red B04, green A17 to the PS1 FG terminal.</desc><style>text{font-family:Arial,Helvetica,sans-serif;fill:#20313e}
 .t-title{font-size:36px;font-weight:700;fill:white}.t-sub{font-size:18px;fill:#cedee7}
 .t-label{font-size:18px;font-weight:700}.t-small{font-size:16px}.t-tiny{font-size:14px}
 .t-micro{font-size:12px}.t-white{fill:white}.t-muted{fill:#677987}

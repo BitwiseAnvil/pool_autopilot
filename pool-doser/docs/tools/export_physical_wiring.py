@@ -25,8 +25,8 @@ def main():
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.goto((DOCS/'physical-wiring.html').as_uri(), wait_until='load')
-        assert page.locator('tr[data-wire]').count() == 27
-        assert page.locator('.wire').count() == 27
+        assert page.locator('tr[data-wire]').count() == 28
+        assert page.locator('.wire').count() == 28
         assert page.locator('img').evaluate_all('(imgs) => imgs.every(i => i.complete && i.naturalWidth > 0)')
         for sheet in ['overview', 'mains', 'neutral', 'switched', 'dc', 'returns', 'signals', 'ferrules']:
             page.locator(f'[data-show="{sheet}"]').click()
