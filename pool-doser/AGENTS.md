@@ -50,6 +50,30 @@ threshold is configured; cover changed safety behavior and failure paths.
 
 Edit wiring sources in `docs/wiring-schedule.md`, `docs/tools/wiring_data.py`, and the viewer template `docs/tools/wiring-viewer.html`. Keep the K5-3/K1-3 terminal-rating warning (`TERMINAL_WARNING`) in the sources and every generated output. Regenerate with `python3 docs/tools/build_physical_wiring.py`; follow `docs/tools/README.md` for PDF export and visual review. Keep generated outputs synchronized.
 
+A hardware or wire change touches more than the schedule. Work through this list:
+
+- **Geometry.** Device positions, pins, routes and wire-ID tags live in
+  `build_physical_wiring.py` (`DEVICES`, `PINS`, `POINTS`, `ROUTES`, `TAGS`,
+  `labels()`). A route runs from the schedule's `From` end to its `To` end and
+  must stay orthogonal. It must also stay at least 12 px from every unrelated
+  terminal drawn on its sheet, including `BOX:` points. The tests enforce both.
+- **Counts.** Wire and end counts, the revision number and "N box leads" are
+  hard-coded in prose and checks. Update `tests/test_wiring_documentation.py`
+  and `docs/tools/export_physical_wiring.py` (it has several `== N` wire
+  counts). Also grep `BOM.md`, `README.md`, `docs/build-instructions.html`,
+  `docs/tools/README.md`, the viewer template and the generator for the old
+  count, revision and wording. Bump the harness revision when wires change.
+- **PDF.** Always re-export `docs/pooldose-physical-wiring.pdf` with the
+  Playwright venv described in `docs/tools/README.md` (create it in `/tmp` if
+  missing). Never leave the PDF stale.
+- **Review.** Render the changed SVG sheets and look at them for overlapping
+  labels, and for wires crossing headings or notes, before committing.
+
+The reference build's PS1 is a Mean Well MDR-20-5 (revision 14). It replaced
+an HDR-15-5 that made the Atlas pH reading noisy, so do not suggest the HDR
+again. PS1 also powers the Atlas kit; that feed is not yet drawn in the wiring
+book. Its FG terminal is grounded by green A17 from the box ground Wago.
+
 ## Commit & Pull Request Guidelines
 
 Use focused commits with imperative subjects. PRs should describe behavior changes, relevant issues, validation commands/results, hardware verification status, and screenshots for dashboard or diagram changes. Record software checks separately from physical measurements.

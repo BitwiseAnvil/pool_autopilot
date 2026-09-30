@@ -37,6 +37,16 @@ has the ESPHome version pinned in root `requirements.txt`. Do not create
 project-local virtual environments inside the device projects. See `README.md`
 for environment setup.
 
+The maintainer works in WSL. If a wrapper fails with `No module named
+'esphome'`, find the existing interpreter (`find ~ -maxdepth 4 -path
+'*/bin/esphome'`) and set `POOL_ESPHOME_PYTHON` to the `python` beside it. Set
+up any tooling a documented step needs (for example the Playwright venv in
+`/tmp` for the wiring PDF) and run it rather than skipping the step or asking
+first. Windows Chrome at `/mnt/c/Program Files/Google/Chrome/Application/chrome.exe`
+can render SVGs headlessly (`--headless=new --screenshot=<windows path>`, using
+`wslpath -w` for paths) for visual review. Read manufacturer datasheets
+directly: `curl` the PDF and open it with the Read tool.
+
 ## Coding Style & Naming Conventions
 
 Use two-space indentation in YAML/C++ and four spaces in Python. Follow existing `snake_case` functions, variables, and ESPHome IDs; `PascalCase` types; and `UPPER_SNAKE_CASE` constants. Keep the Atlas core platform independent. No formatter/linter configuration is checked in; native tests enforce strict compiler warnings.

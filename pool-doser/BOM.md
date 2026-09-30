@@ -27,13 +27,13 @@ them at checkout.
 | 1 | 2 | ESP32-S3-Relay-1CH-U, SKU 35086 | External-antenna controller, isolated RS485, DIN case | [Waveshare](https://www.waveshare.com/esp32-s3-relay-1ch.htm?sku=35086) | $38.78 for 2 |
 | 2 | 2 | Finder 22.32.0.120.1320 | K1 and K5: each 17.5 mm, 120 V varistor-protected coil; independent coils, NO 1–2 power contacts in series | [Amazon](https://www.amazon.com/dp/B00NMQFT6Y) | $48.75 each |
 | 3 | 1 | Phoenix Contact 2966281 | 120 VAC outlet-live detector with hard-gold contact | [Mouser 651-2966281](https://www.mouser.com/en/ProductDetail/Phoenix-Contact/2966281?qs=wd%252Bw3mUqFrlInk3ycQdn9Q%3D%3D) | $25.07 |
-| 4 | 1 | Mean Well MDR-20-5 | DIN supply, 120 VAC to 5 VDC/3 A, 22.5 mm wide; input from the doser's common protected branch/disconnect; FG terminal to protective earth. Also powers the Atlas kit | [Mouser 709-MDR20-5](https://www.mouser.com/ProductDetail/MEAN-WELL/MDR-20-5?qs=TaOZSEYtRiVHaoS93zq5aQ%3D%3D) | check at checkout |
+| 4 | 1 | Mean Well MDR-20-5 | DIN supply, 120 VAC to 5 VDC/3 A, 22.5 mm wide; input from the doser's common protected branch/disconnect; FG terminal to protective earth. Also powers the Atlas kit | [Mouser 709-MDR20-5](https://www.mouser.com/ProductDetail/MEAN-WELL/MDR-20-5?qs=TaOZSEYtRiVHaoS93zq5aQ%3D%3D) | $14.40 |
 | 5 | 1 | CF14JT270R | 270 Ω Slave outlet-detector pull-up | [Mouser 708-CF14JT270R](https://www.mouser.com/ProductDetail/SEI-Stackpole/CF14JT270R?qs=FESYatJ8odLq71IBt5AZfw%3D%3D) | $0.10 |
 | 6 | 1 | Normally-open paddle flow switch, for example Watflow B0D52PPW6R GLX-FLO-style kit | Switch, 15 ft cable and 2-inch PVC tee; verify normally-open operation before installation | [Amazon](https://www.amazon.com/dp/B0D52PPW6R) | $16.23 |
 | 7 | 1 | F1: Schneider Electric 60106 Multi 9 C60, one-pole, 5 A C-curve DIN-rail circuit breaker | UL 489 listed, 120 VAC, 10 kA interrupting rating; local overcurrent protection of the protected hot | [Schneider Electric](https://www.se.com/us/en/product/60106/multi9-c60-ul489-mcb-1-pole-5-a-c-curve-120-v-10-ka-tunnel-term/) | $12.00 |
 | 8 | 10 lengths, 10 ft each | CrimpZone UL1015/MTW 600 V hookup wire: 14 AWG black, red, white, dark green; 18 AWG black, red, yellow, orange, dark blue, brown | Enclosure power, control and signal colors documented below | [14 AWG](https://www.crimpzone.com/14-mtw-hook-up-wire-pick-color-length/) and [18 AWG](https://www.crimpzone.com/18-mtw-hook-up-wire-pick-color-length/) | $41.12 |
 
-**Approximate total: $230.80 plus the MDR-20-5** at these reference prices. The Amazon prices
+**Approximate total: $245.20** at these reference prices. The Amazon prices
 are volatile. The Watflow assembly includes its 2-inch tee.
 
 For a one-shot Mouser order, paste this into Mouser's [Price and Availability
